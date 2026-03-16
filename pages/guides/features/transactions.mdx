@@ -82,6 +82,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/transactions" \
 | `amountCents` | number | Valor em centavos. Exemplo: 9900 = R$ 99,00. |
 | `clientName` | string | Nome completo do cliente. Máximo 255 caracteres. |
 | `clientEmail` | string | Email válido do cliente. |
+| `clientDocument` | string | CPF ou CNPJ do cliente (apenas números). Mínimo 11 dígitos. |
 
 ### Campos opcionais
 
@@ -89,7 +90,6 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/transactions" \
 |-------|------|-----------|--------|
 | `paymentMethod` | string | Método de pagamento: `"PIX"`, `"CARD"`, `"BOLETO"`. | `"PIX"` |
 | `clientPhone` | string | Telefone do cliente (apenas números). Exemplo: `11999999999`. | — |
-| `clientDocument` | string | CPF ou CNPJ do cliente (apenas números). | — |
 | `installments` | number | Número de parcelas (apenas cartão). Mínimo: 1, Máximo: 12. | 1 |
 | `paymentLinkId` | string (UUID) | ID do link de pagamento associado. | — |
 | `dueDate` | string (ISO 8601) | Data de vencimento da cobrança. | — |
