@@ -61,8 +61,8 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/products" \
 
 ```json
 {
-  "message": "Produto criado com sucesso",
-  "product": {
+  "message": "Produto criado com sucesso.",
+  "data": {
     "id": "550e8400-e29b-41d4-a716-446655440000",
     "name": "Curso de JavaScript Avançado",
     "price": 19990,
@@ -297,11 +297,10 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payme
   },
   body: JSON.stringify({
     title: 'Compra de Curso',
-    productIds: [
-      '550e8400-e29b-41d4-a716-446655440000', // ID do produto
-      '550e8400-e29b-41d4-a716-446655440001'  // Outro produto
-    ],
-    clientId: 'cliente-id'
+    products: [
+      { productId: '550e8400-e29b-41d4-a716-446655440000', quantity: 1 },
+      { productId: '550e8400-e29b-41d4-a716-446655440001', quantity: 2 }
+    ]
   })
 });
 ```
@@ -310,13 +309,13 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payme
 
 ### Estoque Ilimitado
 
-Para produtos digitais ou serviços sem limite, deixe `stock` como `null`:
+Para produtos digitais ou serviços sem limite, deixe `stockEnabled` como `false`:
 
-```javascript
+```json
 {
   "name": "E-book Digital",
-  "price": 29.90,
-  "stock": null // Estoque ilimitado
+  "price": 2990,
+  "stockEnabled": false
 }
 ```
 
@@ -324,23 +323,22 @@ Para produtos digitais ou serviços sem limite, deixe `stock` como `null`:
 
 Para produtos físicos, defina a quantidade disponível:
 
-```javascript
+```json
 {
   "name": "Camiseta",
-  "price": 79.90,
-  "stock": 50 // 50 unidades disponíveis
+  "price": 7990,
+  "stockEnabled": true,
+  "stockQuantity": 50
 }
 ```
 
 ### Produto Esgotado
 
-Quando o estoque chegar a zero, o produto não poderá ser adicionado a novos links de pagamento:
+Quando o estoque chegar a zero, o produto não poderá ser adicionado a novos links de pagamento. Atualize o estoque via PATCH:
 
-```javascript
+```json
 {
-  "name": "Produto Esgotado",
-  "price": 99.90,
-  "stock": 0 // Esgotado
+  "stockQuantity": 0
 }
 ```
 
@@ -358,7 +356,7 @@ Crie produtos para cada curso e associe-os a links de pagamento personalizados:
 // Criar curso
 const curso = await criarProduto({
   name: 'Curso Completo de React',
-  price: 299.90,
+  price: 29990, // R$ 299,90
   description: 'Do básico ao avançado com projetos reais',
   imageUrl: 'https://exemplo.com/curso-react.jpg'
 });
@@ -366,8 +364,7 @@ const curso = await criarProduto({
 // Criar link de pagamento
 const link = await criarLinkPagamento({
   title: 'Matrícula - Curso de React',
-  productIds: [curso.id],
-  clientId: clienteId
+  products: [{ productId: curso.id, quantity: 1 }]
 });
 ```
 
@@ -378,10 +375,11 @@ Gerencie estoque e preços de produtos físicos:
 ```javascript
 const produto = await criarProduto({
   name: 'Livro: Clean Code',
-  price: 89.90,
+  price: 8990, // R$ 89,90
   description: 'Livro físico sobre código limpo',
   imageUrl: 'https://exemplo.com/clean-code.jpg',
-  stock: 30
+  stockEnabled: true,
+  stockQuantity: 30
 });
 ```
 
@@ -392,9 +390,9 @@ Ofereça serviços sem controle de estoque:
 ```javascript
 const servico = await criarProduto({
   name: 'Consultoria Técnica - 2h',
-  price: 500.00,
+  price: 50000, // R$ 500,00
   description: 'Sessão de consultoria técnica personalizada',
-  stock: null // Sem limite
+  stockEnabled: false
 });
 ```
 
@@ -402,7 +400,7 @@ const servico = await criarProduto({
 
 1. **Imagens**: Use URLs de imagens otimizadas e hospedadas em CDN
 2. **Descrições**: Seja claro e objetivo nas descrições
-3. **Preços**: Sempre use valores com duas casas decimais (ex: 99.90)
+3. **Preços**: Sempre use valores em centavos (ex: 9990 = R$ 99,90)
 4. **Estoque**: Mantenha o estoque atualizado para evitar vendas de produtos esgotados
 5. **Status**: Use INACTIVE para produtos temporariamente indisponíveis
 6. **Organização**: Use nomes descritivos e padronizados

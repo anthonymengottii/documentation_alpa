@@ -32,10 +32,9 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/payment-links" \
     "amount": 9900,
     "currency": "BRL",
     "settings": {
-      "methods": {
-        "pix": true,
-        "card": true
-      },
+      "pixEnabled": true,
+      "creditCardEnabled": true,
+      "boletoEnabled": false,
       "maxInstallments": 12
     }
   }'
@@ -90,25 +89,22 @@ O objeto `settings` permite configurar métodos de pagamento e comportamentos do
 
 | Campo | Tipo | Descrição | Padrão |
 |-------|------|-----------|--------|
-| `methods.pix` | boolean | Habilita pagamento via PIX. | true |
-| `methods.boleto` | boolean | Habilita pagamento via Boleto. | false |
-| `methods.card` | boolean | Habilita pagamento via Cartão de Crédito. | true |
+| `pixEnabled` | boolean | Habilita pagamento via PIX. | true |
+| `boletoEnabled` | boolean | Habilita pagamento via Boleto. | false |
+| `creditCardEnabled` | boolean | Habilita pagamento via Cartão de Crédito. | true |
 | `maxInstallments` | number | Número máximo de parcelas. Mínimo: 1, Máximo: 12. | 1 |
 | `interestFreeInstallments` | number | Parcelas sem juros. Deve ser ≤ `maxInstallments`. | 1 |
 | `interestRate` | number | Taxa de juros mensal (%). | 0 |
 | `requirePhone` | boolean | Exige telefone no checkout. | true |
 | `requireAddress` | boolean | Exige endereço completo no checkout. | false |
-| `allowedPaymentMethods` | string[] | Array de métodos permitidos (ex: `["pix", "card"]`). | - |
 
 **Exemplo:**
 ```json
 {
   "settings": {
-    "methods": {
-      "pix": true,
-      "boleto": false,
-      "card": true
-    },
+    "pixEnabled": true,
+    "boletoEnabled": false,
+    "creditCardEnabled": true,
     "maxInstallments": 12,
     "interestFreeInstallments": 3,
     "interestRate": 2.5,
@@ -196,10 +192,8 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payme
     amount: 19900, // R$ 199,00
     currency: 'BRL',
     settings: {
-      methods: {
-        pix: true,
-        card: true
-      },
+      pixEnabled: true,
+      creditCardEnabled: true,
       maxInstallments: 6,
       interestFreeInstallments: 3
     }
@@ -226,11 +220,9 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payme
     stockQuantity: 50,
     stockEnabled: true,
     settings: {
-      methods: {
-        pix: true,
-        card: true,
-        boleto: true
-      }
+      pixEnabled: true,
+      creditCardEnabled: true,
+      boletoEnabled: true
     }
   })
 });
@@ -255,10 +247,8 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payme
     expiresAt: expiresAt.toISOString(),
     redirectUrl: 'https://meusite.com.br/obrigado',
     settings: {
-      methods: {
-        pix: true,
-        card: true
-      }
+      pixEnabled: true,
+      creditCardEnabled: true
     }
   })
 });
