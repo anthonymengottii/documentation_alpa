@@ -1937,49 +1937,87 @@
         "required": [
           "product",
           "amountCents",
-          "paymentMethod",
-          "clientEmail",
-          "clientName"
+          "clientName",
+          "clientEmail"
         ],
         "properties": {
           "product": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 255,
+            "description": "Nome ou descrição do produto/serviço"
           },
           "amountCents": {
             "type": "integer",
-            "minimum": 1
+            "minimum": 1,
+            "maximum": 100000000,
+            "description": "Valor em centavos. Exemplo: 9900 = R$ 99,00"
+          },
+          "clientName": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Nome completo do cliente"
+          },
+          "clientEmail": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 255,
+            "description": "Email do cliente"
+          },
+          "clientPhone": {
+            "type": "string",
+            "maxLength": 20,
+            "nullable": true,
+            "description": "Telefone do cliente. Exemplo: 11999999999"
+          },
+          "clientDocument": {
+            "type": "string",
+            "maxLength": 20,
+            "nullable": true,
+            "description": "CPF ou CNPJ do cliente (apenas números)"
           },
           "paymentMethod": {
             "type": "string",
             "enum": [
               "PIX",
-              "CREDIT_CARD",
+              "CARD",
               "BOLETO"
-            ]
-          },
-          "clientEmail": {
-            "type": "string",
-            "format": "email"
-          },
-          "clientName": {
-            "type": "string"
+            ],
+            "default": "PIX",
+            "description": "Método de pagamento"
           },
           "paymentLinkId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "description": "ID do link de pagamento associado (opcional)"
           },
           "installments": {
             "type": "integer",
             "minimum": 1,
-            "maximum": 12
+            "maximum": 12,
+            "description": "Número de parcelas (apenas cartão de crédito)"
           },
           "dueDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "Data de vencimento (opcional)"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Dados adicionais personalizados. Exemplo: { \"orderId\": \"4836572\", \"source\": \"checkout-parceiro\" }"
           },
           "trackingParams": {
             "type": "object",
-            "description": "Parâmetros de rastreamento (UTMs como utm_source, utm_medium, utm_campaign, ou identificadores como fbclid, gclid, src)"
+            "description": "Parâmetros de rastreamento UTM",
+            "properties": {
+              "utm_source": { "type": "string", "nullable": true },
+              "utm_medium": { "type": "string", "nullable": true },
+              "utm_campaign": { "type": "string", "nullable": true },
+              "utm_content": { "type": "string", "nullable": true },
+              "utm_term": { "type": "string", "nullable": true },
+              "src": { "type": "string", "nullable": true },
+              "sck": { "type": "string", "nullable": true }
+            }
           }
         }
       },

@@ -32,15 +32,13 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/transactions" \
   -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "paymentLinkId": "550e8400-e29b-41d4-a716-446655440000",
+    "product": "Pedido #001",
     "paymentMethod": "PIX",
     "amountCents": 9900,
-    "client": {
-      "name": "João Silva",
-      "email": "joao@example.com",
-      "phone": "+5511999999999",
-      "document": "12345678900"
-    }
+    "clientName": "João Silva",
+    "clientEmail": "joao@example.com",
+    "clientPhone": "11999999999",
+    "clientDocument": "12345678900"
   }'
 ```
 
@@ -80,40 +78,23 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/transactions" \
 
 | Campo | Tipo | Descrição |
 |-------|------|-----------|
-| `paymentLinkId` | string | ID do link de pagamento associado. UUID válido. |
-| `paymentMethod` | string | Método de pagamento. Valores: "PIX", "CREDIT_CARD", "DEBIT_CARD", "BOLETO". |
-| `amountCents` | number | Valor em centavos. Exemplo: 9900 = R$ 99,00. Mínimo: 100 (R$ 1,00). |
-| `client` | object | Dados do cliente (veja abaixo). |
-
-### Dados do cliente (`client`)
-
-| Campo | Tipo | Descrição | Obrigatório |
-|-------|------|-----------|-------------|
-| `name` | string | Nome completo do cliente. Máximo 255 caracteres. | Sim |
-| `email` | string | Email válido do cliente. | Sim |
-| `phone` | string | Telefone com código do país. Formato: +5511999999999. | Sim |
-| `document` | string | CPF ou CNPJ (apenas números). | Sim |
-| `address` | object | Endereço completo (obrigatório para boleto). | Condicional |
-
-### Endereço (`address`)
-
-| Campo | Tipo | Descrição |
-|-------|------|-----------|
-| `street` | string | Logradouro. |
-| `number` | string | Número. |
-| `complement` | string | Complemento (opcional). |
-| `neighborhood` | string | Bairro. |
-| `city` | string | Cidade. |
-| `state` | string | Estado (UF). |
-| `zipCode` | string | CEP (apenas números). |
+| `product` | string | Nome ou descrição do produto/serviço. Máximo 255 caracteres. |
+| `amountCents` | number | Valor em centavos. Exemplo: 9900 = R$ 99,00. |
+| `clientName` | string | Nome completo do cliente. Máximo 255 caracteres. |
+| `clientEmail` | string | Email válido do cliente. |
 
 ### Campos opcionais
 
 | Campo | Tipo | Descrição | Padrão |
 |-------|------|-----------|--------|
-| `currency` | string | Código da moeda. Atualmente apenas "BRL". | "BRL" |
-| `installments` | number | Número de parcelas (apenas cartão de crédito). Mínimo: 1, Máximo: 12. | 1 |
-| `metadata` | object | Dados adicionais personalizados. | {} |
+| `paymentMethod` | string | Método de pagamento: `"PIX"`, `"CARD"`, `"BOLETO"`. | `"PIX"` |
+| `clientPhone` | string | Telefone do cliente (apenas números). Exemplo: `11999999999`. | — |
+| `clientDocument` | string | CPF ou CNPJ do cliente (apenas números). | — |
+| `installments` | number | Número de parcelas (apenas cartão). Mínimo: 1, Máximo: 12. | 1 |
+| `paymentLinkId` | string (UUID) | ID do link de pagamento associado. | — |
+| `dueDate` | string (ISO 8601) | Data de vencimento da cobrança. | — |
+| `metadata` | object | Dados adicionais personalizados (ex: `orderId`, `source`). | — |
+| `trackingParams` | object | Parâmetros UTM para rastreamento de campanhas. | — |
 
 ## 📖 Exemplos Completos
 
@@ -127,23 +108,14 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/trans
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    paymentLinkId: 'link-id-aqui',
-    paymentMethod: 'CREDIT_CARD',
+    product: 'Curso Online',
+    paymentMethod: 'CARD',
     amountCents: 19900, // R$ 199,00
     installments: 3,
-    client: {
-      name: 'Maria Santos',
-      email: 'maria@example.com',
-      phone: '+5511988888888',
-      document: '98765432100'
-    },
-    card: {
-      number: '4111111111111111',
-      holderName: 'MARIA SANTOS',
-      expiryMonth: '12',
-      expiryYear: '2028',
-      cvv: '123'
-    }
+    clientName: 'Maria Santos',
+    clientEmail: 'maria@example.com',
+    clientPhone: '11988888888',
+    clientDocument: '98765432100'
   })
 });
 ```
@@ -158,29 +130,18 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/trans
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    paymentLinkId: 'link-id-aqui',
+    product: 'Assinatura Mensal',
     paymentMethod: 'BOLETO',
     amountCents: 29900, // R$ 299,00
-    client: {
-      name: 'Pedro Oliveira',
-      email: 'pedro@example.com',
-      phone: '+5511977777777',
-      document: '12345678900',
-      address: {
-        street: 'Rua das Flores',
-        number: '123',
-        complement: 'Apto 45',
-        neighborhood: 'Centro',
-        city: 'São Paulo',
-        state: 'SP',
-        zipCode: '01310100'
-      }
-    }
+    clientName: 'Pedro Oliveira',
+    clientEmail: 'pedro@example.com',
+    clientPhone: '11977777777',
+    clientDocument: '12345678900'
   })
 });
 ```
 
-### Transação com Metadata
+### Transação com Metadata (integração de parceiros)
 
 ```javascript
 const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/transactions', {
@@ -190,19 +151,16 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/trans
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    paymentLinkId: 'link-id-aqui',
+    product: 'Pedido #4836572',
     paymentMethod: 'PIX',
-    amountCents: 9900,
-    client: {
-      name: 'Ana Costa',
-      email: 'ana@example.com',
-      phone: '+5511966666666',
-      document: '11122233344'
-    },
+    amountCents: 670000, // R$ 6.700,00
+    clientName: 'Ana Costa',
+    clientEmail: 'ana@example.com',
+    clientPhone: '11966666666',
+    clientDocument: '11122233344',
     metadata: {
-      orderId: 'ORD-2025-001',
-      customerId: 'CUST-123',
-      source: 'website',
+      orderId: '4836572',
+      source: 'checkout-parceiro',
       campaign: 'black-friday'
     }
   })
