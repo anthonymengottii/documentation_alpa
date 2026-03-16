@@ -27,16 +27,6 @@
             ]
           },
           {
-            "group": "Recursos",
-            "icon": "lightbulb",
-            "pages": [
-              "pages/referrals",
-              "pages/troubleshooting",
-              "pages/glossary",
-              "pages/changelog"
-            ]
-          },
-          {
             "group": "Guias",
             "icon": "map",
             "pages": [
