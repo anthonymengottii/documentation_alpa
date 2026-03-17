@@ -1,0 +1,174 @@
+---
+title: "Python"
+description: "Cliente HTTP para Python usando requests. Compatível com Python 3.8+."
+---
+
+## Instalação
+
+```bash
+pip install requests
+```
+
+## Client
+
+Copie o arquivo `upay_client.py` para o seu projeto:
+
+```python
+# upay_client.py
+import os
+import requests
+from typing import Optional
+
+class UpayClient:
+    BASE_URL = 'https://upay-sistema-api.onrender.com/api/v1'
+
+    def __init__(self, api_key: str):
+        self._session = requests.Session()
+        self._session.headers.update({
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json',
+        })
+
+    def _req(self, method: str, path: str, **kwargs):
+        r = self._session.request(method, f'{self.BASE_URL}{path}', **kwargs)
+        r.raise_for_status()
+        return r.json()
+
+    # Transações
+    def create_transaction(
+        self,
+        product: str,
+        amount_cents: int,
+        client_name: str,
+        client_email: str,
+        client_document: str,
+        payment_method: str = 'PIX',
+        **kwargs
+    ):
+        return self._req('POST', '/transactions', json={
+            'product': product,
+            'amountCents': amount_cents,
+            'clientName': client_name,
+            'clientEmail': client_email,
+            'clientDocument': client_document,
+            'paymentMethod': payment_method,
+            **kwargs,
+        })
+
+    def list_transactions(self, page: int = 1, limit: int = 20, **filters):
+        return self._req('GET', '/transactions', params={'page': page, 'limit': limit, **filters})
+
+    def get_transaction(self, id: str):
+        return self._req('GET', f'/transactions/{id}')
+
+    # Links de pagamento
+    def create_payment_link(self, title: str, amount_cents: int, **kwargs):
+        return self._req('POST', '/payment-links', json={
+            'title': title, 'amountCents': amount_cents, **kwargs
+        })
+
+    def list_payment_links(self, page: int = 1, limit: int = 20):
+        return self._req('GET', '/payment-links', params={'page': page, 'limit': limit})
+
+    def get_payment_link(self, id: str):
+        return self._req('GET', f'/payment-links/{id}')
+
+    # Produtos
+    def create_product(self, name: str, price_cents: int, **kwargs):
+        return self._req('POST', '/products', json={
+            'name': name, 'priceCents': price_cents, **kwargs
+        })
+
+    def list_products(self, page: int = 1, limit: int = 20):
+        return self._req('GET', '/products', params={'page': page, 'limit': limit})
+
+    # Clientes
+    def list_customers(self, page: int = 1, limit: int = 20):
+        return self._req('GET', '/customers', params={'page': page, 'limit': limit})
+
+    def get_customer(self, id: str):
+        return self._req('GET', f'/customers/{id}')
+```
+
+## Uso
+
+```python
+import os
+from upay_client import UpayClient
+
+upay = UpayClient(os.getenv('UPAY_API_KEY'))
+
+# Criar transação PIX
+tx = upay.create_transaction(
+    product='Curso Python',
+    amount_cents=19900,
+    client_name='João Silva',
+    client_email='joao@example.com',
+    client_document='12345678900',
+    payment_method='PIX',
+)
+print('PIX copia-e-cola:', tx['data']['pixCopiaECola'])
+
+# Listar transações pagas
+result = upay.list_transactions(status='COMPLETED', limit=50)
+print(f"{len(result['data'])} transações encontradas")
+
+# Criar link de pagamento
+link = upay.create_payment_link(
+    title='Produto Premium',
+    amount_cents=9900,
+    description='Acesso vitalício',
+)
+print('Checkout:', link['data']['url'])
+```
+
+## Tratamento de erros
+
+```python
+from requests.exceptions import HTTPError
+
+try:
+    tx = upay.create_transaction(
+        product='Pedido #001',
+        amount_cents=500,  # valor abaixo do mínimo
+        client_name='João',
+        client_email='joao@example.com',
+        client_document='12345678900',
+    )
+except HTTPError as e:
+    error = e.response.json()
+    print('Erro:', error.get('message'))
+```
+
+## Validação de webhooks
+
+```python
+import hmac
+import hashlib
+import os
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    raw_body  = request.data
+    signature = request.headers.get('x-webhook-signature', '')
+
+    expected = 'sha256=' + hmac.new(
+        os.getenv('UPAY_WEBHOOK_SECRET').encode(),
+        raw_body,
+        hashlib.sha256
+    ).hexdigest()
+
+    if not hmac.compare_digest(signature, expected):
+        return jsonify(error='Assinatura inválida'), 401
+
+    event = request.json
+    print('Evento recebido:', event['event'])
+    return jsonify(received=True)
+```
+
+<Tip>
+  Use `request.data` (não `request.json`) para obter o body bruto necessário para validar a assinatura HMAC.
+</Tip>

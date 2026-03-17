@@ -22,8 +22,7 @@
             "pages": [
               "pages/introduction",
               "pages/quickstart",
-              "pages/authentication",
-              "pages/sdks"
+              "pages/authentication"
             ]
           },
           {
@@ -37,7 +36,12 @@
               "pages/guides/features/transactions",
               "pages/guides/features/webhooks"
             ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "Endpoints",
+        "groups": [
           {
             "group": "Link de pagamento",
             "icon": "link",
@@ -121,8 +125,26 @@
         ]
       },
       {
-        "tab": "Endpoints",
-        "openapi": "api-reference/openapi.json"
+        "tab": "SDKs",
+        "groups": [
+          {
+            "group": "Visão geral",
+            "icon": "code",
+            "pages": [
+              "pages/sdks"
+            ]
+          },
+          {
+            "group": "Linguagens",
+            "icon": "terminal",
+            "pages": [
+              "pages/sdk-nodejs",
+              "pages/sdk-python",
+              "pages/sdk-php",
+              "pages/sdk-java"
+            ]
+          }
+        ]
       }
     ]
   },

@@ -1,0 +1,196 @@
+---
+title: "PHP"
+description: "Cliente HTTP para PHP usando cURL, sem dependências externas. Compatível com PHP 8.0+."
+---
+
+## Instalação
+
+Nenhuma dependência externa necessária — usa `cURL` nativo do PHP.
+
+```bash
+# Apenas copie o arquivo abaixo para o seu projeto
+```
+
+## Client
+
+Copie o arquivo `UpayClient.php` para o seu projeto:
+
+```php
+<?php
+// UpayClient.php
+
+class UpayClient
+{
+    private string $baseUrl = 'https://upay-sistema-api.onrender.com/api/v1';
+
+    public function __construct(private string $apiKey) {}
+
+    private function request(string $method, string $path, ?array $body = null): array
+    {
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL            => $this->baseUrl . $path,
+            CURLOPT_CUSTOMREQUEST  => $method,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER     => [
+                "Authorization: Bearer {$this->apiKey}",
+                'Content-Type: application/json',
+            ],
+            CURLOPT_POSTFIELDS => $body ? json_encode($body) : null,
+        ]);
+
+        $response = curl_exec($ch);
+        $status   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        $data = json_decode($response, true);
+        if ($status >= 400) {
+            throw new RuntimeException($data['message'] ?? "HTTP $status");
+        }
+        return $data;
+    }
+
+    // Transações
+    public function createTransaction(
+        string $product,
+        int    $amountCents,
+        string $clientName,
+        string $clientEmail,
+        string $clientDocument,
+        string $paymentMethod = 'PIX',
+        array  $extra = []
+    ): array {
+        return $this->request('POST', '/transactions', array_merge([
+            'product'        => $product,
+            'amountCents'    => $amountCents,
+            'clientName'     => $clientName,
+            'clientEmail'    => $clientEmail,
+            'clientDocument' => $clientDocument,
+            'paymentMethod'  => $paymentMethod,
+        ], $extra));
+    }
+
+    public function listTransactions(int $page = 1, int $limit = 20, array $filters = []): array
+    {
+        $qs = http_build_query(array_merge(['page' => $page, 'limit' => $limit], $filters));
+        return $this->request('GET', "/transactions?$qs");
+    }
+
+    public function getTransaction(string $id): array
+    {
+        return $this->request('GET', "/transactions/$id");
+    }
+
+    // Links de pagamento
+    public function createPaymentLink(string $title, int $amountCents, array $extra = []): array
+    {
+        return $this->request('POST', '/payment-links', array_merge(
+            ['title' => $title, 'amountCents' => $amountCents], $extra
+        ));
+    }
+
+    public function listPaymentLinks(int $page = 1, int $limit = 20): array
+    {
+        return $this->request('GET', "/payment-links?page=$page&limit=$limit");
+    }
+
+    public function getPaymentLink(string $id): array
+    {
+        return $this->request('GET', "/payment-links/$id");
+    }
+
+    // Produtos
+    public function createProduct(string $name, int $priceCents, array $extra = []): array
+    {
+        return $this->request('POST', '/products', array_merge(
+            ['name' => $name, 'priceCents' => $priceCents], $extra
+        ));
+    }
+
+    public function listProducts(int $page = 1, int $limit = 20): array
+    {
+        return $this->request('GET', "/products?page=$page&limit=$limit");
+    }
+
+    // Clientes
+    public function listCustomers(int $page = 1, int $limit = 20): array
+    {
+        return $this->request('GET', "/customers?page=$page&limit=$limit");
+    }
+
+    public function getCustomer(string $id): array
+    {
+        return $this->request('GET', "/customers/$id");
+    }
+}
+```
+
+## Uso
+
+```php
+<?php
+require 'UpayClient.php';
+
+$upay = new UpayClient($_ENV['UPAY_API_KEY']);
+
+// Criar transação PIX
+$tx = $upay->createTransaction(
+    product:         'Curso PHP',
+    amountCents:     19900,
+    clientName:      'João Silva',
+    clientEmail:     'joao@example.com',
+    clientDocument:  '12345678900',
+    paymentMethod:   'PIX',
+);
+echo 'PIX copia-e-cola: ' . $tx['data']['pixCopiaECola'] . "\n";
+
+// Listar transações pagas
+$result = $upay->listTransactions(filters: ['status' => 'COMPLETED']);
+echo count($result['data']) . " transações encontradas\n";
+
+// Criar link de pagamento
+$link = $upay->createPaymentLink('Produto Premium', 9900, [
+    'description' => 'Acesso vitalício',
+]);
+echo 'Checkout: ' . $link['data']['url'] . "\n";
+```
+
+## Tratamento de erros
+
+```php
+<?php
+try {
+    $tx = $upay->createTransaction(
+        product:        'Pedido #001',
+        amountCents:    50,  // abaixo do mínimo
+        clientName:     'João',
+        clientEmail:    'joao@example.com',
+        clientDocument: '12345678900',
+    );
+} catch (RuntimeException $e) {
+    echo 'Erro: ' . $e->getMessage() . "\n";
+}
+```
+
+## Validação de webhooks
+
+```php
+<?php
+$payload   = file_get_contents('php://input');
+$signature = $_SERVER['HTTP_X_WEBHOOK_SIGNATURE'] ?? '';
+$expected  = 'sha256=' . hash_hmac('sha256', $payload, $_ENV['UPAY_WEBHOOK_SECRET']);
+
+if (!hash_equals($expected, $signature)) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Assinatura inválida']);
+    exit;
+}
+
+$event = json_decode($payload, true);
+// Processar evento...
+echo json_encode(['received' => true]);
+```
+
+<Tip>
+  Use `file_get_contents('php://input')` para ler o body bruto antes de qualquer processamento, garantindo que a assinatura HMAC seja válida.
+</Tip>

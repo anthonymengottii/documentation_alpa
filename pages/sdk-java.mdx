@@ -1,0 +1,228 @@
+---
+title: "Java"
+description: "Cliente HTTP para Java usando HttpClient nativo. Requer Java 11+."
+---
+
+## Requisitos
+
+- **Java 11+** (usa `java.net.http.HttpClient` nativo)
+- Nenhuma dependência externa necessária
+
+## Client
+
+Copie o arquivo `UpayClient.java` para o seu projeto:
+
+```java
+// UpayClient.java
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Map;
+
+public class UpayClient {
+
+    private static final String BASE_URL = "https://upay-sistema-api.onrender.com/api/v1";
+
+    private final HttpClient http = HttpClient.newHttpClient();
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final String apiKey;
+
+    public UpayClient(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    // ─── HTTP helpers ────────────────────────────────────────────────────────
+
+    private Map<String, Object> get(String path) throws Exception {
+        var req = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + path))
+                .header("Authorization", "Bearer " + apiKey)
+                .GET()
+                .build();
+        return send(req);
+    }
+
+    private Map<String, Object> post(String path, Object body) throws Exception {
+        var json = mapper.writeValueAsString(body);
+        var req  = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + path))
+                .header("Authorization", "Bearer " + apiKey)
+                .header("Content-Type", "application/json")
+                .POST(BodyPublishers.ofString(json))
+                .build();
+        return send(req);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> send(HttpRequest req) throws Exception {
+        HttpResponse<String> res = http.send(req, BodyHandlers.ofString());
+        Map<String, Object> data = mapper.readValue(res.body(), Map.class);
+        if (res.statusCode() >= 400) {
+            throw new RuntimeException((String) data.getOrDefault("message", "HTTP " + res.statusCode()));
+        }
+        return data;
+    }
+
+    // ─── Transações ──────────────────────────────────────────────────────────
+
+    public Map<String, Object> createTransaction(
+            String product,
+            int    amountCents,
+            String clientName,
+            String clientEmail,
+            String clientDocument,
+            String paymentMethod
+    ) throws Exception {
+        return post("/transactions", Map.of(
+            "product",        product,
+            "amountCents",    amountCents,
+            "clientName",     clientName,
+            "clientEmail",    clientEmail,
+            "clientDocument", clientDocument,
+            "paymentMethod",  paymentMethod
+        ));
+    }
+
+    public Map<String, Object> listTransactions(int page, int limit) throws Exception {
+        return get("/transactions?page=" + page + "&limit=" + limit);
+    }
+
+    public Map<String, Object> getTransaction(String id) throws Exception {
+        return get("/transactions/" + id);
+    }
+
+    // ─── Links de pagamento ──────────────────────────────────────────────────
+
+    public Map<String, Object> createPaymentLink(String title, int amountCents) throws Exception {
+        return post("/payment-links", Map.of("title", title, "amountCents", amountCents));
+    }
+
+    public Map<String, Object> listPaymentLinks(int page, int limit) throws Exception {
+        return get("/payment-links?page=" + page + "&limit=" + limit);
+    }
+
+    public Map<String, Object> getPaymentLink(String id) throws Exception {
+        return get("/payment-links/" + id);
+    }
+
+    // ─── Produtos ────────────────────────────────────────────────────────────
+
+    public Map<String, Object> createProduct(String name, int priceCents) throws Exception {
+        return post("/products", Map.of("name", name, "priceCents", priceCents));
+    }
+
+    public Map<String, Object> listProducts(int page, int limit) throws Exception {
+        return get("/products?page=" + page + "&limit=" + limit);
+    }
+}
+```
+
+<Note>
+  O exemplo usa `jackson-databind` para serialização JSON. Adicione ao seu `pom.xml` ou `build.gradle`.
+</Note>
+
+<CodeGroup>
+```xml Maven (pom.xml)
+<dependency>
+  <groupId>com.fasterxml.jackson.core</groupId>
+  <artifactId>jackson-databind</artifactId>
+  <version>2.17.0</version>
+</dependency>
+```
+
+```groovy Gradle (build.gradle)
+implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+```
+</CodeGroup>
+
+## Uso
+
+```java
+import java.util.Map;
+
+public class Main {
+    public static void main(String[] args) throws Exception {
+        var upay = new UpayClient(System.getenv("UPAY_API_KEY"));
+
+        // Criar transação PIX
+        var tx = upay.createTransaction(
+            "Curso Java",
+            19900,
+            "João Silva",
+            "joao@example.com",
+            "12345678900",
+            "PIX"
+        );
+        var data = (Map<?, ?>) tx.get("data");
+        System.out.println("PIX copia-e-cola: " + data.get("pixCopiaECola"));
+
+        // Listar transações
+        var result = upay.listTransactions(1, 20);
+        var list   = (java.util.List<?>) result.get("data");
+        System.out.println(list.size() + " transações encontradas");
+
+        // Criar link de pagamento
+        var link     = upay.createPaymentLink("Produto Premium", 9900);
+        var linkData = (Map<?, ?>) link.get("data");
+        System.out.println("Checkout: " + linkData.get("url"));
+    }
+}
+```
+
+## Tratamento de erros
+
+```java
+try {
+    var tx = upay.createTransaction(
+        "Pedido #001", 50,  // abaixo do mínimo
+        "João", "joao@example.com", "12345678900", "PIX"
+    );
+} catch (RuntimeException e) {
+    System.out.println("Erro: " + e.getMessage());
+}
+```
+
+## Validação de webhooks
+
+```java
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.HexFormat;
+
+public class WebhookValidator {
+
+    public static boolean isValid(byte[] body, String signature, String secret) throws Exception {
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(secret.getBytes(), "HmacSHA256"));
+        String expected = "sha256=" + HexFormat.of().formatHex(mac.doFinal(body));
+        return expected.equals(signature);
+    }
+}
+```
+
+Exemplo com **Spring Boot**:
+
+```java
+@PostMapping("/webhook")
+public ResponseEntity<?> webhook(
+        @RequestBody byte[] body,
+        @RequestHeader("x-webhook-signature") String signature
+) throws Exception {
+    if (!WebhookValidator.isValid(body, signature, webhookSecret)) {
+        return ResponseEntity.status(401).body(Map.of("error", "Assinatura inválida"));
+    }
+
+    Map<?, ?> event = objectMapper.readValue(body, Map.class);
+    System.out.println("Evento recebido: " + event.get("event"));
+    return ResponseEntity.ok(Map.of("received", true));
+}
+```
+
+<Tip>
+  Configure o endpoint de webhook como `byte[]` para preservar o body bruto e garantir que a assinatura HMAC seja válida. Não use `@RequestBody String` pois a conversão pode alterar a codificação.
+</Tip>

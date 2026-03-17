@@ -1,0 +1,179 @@
+---
+title: "Node.js / TypeScript"
+description: "Cliente HTTP para JavaScript e TypeScript usando fetch nativo. Compatível com Node.js 18+, Bun e edge runtimes."
+---
+
+## Instalação
+
+Nenhuma dependência externa necessária — usa `fetch` nativo disponível a partir do **Node.js 18**.
+
+```bash
+# Apenas copie o arquivo abaixo para o seu projeto
+```
+
+## Client TypeScript
+
+Copie o arquivo `upay-client.ts` para o seu projeto:
+
+```typescript
+// upay-client.ts
+const BASE_URL = 'https://upay-sistema-api.onrender.com/api/v1';
+
+export class UpayClient {
+  constructor(private apiKey: string) {}
+
+  private async req<T>(method: string, path: string, body?: unknown): Promise<T> {
+    const res = await fetch(`${BASE_URL}${path}`, {
+      method,
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message ?? `HTTP ${res.status}`);
+    return data;
+  }
+
+  // Transações
+  createTransaction(payload: {
+    product: string;
+    amountCents: number;
+    clientName: string;
+    clientEmail: string;
+    clientDocument: string;
+    paymentMethod?: 'PIX' | 'CARD' | 'BOLETO';
+    installments?: number;
+    clientPhone?: string;
+    postbackUrl?: string;
+    metadata?: Record<string, unknown>;
+  }) {
+    return this.req('POST', '/transactions', payload);
+  }
+  listTransactions(params?: { page?: number; limit?: number; status?: string; paymentMethod?: string }) {
+    const qs = new URLSearchParams(params as Record<string, string>).toString();
+    return this.req('GET', `/transactions${qs ? `?${qs}` : ''}`);
+  }
+  getTransaction(id: string) {
+    return this.req('GET', `/transactions/${id}`);
+  }
+
+  // Links de pagamento
+  createPaymentLink(payload: { title: string; amountCents: number; description?: string }) {
+    return this.req('POST', '/payment-links', payload);
+  }
+  listPaymentLinks(page = 1, limit = 20) {
+    return this.req('GET', `/payment-links?page=${page}&limit=${limit}`);
+  }
+  getPaymentLink(id: string) {
+    return this.req('GET', `/payment-links/${id}`);
+  }
+
+  // Produtos
+  createProduct(payload: { name: string; priceCents: number; description?: string }) {
+    return this.req('POST', '/products', payload);
+  }
+  listProducts(page = 1, limit = 20) {
+    return this.req('GET', `/products?page=${page}&limit=${limit}`);
+  }
+
+  // Clientes
+  listCustomers(page = 1, limit = 20) {
+    return this.req('GET', `/customers?page=${page}&limit=${limit}`);
+  }
+  getCustomer(id: string) {
+    return this.req('GET', `/customers/${id}`);
+  }
+}
+```
+
+## Uso
+
+```typescript
+import { UpayClient } from './upay-client';
+
+const upay = new UpayClient(process.env.UPAY_API_KEY!);
+
+// Criar transação PIX
+const tx = await upay.createTransaction({
+  product: 'Curso Node.js',
+  paymentMethod: 'PIX',
+  amountCents: 19900,
+  clientName: 'João Silva',
+  clientEmail: 'joao@example.com',
+  clientDocument: '12345678900',
+});
+console.log('PIX copia-e-cola:', tx.data.pixCopiaECola);
+
+// Listar transações pagas
+const { data } = await upay.listTransactions({ status: 'COMPLETED', limit: 50 });
+console.log(`${data.length} transações encontradas`);
+
+// Criar link de pagamento
+const link = await upay.createPaymentLink({
+  title: 'Produto Premium',
+  amountCents: 9900,
+  description: 'Acesso vitalício',
+});
+console.log('Checkout:', link.data.url);
+```
+
+## Exemplo simples (JavaScript puro)
+
+Se preferir sem classe, use a função utilitária abaixo:
+
+```javascript
+const BASE_URL = 'https://upay-sistema-api.onrender.com/api/v1';
+
+async function upay(method, path, body) {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method,
+    headers: {
+      'Authorization': `Bearer ${process.env.UPAY_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message ?? `HTTP ${res.status}`);
+  return data;
+}
+
+// Criar transação
+const tx = await upay('POST', '/transactions', {
+  product: 'Pedido #001',
+  paymentMethod: 'PIX',
+  amountCents: 9900,
+  clientName: 'João Silva',
+  clientEmail: 'joao@example.com',
+  clientDocument: '12345678900',
+});
+```
+
+## Validação de webhooks
+
+```javascript
+import crypto from 'crypto';
+
+// Express — use express.raw() para preservar o body original
+app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  const signature = req.headers['x-webhook-signature'];
+  const expected  = `sha256=${crypto
+    .createHmac('sha256', process.env.UPAY_WEBHOOK_SECRET)
+    .update(req.body)
+    .digest('hex')}`;
+
+  if (signature !== expected) {
+    return res.status(401).json({ error: 'Assinatura inválida' });
+  }
+
+  const event = JSON.parse(req.body.toString());
+  console.log('Evento recebido:', event.event);
+  res.json({ received: true });
+});
+```
+
+<Tip>
+  Use `express.raw()` e não `express.json()` no endpoint de webhook para preservar o body original e garantir que a assinatura bata.
+</Tip>
