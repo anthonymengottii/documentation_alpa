@@ -18,7 +18,6 @@
         "groups": [
           {
             "group": "Introdução",
-            "icon": "book",
             "pages": [
               "pages/introduction",
               "pages/quickstart",
@@ -27,7 +26,6 @@
           },
           {
             "group": "Guias",
-            "icon": "map",
             "pages": [
               "pages/guides/features/payment-links",
               "pages/guides/features/products",
@@ -39,7 +37,6 @@
           },
           {
             "group": "Link de pagamento",
-            "icon": "link",
             "pages": [
               "pages/payment-links/reference",
               "pages/payment-links/create",
@@ -51,7 +48,6 @@
           },
           {
             "group": "Produtos",
-            "icon": "box-archive",
             "pages": [
               "pages/products/reference",
               "pages/products/create",
@@ -63,7 +59,6 @@
           },
           {
             "group": "Clientes",
-            "icon": "users",
             "pages": [
               "pages/customers/reference",
               "pages/customers/create",
@@ -73,7 +68,6 @@
           },
           {
             "group": "Cupom",
-            "icon": "tag",
             "pages": [
               "pages/coupon/reference",
               "pages/coupon/create",
@@ -83,7 +77,6 @@
           },
           {
             "group": "Transações",
-            "icon": "file-text",
             "pages": [
               "pages/transactions/reference",
               "pages/transactions/list",
@@ -93,7 +86,6 @@
           },
           {
             "group": "Financeiro",
-            "icon": "wallet",
             "pages": [
               "pages/balance/reference",
               "pages/balance/get",
@@ -106,7 +98,6 @@
           },
           {
             "group": "Webhooks",
-            "icon": "zap",
             "pages": [
               "pages/webhooks/reference",
               "pages/webhooks/get",
@@ -128,13 +119,12 @@
         "groups": [
           {
             "group": "SDKs",
-            "icon": "code",
             "pages": [
-              "pages/sdks",
-              "pages/sdk-nodejs",
-              "pages/sdk-python",
-              "pages/sdk-php",
-              "pages/sdk-java"
+              { "page": "pages/sdks", "icon": "code" },
+              { "page": "pages/sdk-nodejs", "icon": "node-js" },
+              { "page": "pages/sdk-python", "icon": "python" },
+              { "page": "pages/sdk-php", "icon": "php" },
+              { "page": "pages/sdk-java", "icon": "java" }
             ]
           }
         ]
