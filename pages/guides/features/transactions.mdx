@@ -94,6 +94,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/transactions" \
 | `paymentLinkId` | string (UUID) | ID do link de pagamento associado. | — |
 | `dueDate` | string (ISO 8601) | Data de vencimento da cobrança. | — |
 | `metadata` | object | Dados adicionais personalizados (ex: `orderId`, `source`). | — |
+| `postbackUrl` | string (URL) | URL para receber notificações de mudança de status da transação. | — |
 | `trackingParams` | object | Parâmetros UTM para rastreamento de campanhas. | — |
 
 ## 📖 Exemplos Completos
@@ -288,6 +289,49 @@ curl -X GET "https://upay-sistema-api.onrender.com/api/v1/transactions?status=CO
   "boletoBarcode": "34191.79001 01043.510047 91020.150008 1 84350000002000",
   "boletoExpiresAt": "2025-01-02T23:59:59.000Z"
 }
+```
+
+## Postback URL
+
+Se você prefere receber notificações de status por transação sem precisar cadastrar uma assinatura de webhook global, use o campo `postbackUrl` na criação da transação.
+
+Quando o status mudar para `COMPLETED` ou `FAILED`, a UPay enviará automaticamente um `POST` para a URL informada com o seguinte payload:
+
+```json
+{
+  "id": "5e1f52d9-1477-414c-a113-38dd87290ede",
+  "displayId": "52a8d85b-160b-4f06-b7cb-34845c1955f2",
+  "status": "COMPLETED",
+  "amountCents": 9900,
+  "amount": 99.00,
+  "currency": "BRL",
+  "paymentMethod": "PIX",
+  "product": "Pedido #001",
+  "client": {
+    "name": "João Silva",
+    "email": "joao@example.com",
+    "document": "12345678900",
+    "phone": "11999999999"
+  },
+  "createdAt": "2025-12-30T00:00:00.000Z",
+  "updatedAt": "2025-12-30T00:01:00.000Z"
+}
+```
+
+O cabeçalho `X-Webhook-Signature` é enviado com assinatura HMAC-SHA256 para validação de autenticidade (mesmo formato dos [webhooks](/pages/guides/features/webhooks#validando-a-assinatura)). Seu endpoint deve responder com status `2xx` para confirmar o recebimento.
+
+```bash
+curl -X POST "https://upay-sistema-api.onrender.com/api/v1/transactions" \
+  -H "Authorization: Bearer SUA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "product": "Pedido #001",
+    "amountCents": 9900,
+    "clientName": "João Silva",
+    "clientEmail": "joao@example.com",
+    "clientDocument": "12345678900",
+    "postbackUrl": "https://meusite.com.br/postback/upay"
+  }'
 ```
 
 ## 🔔 Webhooks
