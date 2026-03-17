@@ -120,11 +120,11 @@
           {
             "group": "SDKs",
             "pages": [
-              { "page": "pages/sdks", "icon": "code" },
-              { "page": "pages/sdk-nodejs", "icon": "node-js" },
-              { "page": "pages/sdk-python", "icon": "python" },
-              { "page": "pages/sdk-php", "icon": "php" },
-              { "page": "pages/sdk-java", "icon": "java" }
+              "pages/sdks",
+              "pages/sdk-nodejs",
+              "pages/sdk-python",
+              "pages/sdk-php",
+              "pages/sdk-java"
             ]
           }
         ]
