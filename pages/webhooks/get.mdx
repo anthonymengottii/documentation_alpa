@@ -1,6 +1,55 @@
 ---
 title: "Obter Informações de Webhook"
-description: "Obtém informações sobre webhooks configurados"
-openapi: "GET /api/v1/webhooks"
+description: "Retorna informações gerais sobre a integração de webhooks da conta"
 ---
 
+## GET /api/v1/webhooks
+
+Retorna informações gerais sobre os webhooks da conta autenticada, incluindo total de assinaturas ativas e eventos suportados.
+
+## Autenticação
+
+Requer Bearer Token (API Key).
+
+```
+Authorization: Bearer SUA_API_KEY
+```
+
+## Exemplo de Requisição
+
+```bash
+curl -X GET "https://upay-sistema-api.onrender.com/api/v1/webhooks" \
+  -H "Authorization: Bearer SUA_API_KEY"
+```
+
+## Resposta de Sucesso (200 OK)
+
+```json
+{
+  "success": true,
+  "data": {
+    "totalSubscriptions": 2,
+    "activeSubscriptions": 1,
+    "supportedEvents": [
+      "payment.completed",
+      "payment.failed",
+      "payment.pending",
+      "payment.refunded",
+      "payment.cancelled",
+      "payment_link.created",
+      "payment_link.updated",
+      "payment_link.deleted",
+      "product.created",
+      "product.updated",
+      "product.deleted",
+      "coupon.created",
+      "coupon.used",
+      "coupon.expired"
+    ]
+  }
+}
+```
+
+<Card title="Listar Assinaturas" icon="list" href="/pages/webhooks/subscriptions-list">
+  Veja todas as assinaturas configuradas
+</Card>

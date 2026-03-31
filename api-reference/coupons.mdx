@@ -53,16 +53,16 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/coupons" \
 <ParamField body="description" type="string">
   Descrição do cupom
 </ParamField>
-<ParamField body="minPurchaseAmount" type="number">
+<ParamField body="minPurchaseCents" type="number">
   Valor mínimo de compra em centavos
 </ParamField>
-<ParamField body="maxDiscountAmount" type="number">
+<ParamField body="maxDiscountCents" type="number">
   Valor máximo de desconto em centavos (apenas para PERCENTAGE)
 </ParamField>
-<ParamField body="maxUses" type="number">
+<ParamField body="usageLimit" type="number">
   Limite total de usos (null = ilimitado)
 </ParamField>
-<ParamField body="maxUsesPerUser" type="number">
+<ParamField body="perUserLimit" type="number">
   Limite de usos por usuário (null = ilimitado)
 </ParamField>
 <ParamField body="validFrom" type="string">
@@ -91,7 +91,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/coupons/validate" \
   -H "Content-Type: application/json" \
   -d '{
     "code": "DESCONTO10",
-    "amount": 10000
+    "amountCents": 10000
   }'
 ```
 
@@ -100,8 +100,11 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/coupons/validate" \
 <ParamField body="code" type="string" required>
   Código do cupom
 </ParamField>
-<ParamField body="amount" type="number" required>
-  Valor da compra em centavos
+<ParamField body="amountCents" type="number" required>
+  Valor da compra em centavos (ex: 10000 = R$ 100,00)
+</ParamField>
+<ParamField body="productIds" type="array">
+  IDs dos produtos no carrinho (afeta qual merchant é usado na validação)
 </ParamField>
 
 <ResponseField name="success" type="boolean">

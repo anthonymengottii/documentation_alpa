@@ -65,10 +65,10 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/coupons" \
     "discountType": "PERCENTAGE",
     "discountValue": 10,
     "description": "10% de desconto em qualquer compra",
-    "minPurchaseAmount": null,
-    "maxDiscountAmount": null,
-    "maxUses": null,
-    "maxUsesPerUser": null,
+    "minPurchaseCents": null,
+    "maxDiscountCents": null,
+    "usageLimit": null,
+    "perUserLimit": null,
     "validFrom": null,
     "validUntil": null,
     "productIds": [],
@@ -94,10 +94,10 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/coupons" \
 | Campo | Tipo | Descrição | Padrão |
 |-------|------|-----------|--------|
 | `description` | string | Descrição do cupom. Máximo 500 caracteres. | - |
-| `minPurchaseAmount` | number | Valor mínimo de compra em centavos. Mínimo: 0. | null |
-| `maxDiscountAmount` | number | Valor máximo de desconto em centavos. Apenas para PERCENTAGE. Mínimo: 1. | null |
-| `maxUses` | number | Limite total de usos do cupom. null = ilimitado. Mínimo: 1. | null |
-| `maxUsesPerUser` | number | Limite de usos por usuário. null = ilimitado. Mínimo: 1. | null |
+| `minPurchaseCents` | number | Valor mínimo de compra em centavos. Mínimo: 0. | null |
+| `maxDiscountCents` | number | Valor máximo de desconto em centavos. Apenas para PERCENTAGE. Mínimo: 1. | null |
+| `usageLimit` | number | Limite total de usos do cupom. null = ilimitado. Mínimo: 1. | null |
+| `perUserLimit` | number | Limite de usos por usuário. null = ilimitado. Mínimo: 1. | null |
 | `validFrom` | string | Data de início da validade. Formato ISO 8601. Exemplo: "2024-01-01T00:00:00Z". | null |
 | `validUntil` | string | Data de fim da validade. Formato ISO 8601. Deve ser posterior a `validFrom`. | null |
 | `productIds` | array | Array de IDs de produtos aplicáveis. Vazio ou null = todos os produtos. | [] |
@@ -141,10 +141,10 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/coupo
     discountType: 'PERCENTAGE',
     discountValue: 25,
     description: 'Black Friday - 25% de desconto',
-    minPurchaseAmount: 10000, // Mínimo R$ 100,00
-    maxDiscountAmount: 50000, // Máximo R$ 500,00 de desconto
-    maxUses: 1000, // Máximo 1000 usos totais
-    maxUsesPerUser: 1, // 1 uso por usuário
+    minPurchaseCents: 10000, // Mínimo R$ 100,00
+    maxDiscountCents: 50000, // Máximo R$ 500,00 de desconto
+    usageLimit: 1000, // Máximo 1000 usos totais
+    perUserLimit: 1, // 1 uso por usuário
     validFrom: validFrom.toISOString(),
     validUntil: validUntil.toISOString()
   })
@@ -184,7 +184,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/coupons/validate" \
   -H "Content-Type: application/json" \
   -d '{
     "code": "DESCONTO10",
-    "amount": 10000
+    "amountCents": 10000
   }'
 ```
 
@@ -267,7 +267,7 @@ curl -X PATCH "https://upay-sistema-api.onrender.com/api/v1/coupons/{id}" \
   -H "Content-Type: application/json" \
   -d '{
     "status": "INACTIVE",
-    "maxUses": 500
+    "usageLimit": 500
   }'
 ```
 
@@ -292,10 +292,10 @@ O sistema valida automaticamente:
 
 1. **Código válido**: O cupom existe e está ativo
 2. **Validade**: Data atual está entre `validFrom` e `validUntil`
-3. **Limites de uso**: Não excedeu `maxUses` e `maxUsesPerUser`
-4. **Valor mínimo**: Compra atinge `minPurchaseAmount`
+3. **Limites de uso**: Não excedeu `usageLimit` e `perUserLimit`
+4. **Valor mínimo**: Compra atinge `minPurchaseCents`
 5. **Produtos aplicáveis**: Produto está na lista `productIds` (se especificado)
-6. **Desconto máximo**: Para percentuais, respeita `maxDiscountAmount`
+6. **Desconto máximo**: Para percentuais, respeita `maxDiscountCents`
 
 ## 🎯 Casos de Uso
 
@@ -312,7 +312,7 @@ Use limites de uso para criar cupons exclusivos ou limitados.
 Aplique descontos apenas a produtos selecionados do catálogo.
 
 ### Primeira Compra
-Configure `maxUsesPerUser: 1` para cupons de primeira compra.
+Configure `perUserLimit: 1` para cupons de primeira compra.
 
 ## Próximos passos
 
