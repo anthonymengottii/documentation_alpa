@@ -1,0 +1,224 @@
+---
+title: "Webhooks"
+description: "Configure sua integração com a Upay Gateway API em minutos"
+---
+
+## Configure sua integração em 3 passos
+
+Siga este guia para realizar sua primeira transação com a Upay Gateway API em menos de 10 minutos.
+
+### Passo 1: Obtenha suas credenciais
+
+<AccordionGroup>
+  <Accordion icon="key" title="Criar conta e obter API Key">
+    Para começar, você precisa de uma conta Upay e suas credenciais de API.
+    
+    1. Acesse o [Dashboard Upay](https://app.upaybr.com)
+    2. Faça login ou crie uma conta
+    3. Complete o processo de KYC (Know Your Customer)
+    4. Navegue até **Configurações → API Keys**
+    5. Gere uma nova API Key
+    6. **Importante**: Guarde sua API Key em local seguro, ela não será exibida novamente
+    
+    <Warning>
+      Nunca compartilhe sua API Key publicamente. Mantenha-a segura e use variáveis de ambiente.
+    </Warning>
+  </Accordion>
+  
+  <Accordion icon="globe" title="URL Base da API">
+    A URL base da API Upay é:
+    
+    ```
+    https://upay-sistema-api.onrender.com
+    ```
+    
+    Todas as requisições devem ser feitas para este endpoint, com exceção dos endpoints públicos de checkout.
+  </Accordion>
+</AccordionGroup>
+
+### Passo 2: Faça sua primeira requisição
+
+<AccordionGroup>
+  <Accordion icon="code" title="Exemplo com cURL">
+    Teste sua API Key fazendo uma requisição para listar seus links de pagamento:
+    
+    ```bash
+    curl -X GET "https://upay-sistema-api.onrender.com/api/v1/payment-links" \
+      -H "Authorization: Bearer SUA_API_KEY_AQUI" \
+      -H "Content-Type: application/json"
+    ```
+    
+    **Resposta de sucesso (200 OK):**
+    ```json
+    {
+      "data": [
+        {
+          "id": "clx1234567890",
+          "slug": "meu-produto",
+          "name": "Meu Produto",
+          "amount": 100.00,
+          "currency": "BRL",
+          "status": "active"
+        }
+      ],
+      "total": 1
+    }
+    ```
+    
+    **Resposta de erro (401 Unauthorized):**
+    ```json
+    {
+      "error": "Unauthorized",
+      "message": "Token inválido ou expirado"
+    }
+    ```
+    
+    <Tip>
+      Substitua `SUA_API_KEY_AQUI` pela sua API Key real.
+    </Tip>
+  </Accordion>
+  
+  <Accordion icon="code" title="Exemplo com JavaScript">
+    Exemplo usando fetch em JavaScript:
+    
+    ```javascript
+    const apiKey = 'SUA_API_KEY_AQUI';
+    const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payment-links', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    const data = await response.json();
+    console.log(data);
+    ```
+  </Accordion>
+  
+  <Accordion icon="code" title="Exemplo com Python">
+    Exemplo usando requests em Python:
+    
+    ```python
+    import requests
+
+    api_key = 'SUA_API_KEY_AQUI'
+    headers = {
+        'Authorization': f'Bearer {api_key}',
+        'Content-Type': 'application/json'
+    }
+    
+    response = requests.get(
+        'https://upay-sistema-api.onrender.com/api/v1/payment-links',
+        headers=headers
+    )
+    
+    data = response.json()
+    print(data)
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Passo 3: Crie seu primeiro link de pagamento
+
+<AccordionGroup>
+  <Accordion icon="link" title="Criar link de pagamento">
+    Agora vamos criar seu primeiro link de pagamento:
+    
+    ```bash
+    curl -X POST "https://upay-sistema-api.onrender.com/api/v1/payment-links" \
+      -H "Authorization: Bearer SUA_API_KEY_AQUI" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "title": "Meu Primeiro Link",
+        "description": "Link de pagamento de teste",
+        "amount": 10000,
+        "currency": "BRL",
+        "settings": {
+          "methods": {
+            "pix": true,
+            "card": true
+          }
+        }
+      }'
+    ```
+    
+    **Resposta de sucesso (201 Created):**
+    ```json
+    {
+      "id": "clx1234567890",
+      "slug": "meu-primeiro-link",
+      "title": "Meu Primeiro Link",
+      "description": "Link de pagamento de teste",
+      "amount": 10000,
+      "currency": "BRL",
+      "settings": {
+        "methods": {
+          "pix": true,
+          "card": true
+        }
+      },
+      "status": "active",
+      "checkoutUrl": "https://checkout.upaybr.com/meu-primeiro-link",
+      "createdAt": "2024-01-15T10:30:00Z"
+    }
+    ```
+    
+    **Resposta de erro (400 Bad Request):**
+    ```json
+    {
+      "error": "Validation Error",
+      "message": "Dados inválidos",
+      "details": [
+        {
+          "field": "amount",
+          "message": "O valor deve ser maior que 0"
+        }
+      ]
+    }
+    ```
+    
+    A resposta incluirá o `slug` único do link e a `checkoutUrl` que você pode compartilhar com seus clientes.
+  </Accordion>
+  
+  <Accordion icon="check" title="Validar cupom (opcional)">
+    Se você tiver cupons configurados, pode validá-los no checkout:
+    
+    ```bash
+    curl -X POST "https://upay-sistema-api.onrender.com/api/v1/coupons/validate" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "code": "DESCONTO10",
+        "amountCents": 10000
+      }'
+    ```
+    
+    <Note>
+      Este endpoint é público e não requer autenticação.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+## Próximos passos
+
+Agora que você fez sua primeira requisição, explore estas funcionalidades:
+
+<CardGroup cols={2}>
+  <Card title="Autenticação" icon="key" href="/pages/authentication">
+    Aprenda sobre autenticação e segurança da API.
+  </Card>
+  
+  <Card title="Links de Pagamento" icon="link" href="/pages/guides/features/payment-links">
+    Crie e gerencie links de pagamento personalizados.
+  </Card>
+  
+  <Card title="Referência da API" icon="book-open" href="/pages/payment-links/reference">
+    Documentação completa dos endpoints disponíveis.
+  </Card>
+</CardGroup>
+
+## Precisa de ajuda?
+
+<Note>
+  **Dúvidas?** Entre em contato com nosso suporte em [suporte@upay.com.br](mailto:suporte@upay.com.br) ou consulte a [documentação completa da API](/pages/authentication).
+</Note>

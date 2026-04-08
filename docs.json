@@ -32,7 +32,9 @@
             "group": "Primeiros Passos",
             "pages": [
               "pages/quickstart",
-              "pages/authentication"
+              "pages/authentication",
+              "pages/fist-request",
+              "pages/webhooks"
             ]
           },
           {
@@ -49,8 +51,7 @@
           {
             "group": "Suporte",
             "pages": [
-              "pages/errors",
-              "pages/troubleshooting"
+              "pages/glossary"
             ]
           }
         ]
