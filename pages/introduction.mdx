@@ -1,128 +1,176 @@
 ---
-title: "Introdução"
-description: "API completa de pagamentos com PIX, cartão e boleto. Crie links de pagamento, gerencie transações e integre webhooks facilmente"
+title: "Bem-vindo à Documentação da Upay"
+mode: "custom"
 ---
 
-<Hero title="Upay Gateway API" subtitle="Plataforma completa de pagamentos com PIX, cartão, boleto, webhooks e muito mais" image="/images/hero-light.png" darkImage="/images/hero-dark.png" />
+<div style={{
+    position: "relative",
+    textAlign: "center",
+    padding: "80px 20px",
+    backgroundImage: "url('/images/hero-dark.png')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    borderBottom: "1px solid rgba(255,255,255,0.08)"
+}}>
+  <h1 style={{ fontSize: "40px", fontWeight: "600", marginBottom: "16px", color: "#fff" }}>
+    Bem-vindo à API da Upay
+  </h1>
 
-## Comece aqui
+  <p style={{
+    maxWidth: "800px",
+    margin: "0 auto",
+    opacity: 0.8,
+    fontSize: "18px",
+    fontWeight: "300",
+    color: "#fff"
+  }}>
+    Aqui você encontra tudo o que precisa para integrar a API da Upay:
+    <br />
+    pagamentos via PIX, cartão e boleto, gestão de transações e ferramentas avançadas para o seu sistema.
+  </p>
+</div>
 
-Aprenda sobre a Upay Gateway API e como integrar pagamentos na sua aplicação.
+<div style={{
+  padding: "60px 20px",
+  maxWidth: "1100px",
+  margin: "0 auto"
+}}>
+  <div style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+    gap: "24px",
+    marginBottom: "32px"
+  }}>
+    <Card icon="rocket" title="Início rápido" href="./quickstart">
+      Configure sua integração em minutos e comece a processar pagamentos.
+    </Card>
 
-Nesta documentação você encontrará tudo o que precisa para integrar com a API da Upay. Desenvolvida por desenvolvedores para desenvolvedores, nossa plataforma foi projetada para ser intuitiva e fácil de usar.
+    <Card icon="link" title="Criar link de pagamento" href="./payment-links/create">
+      Gere links de checkout personalizados com PIX, cartão e boleto.
+    </Card>
 
-## O que é a Upay Gateway API?
+    <Card icon="key" title="Chaves de API" href="./authentication">
+      Consulte como gerar e gerenciar suas credenciais com segurança.
+    </Card>
 
-A Upay Gateway API é uma plataforma completa de pagamentos que surgiu da necessidade de oferecer uma solução white-label robusta e flexível para processamento de transações. Diferente de outras plataformas que são excessivamente complexas:
+    <Card icon="money-bill" title="Criar transação" href="./transactions/create">
+      Processe pagamentos diretamente via API com suporte a PIX e cartão.
+    </Card>
 
-- **API simples e intuitiva**: Endpoints claros e bem documentados
-- **Múltiplos métodos de pagamento**: PIX, Cartão de Crédito/Débito e Boleto
-- **Links de pagamento personalizados**: Crie links únicos com configurações flexíveis
-- **Gestão completa**: Produtos, cupons, webhooks e muito mais
-- **Dashboard administrativo**: Controle total sobre transações e relatórios
+    <Card icon="tag" title="Criar cupons" href="./coupon/create">
+      Crie cupons de desconto fixo ou percentual para suas vendas.
+    </Card>
 
-Veja como é fácil:
+    <Card icon="shopping-basket" title="Criar produtos" href="./products/create">
+      Cadastre e organize produtos para vincular aos seus links de pagamento.
+    </Card>
 
-```javascript
-// Exemplo de criação de link de pagamento
-const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payment-links', {
-  method: 'POST',
-  headers: {
-    'Authorization': `Bearer ${apiKey}`,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    title: 'Produto Premium',
-    amount: 10000,
-    settings: {
-      methods: {
-        pix: true,
-        card: true
-      }
-    }
-  })
-});
+    <div id="card-extra-1" style={{ display: "none" }}>
+      <Card icon="users" title="Criar clientes" href="./customers/create">
+        Gerencie o cadastro de clientes e seus dados de pagamento.
+      </Card>
+    </div>
 
-const data = await response.json();
-console.log(data.data.url); // URL do checkout
-```
+    <div id="card-extra-2" style={{ display: "none" }}>
+      <Card icon="money-bill-transfer" title="Realizar saques" href="./withdrawals/create">
+        Solicite transferências do saldo disponível para sua chave PIX.
+      </Card>
+    </div>
 
-## Arquitetura RESTful Simplificada
+    <div id="card-extra-3" style={{ display: "none" }}>
+      <Card icon="boxes-stacked" title="SDKs" href="../pages/sdks">
+        Bibliotecas oficiais para Node.js, Python, PHP e Java.
+      </Card>
+    </div>
 
-Nossa API foi construída seguindo os princípios REST com foco em simplicidade e previsibilidade:
+    <div id="card-extra-4" style={{ display: "none" }}>
+      <Card icon="bell" title="Configurar webhooks" href="./webhooks/reference">
+        Receba notificações automáticas de eventos em tempo real.
+      </Card>
+    </div>
 
-### 1. **Baseada em intenção**: Cada endpoint representa exatamente o que você lê
+    <div id="card-extra-5" style={{ display: "none" }}>
+      <Card icon="wallet" title="Consultar saldo" href="./balance/get">
+        Verifique o saldo disponível e movimentações recentes da conta.
+      </Card>
+    </div>
 
-```javascript
-POST /api/v1/payment-links     // Cria um link de pagamento
-GET  /api/v1/payment-links     // Lista links de pagamento
-GET  /api/v1/payment-links/:id // Busca um link específico
-```
+    <div id="card-extra-6" style={{ display: "none" }}>
+      <Card icon="scroll" title="Changelog" href="../pages/changelog">
+        Acompanhe as últimas atualizações e melhorias da API.
+      </Card>
+    </div>
+  </div>
 
-### 2. **Idempotência**: Requisições seguras para retry
+  <div style={{ textAlign: "center", marginTop: "32px" }}>
+    <button
+      id="load-more-btn"
+      onClick={() => {
+        const cards = ['card-extra-1', 'card-extra-2', 'card-extra-3', 'card-extra-4', 'card-extra-5', 'card-extra-6'];
+        const btn = document.getElementById('load-more-btn');
+        const firstCard = document.getElementById('card-extra-1');
+        const isHidden = firstCard && firstCard.style.display === 'none';
 
-Operações POST e PUT são idempotentes quando você fornece um `idempotencyKey`, garantindo que requisições duplicadas não criem recursos múltiplos.
+        cards.forEach(id => {
+          const card = document.getElementById(id);
+          if (card) {
+            card.style.display = isHidden ? 'block' : 'none';
+          }
+        });
 
-```javascript
-await fetch('/api/v1/payment-links', {
-  method: 'POST',
-  headers: {
-    'Authorization': `Bearer ${apiKey}`,
-    'Idempotency-Key': 'unique-key-123' // Previne duplicação
-  },
-  body: JSON.stringify({...})
-});
-```
+        if (btn) {
+          btn.textContent = isHidden ? 'Mostrar menos' : 'Carregar mais';
+        }
+      }}
+      style={{
+        padding: "12px 32px",
+        fontSize: "16px",
+        fontWeight: "500",
+        color: "#fff",
+        backgroundColor: "#9747FF",
+        border: "none",
+        borderRadius: "75rem",
+        cursor: "pointer",
+        transition: "opacity 0.2s"
+      }}
+      onMouseOver={(e) => e.target.style.opacity = "0.85"}
+      onMouseOut={(e) => e.target.style.opacity = "1"}
+    >
+      Carregar mais
+    </button>
+  </div>
+</div>
 
-### 3. **Consistente**: Respostas padronizadas facilitam o tratamento de erros
+<div style={{
+  padding: "60px 20px",
+  maxWidth: "1100px",
+  margin: "0 auto"
+}}>
+  <h2 style={{
+    fontSize: "28px",
+    fontWeight: "600",
+    marginBottom: "32px",
+    color: "#ffffff"
+  }}>
+    Saiba mais sobre a Upay
+  </h2>
 
-```json
-{
-  "success": true,
-  "data": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "slug": "produto-premium-abc123",
-    "title": "Produto Premium",
-    "amount": 10000,
-    "url": "https://app.upaybr.com/checkout/produto-premium-abc123",
-    "status": "ACTIVE"
-  }
-}
-```
+  <div style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+    gap: "24px"
+  }}>
+    <Card icon="book-open-cover" title="Glossário" href="./glossary">
+      Consulte o glossário de termos técnicos e conceitos da plataforma.
+    </Card>
 
-### 4. **Documentação completa e suporte dedicado**
+<Card icon="scroll" title="Changelog" href="../pages/changelog">
+        Acompanhe as últimas atualizações e melhorias da API.
+      </Card>
 
-Para garantir uma integração bem-sucedida, oferecemos:
-
-- Guias passo a passo com casos de uso reais
-- Exemplos de código em JavaScript, Python, PHP e cURL
-- Referência completa da API com todos os parâmetros documentados
-- Suporte técnico via email: [suporte@upay.com.br](mailto:suporte@upay.com.br)
-
-## Funcionalidades Principais
-
-<CardGroup cols={2}>
-  <Card title="Links de Pagamento" icon="link" href="/pages/guides/features/payment-links">
-    Crie links personalizados com múltiplos métodos de pagamento
-  </Card>
-  <Card title="Autenticação" icon="key" href="/pages/authentication">
-    Configure suas credenciais de API
-  </Card>
-  <Card title="Referência da API" icon="book-open" href="/pages/payment-links/reference">
-    Documentação completa dos endpoints
-  </Card>
-</CardGroup>
-
-## Próximos Passos
-
-<Card title="Início Rápido" icon="rocket" horizontal href="/pages/quickstart">
-  Configure sua integração em minutos e comece a processar pagamentos.
-</Card>
-
-<Card title="Autenticação" icon="key" horizontal href="/pages/authentication">
-  Aprenda como obter e usar suas credenciais de API.
-</Card>
-
-## Dúvidas?
-
-Nossa equipe está sempre pronta para ajudar! Entre em contato pelo email [suporte@upay.com.br](mailto:suporte@upay.com.br)
+    <Card icon="headset" title="Suporte" href="mailto:suporte@upaybr.com">
+      Entre em contato com o suporte para ajuda com sua integração.
+    </Card>
+  </div>
+</div>
