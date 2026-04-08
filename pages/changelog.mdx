@@ -11,6 +11,39 @@ Acompanhe todas as mudanças, melhorias e correções da API Upay. Mantemos comp
 
 ## 2026
 
+### Abril 2026
+
+#### v1.6.0 - 7 de abril de 2026
+
+<AccordionGroup>
+  <Accordion title="✨ Novos recursos">
+    - **Validação de cupom pública**: Novo endpoint `POST /api/v1/coupons/validate` — sem autenticação, ideal para validar cupons diretamente no checkout.
+    - **Idempotência em transações**: Requisições `POST` de transação aceitam header `Idempotency-Key`, garantindo que retentativas não criem cobranças duplicadas.
+    - **Split de pagamentos (Pagar.me)**: Divisão automática de pagamentos entre gateway e lojistas. Configure `PAGARME_SPLIT_ENABLED` e `PAGARME_GATEWAY_RECIPIENT_ID`.
+  </Accordion>
+
+  <Accordion title="🔧 Melhorias">
+    - **Respostas padronizadas**: Todas as respostas agora seguem o envelope `{ "success": true, "data": ... }` de forma consistente em todos os endpoints.
+    - **Compressão gzip/brotli**: Respostas comprimidas automaticamente — menor consumo de banda para clientes que suportam compressão.
+    - **Rate limit por usuário**: Em rotas autenticadas, o rate limit usa o `userId` como chave — evita penalizar clientes legítimos atrás de NAT/proxy compartilhado.
+    - **Circuit breaker para PSPs**: Chamadas a processadores de pagamento são protegidas automaticamente — em caso de instabilidade do PSP, erros são retornados rapidamente sem travar a requisição.
+  </Accordion>
+
+  <Accordion title="🔒 Segurança">
+    - **Validação de CPF/CNPJ aprimorada**: Verificação completa dos dígitos verificadores (algoritmo módulo 11) — documentos com formato correto mas matematicamente inválidos são rejeitados.
+    - **Sanitização XSS em metadata**: O campo `metadata` de transações é sanitizado na entrada — strip de HTML e limite de profundidade/tamanho previnem Stored XSS.
+    - **CORS explícito**: Remoção de derivação automática de subdomínios — origens permitidas são agora explicitamente configuradas.
+  </Accordion>
+
+  <Accordion title="🐛 Correções">
+    - Corrigido: `amountCents` padronizado em toda a camada de pagamento — elimina inconsistências entre centavos e reais nos cálculos.
+    - Corrigido: Skew de webhook reduzido para 60s e validação HMAC com timing-safe compare.
+    - Corrigido: Rate limit de login aplicado em todos os ambientes, não apenas produção.
+  </Accordion>
+</AccordionGroup>
+
+---
+
 ### Fevereiro 2026
 
 #### v1.5.0 - 19 de fevereiro de 2026
@@ -167,36 +200,31 @@ Acompanhe todas as mudanças, melhorias e correções da API Upay. Mantemos comp
   <Card title="Assinaturas recorrentes" icon="repeat">
     Sistema completo de cobranças recorrentes com múltiplas frequências
   </Card>
-  
-  <Card title="Split de pagamento" icon="split">
-    Divisão automática de pagamentos entre múltiplos recebedores
+
+  <Card title="Relatórios avançados via API" icon="chart-line">
+    Endpoints de exportação de relatórios financeiros em CSV/Excel
   </Card>
-  
-  <Card title="Checkout customizável" icon="palette">
-    Personalização completa da página de checkout
+
+  <Card title="API de reembolsos" icon="rotate-left">
+    Endpoint público para solicitar estornos via API Key
   </Card>
-  
-  <Card title="Relatórios avançados" icon="chart-line">
-    Dashboard com métricas e relatórios detalhados
+
+  <Card title="Múltiplas moedas" icon="globe">
+    Suporte para pagamentos internacionais em USD e EUR
   </Card>
 </CardGroup>
 
 ### Planejado para 2026
 
-- **Q1 2026**
-  - Suporte para múltiplas moedas
-  - Integração com mais gateways de pagamento
-  - Sistema de afiliados
-
 - **Q2 2026**
-  - API de reembolsos
+  - API de reembolsos e gestão de estornos
   - Gestão de disputas (chargebacks)
   - Autenticação 3D Secure
 
 - **Q3 2026**
-  - Marketplace multi-vendor
-  - Sistema de carteira digital
-  - Pagamentos internacionais
+  - Assinaturas recorrentes
+  - Pagamentos internacionais (USD/EUR)
+  - SDK mobile (React Native)
 
 - **Q4 2026**
   - Machine learning para detecção de fraude

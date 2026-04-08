@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "UPay Gateway API",
-    "version": "2.19.0",
-    "description": "Documentação completa da API pública do UPay Gateway. Todas as rotas requerem autenticação via API Key.",
+    "version": "2.21.0",
+    "description": "Documentação completa da API pública do UPay Gateway. Todas as rotas requerem autenticação via API Key, exceto validação de cupom e checkout público.",
     "contact": {
       "email": "suporte@upay.com.br"
     },
@@ -1041,6 +1041,86 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/coupons/validate": {
+      "post": {
+        "tags": ["Cupons"],
+        "summary": "Validar cupom",
+        "description": "Valida um cupom de desconto e retorna o valor do desconto calculado. **Endpoint público — não requer autenticação.**",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["code"],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "Código do cupom",
+                    "example": "PROMO10"
+                  },
+                  "productIds": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "IDs dos produtos no carrinho (para verificar aplicabilidade)",
+                    "example": ["prod_abc123"]
+                  },
+                  "amountCents": {
+                    "type": "integer",
+                    "description": "Valor total do pedido em centavos",
+                    "example": 5000
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cupom válido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "valid": { "type": "boolean", "example": true },
+                        "code": { "type": "string", "example": "PROMO10" },
+                        "discountType": { "type": "string", "enum": ["PERCENTAGE", "FIXED"], "example": "PERCENTAGE" },
+                        "discountValue": { "type": "number", "example": 10 },
+                        "discountAmountCents": { "type": "integer", "description": "Valor do desconto calculado em centavos", "example": 500 },
+                        "finalAmountCents": { "type": "integer", "description": "Valor final após desconto em centavos", "example": 4500 }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Cupom inválido, expirado ou limite atingido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": false },
+                    "message": { "type": "string", "example": "Cupom expirado ou inativo." }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Muitas tentativas — rate limit atingido (10 req/min por IP)"
           }
         }
       }
