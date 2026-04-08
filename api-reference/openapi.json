@@ -1047,7 +1047,9 @@
     },
     "/api/v1/coupons/validate": {
       "post": {
-        "tags": ["Cupons"],
+        "tags": [
+          "Cupons"
+        ],
         "summary": "Validar cupom",
         "description": "Valida um cupom de desconto e retorna o valor do desconto calculado. **Endpoint público — não requer autenticação.**",
         "security": [],
@@ -1057,7 +1059,9 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["code"],
+                "required": [
+                  "code"
+                ],
                 "properties": {
                   "code": {
                     "type": "string",
@@ -1066,9 +1070,13 @@
                   },
                   "productIds": {
                     "type": "array",
-                    "items": { "type": "string" },
+                    "items": {
+                      "type": "string"
+                    },
                     "description": "IDs dos produtos no carrinho (para verificar aplicabilidade)",
-                    "example": ["prod_abc123"]
+                    "example": [
+                      "prod_abc123"
+                    ]
                   },
                   "amountCents": {
                     "type": "integer",
@@ -1088,16 +1096,43 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "example": true },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
                     "data": {
                       "type": "object",
                       "properties": {
-                        "valid": { "type": "boolean", "example": true },
-                        "code": { "type": "string", "example": "PROMO10" },
-                        "discountType": { "type": "string", "enum": ["PERCENTAGE", "FIXED"], "example": "PERCENTAGE" },
-                        "discountValue": { "type": "number", "example": 10 },
-                        "discountAmountCents": { "type": "integer", "description": "Valor do desconto calculado em centavos", "example": 500 },
-                        "finalAmountCents": { "type": "integer", "description": "Valor final após desconto em centavos", "example": 4500 }
+                        "valid": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "string",
+                          "example": "PROMO10"
+                        },
+                        "discountType": {
+                          "type": "string",
+                          "enum": [
+                            "PERCENTAGE",
+                            "FIXED"
+                          ],
+                          "example": "PERCENTAGE"
+                        },
+                        "discountValue": {
+                          "type": "number",
+                          "example": 10
+                        },
+                        "discountAmountCents": {
+                          "type": "integer",
+                          "description": "Valor do desconto calculado em centavos",
+                          "example": 500
+                        },
+                        "finalAmountCents": {
+                          "type": "integer",
+                          "description": "Valor final após desconto em centavos",
+                          "example": 4500
+                        }
                       }
                     }
                   }
@@ -1112,8 +1147,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "example": false },
-                    "message": { "type": "string", "example": "Cupom expirado ou inativo." }
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Cupom expirado ou inativo."
+                    }
                   }
                 }
               }
@@ -1695,7 +1736,8 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           }
-        }
+        },
+        "operationId": "getWebhookInfo"
       }
     },
     "/api/v1/webhooks/subscriptions": {
@@ -1957,6 +1999,611 @@
           }
         }
       }
+    },
+    "/api/user/fees": {
+      "get": {
+        "tags": [
+          "Taxas"
+        ],
+        "summary": "Consultar taxa",
+        "description": "Retorna as taxas de intermediação configuradas para a conta autenticada (PIX, Cartão e Boleto).",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Taxas retornadas com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Taxas do usuário recuperadas com sucesso"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "userId": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "pix": {
+                          "type": "object",
+                          "properties": {
+                            "fixed": {
+                              "type": "string",
+                              "example": "0,00",
+                              "description": "Taxa fixa em reais (formatada)"
+                            },
+                            "variable": {
+                              "type": "string",
+                              "example": "0,99",
+                              "description": "Taxa variável em % (formatada)"
+                            },
+                            "fixedCents": {
+                              "type": "integer",
+                              "example": 0,
+                              "description": "Taxa fixa em centavos"
+                            },
+                            "variablePercent": {
+                              "type": "number",
+                              "example": 0.99,
+                              "description": "Taxa variável em %"
+                            }
+                          }
+                        },
+                        "boleto": {
+                          "type": "object",
+                          "properties": {
+                            "fixed": {
+                              "type": "string",
+                              "example": "3,99"
+                            },
+                            "variable": {
+                              "type": "string",
+                              "example": "0,00"
+                            },
+                            "fixedCents": {
+                              "type": "integer",
+                              "example": 399
+                            },
+                            "variablePercent": {
+                              "type": "number",
+                              "example": 0.0
+                            }
+                          }
+                        },
+                        "card": {
+                          "type": "object",
+                          "properties": {
+                            "fixed": {
+                              "type": "string",
+                              "example": "3,99"
+                            },
+                            "variable": {
+                              "type": "string",
+                              "example": "5,99"
+                            },
+                            "fixedCents": {
+                              "type": "integer",
+                              "example": 399
+                            },
+                            "variablePercent": {
+                              "type": "number",
+                              "example": 5.99
+                            },
+                            "installments": {
+                              "type": "object",
+                              "description": "Taxa adicional por número de parcelas (2x a 12x)",
+                              "additionalProperties": {
+                                "type": "string"
+                              },
+                              "example": {
+                                "2": "14,99",
+                                "3": "16,49",
+                                "12": "29,99"
+                              }
+                            }
+                          }
+                        },
+                        "isDefault": {
+                          "type": "boolean",
+                          "example": false,
+                          "description": "True se as taxas são o padrão da plataforma"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "operationId": "getUserFees"
+      }
+    },
+    "/api/withdraws": {
+      "get": {
+        "tags": [
+          "Saques"
+        ],
+        "summary": "Listar Saques",
+        "description": "Retorna o historico de solicitacoes de saque do usuario autenticado.",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            },
+            "description": "Pagina atual"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            },
+            "description": "Resultados por pagina (max. 100)"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "PROCESSING",
+                "COMPLETED",
+                "FAILED",
+                "CANCELLED"
+              ]
+            },
+            "description": "Filtrar por status"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de saques retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "userId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "amountCents": {
+                            "type": "integer",
+                            "example": 5000,
+                            "description": "Valor solicitado em centavos"
+                          },
+                          "feeCents": {
+                            "type": "integer",
+                            "example": 350,
+                            "description": "Taxa do saque em centavos"
+                          },
+                          "netAmount": {
+                            "type": "integer",
+                            "example": 4650,
+                            "description": "Valor liquido a receber em centavos"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PENDING",
+                              "PROCESSING",
+                              "COMPLETED",
+                              "FAILED",
+                              "CANCELLED"
+                            ]
+                          },
+                          "pixKeyType": {
+                            "type": "string",
+                            "enum": [
+                              "cpf",
+                              "cnpj",
+                              "email",
+                              "phone",
+                              "random"
+                            ],
+                            "nullable": true
+                          },
+                          "pixKey": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "externalId": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "failureReason": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "processedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "completedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "failedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          }
+                        }
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        },
+                        "totalPages": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "operationId": "listWithdraws"
+      },
+      "post": {
+        "tags": [
+          "Saques"
+        ],
+        "summary": "Criar Saque",
+        "description": "Cria uma nova solicitacao de transferencia para a chave PIX informada.",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "amountCents",
+                  "pixKey",
+                  "pixKeyType"
+                ],
+                "properties": {
+                  "amountCents": {
+                    "type": "integer",
+                    "minimum": 100,
+                    "maximum": 10000000,
+                    "example": 5000,
+                    "description": "Valor em centavos (min. R$ 1,00)"
+                  },
+                  "pixKey": {
+                    "type": "string",
+                    "example": "joao@example.com",
+                    "description": "Chave PIX de destino"
+                  },
+                  "pixKeyType": {
+                    "type": "string",
+                    "enum": [
+                      "cpf",
+                      "cnpj",
+                      "email",
+                      "phone",
+                      "random"
+                    ],
+                    "example": "email"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Descricao opcional"
+                  },
+                  "idempotencyKey": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Chave de idempotencia — evita criacao duplicada em retentativas"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Saque criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Requisicao de saque criada com sucesso"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "userId": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "amountCents": {
+                          "type": "integer",
+                          "example": 5000,
+                          "description": "Valor solicitado em centavos"
+                        },
+                        "feeCents": {
+                          "type": "integer",
+                          "example": 350,
+                          "description": "Taxa do saque em centavos"
+                        },
+                        "netAmount": {
+                          "type": "integer",
+                          "example": 4650,
+                          "description": "Valor liquido a receber em centavos"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "PROCESSING",
+                            "COMPLETED",
+                            "FAILED",
+                            "CANCELLED"
+                          ]
+                        },
+                        "pixKeyType": {
+                          "type": "string",
+                          "enum": [
+                            "cpf",
+                            "cnpj",
+                            "email",
+                            "phone",
+                            "random"
+                          ],
+                          "nullable": true
+                        },
+                        "pixKey": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "externalId": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "failureReason": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "processedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "completedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "failedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "operationId": "createWithdraw"
+      }
+    },
+    "/api/withdraws/{id}": {
+      "get": {
+        "tags": [
+          "Saques"
+        ],
+        "summary": "Obter Saque",
+        "description": "Retorna os detalhes de uma solicitacao de saque especifica.",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID do saque"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saque encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "userId": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "amountCents": {
+                          "type": "integer",
+                          "example": 5000,
+                          "description": "Valor solicitado em centavos"
+                        },
+                        "feeCents": {
+                          "type": "integer",
+                          "example": 350,
+                          "description": "Taxa do saque em centavos"
+                        },
+                        "netAmount": {
+                          "type": "integer",
+                          "example": 4650,
+                          "description": "Valor liquido a receber em centavos"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "PROCESSING",
+                            "COMPLETED",
+                            "FAILED",
+                            "CANCELLED"
+                          ]
+                        },
+                        "pixKeyType": {
+                          "type": "string",
+                          "enum": [
+                            "cpf",
+                            "cnpj",
+                            "email",
+                            "phone",
+                            "random"
+                          ],
+                          "nullable": true
+                        },
+                        "pixKey": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "externalId": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "failureReason": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "processedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "completedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "failedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "operationId": "getWithdraw"
+      }
     }
   },
   "components": {
@@ -2091,13 +2738,34 @@
             "type": "object",
             "description": "Parâmetros de rastreamento UTM",
             "properties": {
-              "utm_source": { "type": "string", "nullable": true },
-              "utm_medium": { "type": "string", "nullable": true },
-              "utm_campaign": { "type": "string", "nullable": true },
-              "utm_content": { "type": "string", "nullable": true },
-              "utm_term": { "type": "string", "nullable": true },
-              "src": { "type": "string", "nullable": true },
-              "sck": { "type": "string", "nullable": true }
+              "utm_source": {
+                "type": "string",
+                "nullable": true
+              },
+              "utm_medium": {
+                "type": "string",
+                "nullable": true
+              },
+              "utm_campaign": {
+                "type": "string",
+                "nullable": true
+              },
+              "utm_content": {
+                "type": "string",
+                "nullable": true
+              },
+              "utm_term": {
+                "type": "string",
+                "nullable": true
+              },
+              "src": {
+                "type": "string",
+                "nullable": true
+              },
+              "sck": {
+                "type": "string",
+                "nullable": true
+              }
             }
           },
           "postbackUrl": {
