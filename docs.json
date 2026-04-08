@@ -14,12 +14,23 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentação",
+        "tab": "Bem-Vindo",
         "groups": [
           {
-            "group": "Introdução",
+            "group": "Visão Geral",
             "pages": [
               "pages/introduction",
+              "pages/glossary"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Comece Aqui",
+        "groups": [
+          {
+            "group": "Primeiros Passos",
+            "pages": [
               "pages/quickstart",
               "pages/authentication"
             ]
@@ -35,6 +46,18 @@
               "pages/guides/features/webhooks"
             ]
           },
+          {
+            "group": "Suporte",
+            "pages": [
+              "pages/errors",
+              "pages/troubleshooting"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Documentação",
+        "groups": [
           {
             "group": "Link de pagamento",
             "pages": [
@@ -85,11 +108,16 @@
             ]
           },
           {
-            "group": "Financeiro",
+            "group": "Saldo",
             "pages": [
               "pages/balance/reference",
               "pages/balance/get",
-              "pages/balance/fees",
+              "pages/balance/fees"
+            ]
+          },
+          {
+            "group": "Saques",
+            "pages": [
               "pages/withdrawals/reference",
               "pages/withdrawals/create",
               "pages/withdrawals/list",
@@ -125,6 +153,17 @@
               "pages/sdk-python",
               "pages/sdk-php",
               "pages/sdk-java"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": [
+              "pages/changelog"
             ]
           }
         ]
