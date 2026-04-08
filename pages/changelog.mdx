@@ -1,336 +1,158 @@
 ---
-title: Changelog
-description: Histórico de mudanças e atualizações da API Upay
+title: 'Changelog da API'
+description: 'Mantenha-se atualizado com as mudanças e histórico de versões da API Upay'
+icon: 'scroll'
 ---
 
-Acompanhe todas as mudanças, melhorias e correções da API Upay. Mantemos compatibilidade retroativa sempre que possível e comunicamos breaking changes com antecedência.
-
-<Note>
-  **Versionamento:** A API Upay segue o padrão de versionamento semântico (SemVer). A versão atual é **v1**.
-</Note>
-
-## 2026
-
-### Abril 2026
-
-#### v1.6.0 - 7 de abril de 2026
-
-<AccordionGroup>
-  <Accordion title="✨ Novos recursos">
-    - **Validação de cupom pública**: Novo endpoint `POST /api/v1/coupons/validate` — sem autenticação, ideal para validar cupons diretamente no checkout.
-    - **Idempotência em transações**: Requisições `POST` de transação aceitam header `Idempotency-Key`, garantindo que retentativas não criem cobranças duplicadas.
-    - **Split de pagamentos (Pagar.me)**: Divisão automática de pagamentos entre gateway e lojistas. Configure `PAGARME_SPLIT_ENABLED` e `PAGARME_GATEWAY_RECIPIENT_ID`.
-  </Accordion>
-
-  <Accordion title="🔧 Melhorias">
-    - **Respostas padronizadas**: Todas as respostas agora seguem o envelope `{ "success": true, "data": ... }` de forma consistente em todos os endpoints.
-    - **Compressão gzip/brotli**: Respostas comprimidas automaticamente — menor consumo de banda para clientes que suportam compressão.
-    - **Rate limit por usuário**: Em rotas autenticadas, o rate limit usa o `userId` como chave — evita penalizar clientes legítimos atrás de NAT/proxy compartilhado.
-    - **Circuit breaker para PSPs**: Chamadas a processadores de pagamento são protegidas automaticamente — em caso de instabilidade do PSP, erros são retornados rapidamente sem travar a requisição.
-  </Accordion>
-
-  <Accordion title="🔒 Segurança">
-    - **Validação de CPF/CNPJ aprimorada**: Verificação completa dos dígitos verificadores (algoritmo módulo 11) — documentos com formato correto mas matematicamente inválidos são rejeitados.
-    - **Sanitização XSS em metadata**: O campo `metadata` de transações é sanitizado na entrada — strip de HTML e limite de profundidade/tamanho previnem Stored XSS.
-    - **CORS explícito**: Remoção de derivação automática de subdomínios — origens permitidas são agora explicitamente configuradas.
-  </Accordion>
-
-  <Accordion title="🐛 Correções">
-    - Corrigido: `amountCents` padronizado em toda a camada de pagamento — elimina inconsistências entre centavos e reais nos cálculos.
-    - Corrigido: Skew de webhook reduzido para 60s e validação HMAC com timing-safe compare.
-    - Corrigido: Rate limit de login aplicado em todos os ambientes, não apenas produção.
-  </Accordion>
-</AccordionGroup>
-
----
-
-### Fevereiro 2026
-
-#### v1.5.0 - 19 de fevereiro de 2026
-
-<AccordionGroup>
-  <Accordion title="✨ Novos recursos">
-    - **Advanced Sales Tracking**: Integração nativa com Utmify para rastreamento preciso de campanhas e UTMs.
-    - **IP Tracking**: Captura automática de IP do comprador e suporte a parâmetros de rastreio customizados (src, fbclid, gclid).
-  </Accordion>
-
-  <Accordion title="🔧 Melhorias">
-    - **Layout Admin**: Refinamento completo da interface do Dashboard e painel Admin para melhor usabilidade em dispositivos móveis.
-    - **Performance**: Otimização no carregamento de modais e estados de skeleton.
-    - **Segurança**: Melhorias na criptografia de tokens de integração de terceiros.
-  </Accordion>
-
-  <Accordion title="🐛 Correções">
-    - Corrigido problema de validação de IP obrigatório na API da Utmify para ordens manuais.
-    - Ajustado casing de endpoints internos da API (/utmfy).
-    - Corrigido alinhamento de breadcrumbs no layout Admin.
-  </Accordion>
-</AccordionGroup>
-
----
-
-### Janeiro 2026
-
-#### v1.4.0 - 15 de janeiro de 2026
-
-<AccordionGroup>
-  <Accordion title="✨ Novos recursos">
-    - **SDKs oficiais**: Lançamento dos SDKs para JavaScript/TypeScript, Python, PHP e Java
-    - **Validação de webhooks**: Novos utilitários para validar assinaturas de webhooks em todos os SDKs
-    - **Meta Pixel**: Suporte para integração com Meta Pixel em links de pagamento
-    - **Parcelamento**: Configuração de parcelamento até 12x em links de pagamento
-  </Accordion>
-
-  <Accordion title="🔧 Melhorias">
-    - Melhor tratamento de erros com códigos específicos
-    - Documentação expandida com exemplos em múltiplas linguagens
-    - Performance otimizada nas listagens com paginação
-    - Headers de rate limit mais informativos
-  </Accordion>
-
-  <Accordion title="🐛 Correções">
-    - Corrigido problema de timezone em datas de expiração
-    - Corrigido cálculo de desconto com cupons percentuais
-    - Corrigido validação de CPF/CNPJ em alguns casos específicos
-  </Accordion>
-</AccordionGroup>
-
----
-
-### Dezembro 2025
-
-#### v1.3.0 - 20 de dezembro de 2025
-
-<AccordionGroup>
-  <Accordion title="✨ Novos recursos">
-    - **Webhooks**: Sistema completo de webhooks para notificações em tempo real
-    - **Eventos suportados**: `transaction.paid`, `transaction.failed`, `transaction.refunded`, `payment_link.expired`
-    - **Assinaturas de webhook**: Gerenciamento de subscriptions via API
-    - **Retry automático**: Sistema de retry para webhooks que falharem
-  </Accordion>
-
-  <Accordion title="🔧 Melhorias">
-    - Adicionado campo `metadata` em transações para dados customizados
-    - Melhor validação de dados de entrada
-    - Mensagens de erro mais descritivas
-  </Accordion>
-</AccordionGroup>
-
----
-
-#### v1.2.0 - 5 de dezembro de 2025
-
-<AccordionGroup>
-  <Accordion title="✨ Novos recursos">
-    - **Sistema de cupons**: Criação e validação de cupons de desconto
-    - **Tipos de desconto**: Suporte para desconto fixo e percentual
-    - **Limites de uso**: Controle de uso por cupom e por usuário
-    - **Produtos aplicáveis**: Restrição de cupons a produtos específicos
-  </Accordion>
-
-  <Accordion title="🔧 Melhorias">
-    - Adicionado campo `expiresAt` em links de pagamento
-    - Suporte para URLs de redirecionamento customizadas
-    - Melhor tratamento de estoque em links de pagamento
-  </Accordion>
-</AccordionGroup>
-
----
-
-### Novembro 2025
-
-#### v1.1.0 - 15 de novembro de 2025
-
-<AccordionGroup>
-  <Accordion title="✨ Novos recursos">
-    - **Gestão de produtos**: Endpoints para criar e gerenciar produtos
-    - **Catálogo de produtos**: Associação de produtos a links de pagamento
-    - **Controle de estoque**: Gestão automática de estoque por produto
-    - **Imagens de produtos**: Suporte para múltiplas imagens por produto
-  </Accordion>
+Acompanhe as atualizações e o histórico de versões da API.
+Este changelog é atualizado continuamente com melhorias, correções e mudanças relevantes.
+Sugestões de features ou melhorias podem ser enviadas pelo Dashboard na seção de Feedback.
 
-  <Accordion title="🔧 Melhorias">
-    - Paginação melhorada com metadados completos
-    - Filtros avançados em listagens
-    - Ordenação customizável em queries
-  </Accordion>
+## Atualizações Recentes
 
-  <Accordion title="🐛 Correções">
-    - Corrigido problema de encoding em slugs com caracteres especiais
-    - Corrigido validação de telefone internacional
-  </Accordion>
-</AccordionGroup>
+<Update label="7 de Abr, 2026">
+## SDKs: correções no endpoint de validação de cupom
 
----
+Os SDKs oficiais (Node.js, Python, PHP e Java) receberam correções importantes.
 
-#### v1.0.1 - 1 de novembro de 2025
+**O que mudou:**
 
-<AccordionGroup>
-  <Accordion title="🐛 Correções">
-    - Corrigido problema de CORS em requisições OPTIONS
-    - Corrigido validação de email em alguns casos
-    - Melhorado tratamento de erros de rede
-  </Accordion>
-</AccordionGroup>
+- Corrigido campo `amount` no body de `POST /api/coupons/validate` — os SDKs enviavam `amountCents` incorretamente
+- Respostas HTTP 400 com `{ valid: false }` agora são tratadas como resposta válida (cupom inválido), não como erro
+- Java: pacote renomeado de `com.upay.sdk` para `com.upay`
+- Java: `pom.xml` reescrito em UTF-8 (estava em UTF-16, causando falha no Maven)
+- JS: script de teste corrigido no `package.json`
 
----
+</Update>
 
-### Outubro 2025
+<Update label="7 de Abr, 2026">
+## Validação de cupom pública, idempotência e split de pagamentos
 
-#### v1.0.0 - 15 de outubro de 2025 🎉
+**Novos recursos:**
 
-<AccordionGroup>
-  <Accordion title="✨ Lançamento inicial">
-    - **Links de pagamento**: Criação e gestão de links de pagamento personalizados
-    - **Transações**: Listagem e consulta de transações
-    - **Múltiplos métodos**: Suporte para PIX, Cartão de Crédito/Débito e Boleto
-    - **Autenticação**: Sistema de API Keys
-    - **Rate limiting**: Proteção contra abuso
-    - **Documentação**: Documentação completa da API
-  </Accordion>
-</AccordionGroup>
+- **Validação de cupom pública**: `POST /api/coupons/validate` não requer autenticação — ideal para validar cupons diretamente no checkout
+- **Idempotência em transações**: requisições `POST` de transação aceitam header `Idempotency-Key`, garantindo que retentativas não gerem cobranças duplicadas
+- **Split de pagamentos**: divisão automática entre gateway e lojistas via integração com Pagar.me
 
----
+**Melhorias:**
 
-## Próximas versões
+- Compressão gzip/brotli automática nas respostas
+- Rate limit por `userId` em rotas autenticadas — evita penalizar clientes legítimos atrás de NAT/proxy compartilhado
+- Circuit breaker para PSPs: em caso de instabilidade, erros retornam rapidamente sem travar a requisição
 
-### Em desenvolvimento
+**Segurança:**
 
-<CardGroup cols={2}>
-  <Card title="Assinaturas recorrentes" icon="repeat">
-    Sistema completo de cobranças recorrentes com múltiplas frequências
-  </Card>
+- Validação completa de CPF/CNPJ com verificação dos dígitos verificadores (módulo 11)
+- Sanitização XSS no campo `metadata` de transações
+- CORS com origens explicitamente configuradas (removida derivação automática de subdomínios)
 
-  <Card title="Relatórios avançados via API" icon="chart-line">
-    Endpoints de exportação de relatórios financeiros em CSV/Excel
-  </Card>
+**Correções:**
 
-  <Card title="API de reembolsos" icon="rotate-left">
-    Endpoint público para solicitar estornos via API Key
-  </Card>
+- `amountCents` padronizado em toda a camada de pagamento
+- Skew de webhook reduzido para 60s com validação HMAC timing-safe
+- Rate limit de login aplicado em todos os ambientes
 
-  <Card title="Múltiplas moedas" icon="globe">
-    Suporte para pagamentos internacionais em USD e EUR
-  </Card>
-</CardGroup>
+</Update>
 
-### Planejado para 2026
+<Update label="19 de Fev, 2026">
+## Advanced Sales Tracking e otimizações de interface
 
-- **Q2 2026**
-  - API de reembolsos e gestão de estornos
-  - Gestão de disputas (chargebacks)
-  - Autenticação 3D Secure
+**Novos recursos:**
 
-- **Q3 2026**
-  - Assinaturas recorrentes
-  - Pagamentos internacionais (USD/EUR)
-  - SDK mobile (React Native)
+- **Rastreamento de campanhas**: integração nativa com Utmify para captura precisa de UTMs, `fbclid`, `gclid` e outros parâmetros
+- **IP Tracking**: captura automática do IP do comprador em transações
 
-- **Q4 2026**
-  - Machine learning para detecção de fraude
-  - Análise preditiva de vendas
-  - Integração com ERPs
+**Melhorias:**
 
-## Breaking changes
+- Refinamento completo do Dashboard e painel Admin para dispositivos móveis
+- Otimização no carregamento de modais e estados de skeleton
 
-Quando fazemos mudanças que quebram compatibilidade, seguimos este processo:
+**Correções:**
 
-1. **Anúncio prévio**: Comunicamos com 90 dias de antecedência
-2. **Período de transição**: Mantemos ambas as versões funcionando
-3. **Guia de migração**: Fornecemos documentação detalhada
-4. **Suporte**: Oferecemos suporte durante a migração
+- Corrigido problema de validação de IP obrigatório na API da Utmify para ordens manuais
+- Ajustado casing de endpoints internos da API (`/utmfy`)
 
-### Histórico de breaking changes
+</Update>
 
-Até o momento, não houve breaking changes na API v1.
+<Update label="15 de Jan, 2026">
+## Lançamento dos SDKs oficiais
 
-## Deprecações
+Os SDKs oficiais da Upay estão disponíveis para as principais linguagens de backend.
 
-### Recursos descontinuados
+**SDKs disponíveis:**
 
-Nenhum recurso foi descontinuado até o momento.
+- **Node.js / TypeScript** — `@upay/upay-js`
+- **Python** — `upay-python`
+- **PHP** — `upay/upay-php`
+- **Java** — `com.upay:upay-java`
 
-### Avisos de deprecação
+Todos os SDKs incluem:
+- Funções prontas para todos os endpoints (transações, links de pagamento, produtos, cupons)
+- Utilitários de validação de assinatura HMAC para webhooks
+- Tratamento de erros tipado
 
-<Warning>
-  Quando um recurso for marcado para deprecação, ele continuará funcionando por pelo menos 12 meses antes de ser removido.
-</Warning>
+Consulte a aba **SDKs** para instalação e exemplos de uso.
 
-## Como se manter atualizado
+</Update>
 
-### Notificações
+<Update label="20 de Dez, 2025">
+## Sistema completo de Webhooks
 
-Para receber notificações sobre mudanças na API:
+**Novos recursos:**
 
-1. **Email**: Configure notificações no [Dashboard](https://app.upaybr.com)
-2. **Webhook**: Subscribe ao evento `api.version.updated`
-3. **RSS**: Assine nosso feed RSS (em breve)
+- Criação e gerenciamento de assinaturas de webhook via API
+- Suporte aos eventos: `transaction.created`, `transaction.completed`, `transaction.failed`, `transaction.updated`, `payment_link.created`, `payment_link.updated`, `balance.updated`
+- Retry automático para webhooks que falharem na entrega
+- Validação de assinatura HMAC-SHA256 via header `X-Webhook-Signature`
 
-### Versionamento da API
+**Melhorias:**
 
-A URL da API inclui a versão:
+- Campo `metadata` adicionado em transações para dados customizados
+- Mensagens de erro mais descritivas em toda a API
 
-```
-https://upay-sistema-api.onrender.com/api/v1/...
-```
+</Update>
 
-Quando lançarmos a v2, a v1 continuará disponível:
+<Update label="5 de Dez, 2025">
+## Sistema de Cupons de Desconto
 
-```
-https://upay-sistema-api.onrender.com/api/v1/...  # Versão antiga
-https://upay-sistema-api.onrender.com/api/v2/...  # Nova versão
-```
+**Novos recursos:**
 
-### Versionamento dos SDKs
+- Criação de cupons com desconto fixo (em centavos) ou percentual
+- Limites de uso por cupom e por usuário
+- Restrição de cupons a produtos específicos
+- Campo `expiresAt` em links de pagamento
+- Suporte a URLs de redirecionamento customizadas
 
-Os SDKs seguem versionamento semântico:
+</Update>
 
-- **Major** (1.x.x): Breaking changes
-- **Minor** (x.1.x): Novos recursos (compatível)
-- **Patch** (x.x.1): Correções de bugs
+<Update label="15 de Nov, 2025">
+## Gestão de Produtos
 
-```bash
-# JavaScript/TypeScript
-npm install @upay/upay-js@latest
+**Novos recursos:**
 
-# Python
-pip install upay-python --upgrade
+- Endpoints para criar, listar, atualizar e remover produtos
+- Associação de produtos a links de pagamento
+- Controle automático de estoque por produto
+- Suporte a múltiplas imagens por produto
 
-# PHP
-composer update upay/upay-php
-```
+**Melhorias:**
 
-## Suporte a versões antigas
+- Paginação aprimorada com metadados completos (`total`, `totalPages`)
+- Filtros avançados e ordenação customizável em listagens
 
-| Versão | Status | Suporte até | Notas |
-|--------|--------|-------------|-------|
-| v1.x | ✅ Atual | Indefinido | Versão estável atual |
+</Update>
 
-## Feedback
+<Update label="15 de Out, 2025">
+## 🎉 Lançamento da API Upay v1
 
-Sua opinião é importante! Compartilhe feedback sobre:
+A API Upay está no ar. A partir de hoje você pode integrar pagamentos via PIX, Cartão de Crédito/Débito e Boleto ao seu sistema.
 
-- Novos recursos que você gostaria de ver
-- Problemas encontrados
-- Sugestões de melhoria
+**Disponível no lançamento:**
 
-**Canais de feedback:**
-- Email: feedback@upaybr.com
-- GitHub: [Issues](https://github.com/anthonymengottii/upay-sdks/issues)
-- Dashboard: Seção de feedback
+- Links de pagamento: criação e gestão de páginas de checkout personalizadas
+- Transações: listagem e consulta com filtros por status e método de pagamento
+- Autenticação via API Key (Bearer Token)
+- Rate limiting e proteção contra abuso
+- Documentação completa da API
 
-## Recursos adicionais
-
-<CardGroup cols={2}>
-  <Card title="Códigos de erro" icon="triangle-exclamation" href="/troubleshooting">
-    Referência completa de erros
-  </Card>
-  
-  <Card title="Troubleshooting" icon="wrench" href="/troubleshooting">
-    Soluções para problemas comuns
-  </Card>
-  
-  <Card title="Status da API" icon="signal" href="https://status.upaybr.com">
-    Verifique o status dos serviços
-  </Card>
-</CardGroup>
+</Update>
