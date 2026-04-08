@@ -1,37 +1,310 @@
 ---
-title: "Referência"
-description: "Documentação completa da API de Webhooks"
-icon: "book"
+title: 'Webhooks'
+description: 'Receba notificações automáticas da Upay sempre que algo importante acontecer — como um pagamento confirmado ou um saque concluído.'
+icon: 'webhook'
 ---
 
-## Webhooks
+Pense nos webhooks como **"mensagens enviadas pela Upay para o seu sistema"**, sem que você precise ficar consultando a API o tempo todo.
 
-Configure webhooks para receber notificações em tempo real sobre eventos importantes.
+---
 
-<Note>
-  Para um guia completo sobre Webhooks, consulte [Webhooks Guide](/pages/guides/features/webhooks).
-</Note>
+## Por que usar webhooks?
 
-## Endpoints Disponíveis
+Sem webhooks, sua aplicação teria que **perguntar para a API a cada segundo**:
 
-- **GET** `/api/v1/webhooks` - [Obter informações de webhook](/pages/webhooks/get)
-- **GET** `/api/v1/webhooks/subscriptions` - [Listar assinaturas de webhook](/pages/webhooks/subscriptions-list)
-- **POST** `/api/v1/webhooks/subscriptions` - [Criar nova assinatura](/pages/webhooks/subscriptions-create)
-- **PUT** `/api/v1/webhooks/subscriptions/{id}` - [Atualizar assinatura](/pages/webhooks/subscriptions-update)
-- **DELETE** `/api/v1/webhooks/subscriptions/{id}` - [Deletar assinatura](/pages/webhooks/subscriptions-delete)
-- **GET** `/api/v1/webhooks/events` - [Listar eventos de webhook](/pages/webhooks/events)
+> "Essa transação já foi confirmada?"
 
-## Autenticação
+Com webhooks, a Upay avisa você **imediatamente**:
 
-Todos os endpoints requerem autenticação via Bearer Token (API Key).
+> "A transação foi confirmada. Aqui estão os dados."
 
+Assim você pode:
+
+- Atualizar o status de um pedido
+- Liberar acesso a um produto digital
+- Enviar e-mails automáticos de confirmação
+- Registrar movimentações financeiras
+
+Tudo isso de forma automática, sem fazer seu cliente esperar.
+
+---
+
+## Como funciona na prática?
+
+1. **Você cria um endpoint no seu sistema**
+   Ex.: `https://meusite.com.br/webhooks/upay`
+
+2. **Você cadastra esse endpoint via API ou Dashboard**
+
+3. **Sempre que algo importante acontece**, como uma transação paga:
+   - A Upay envia um `POST` para a sua URL
+   - O `POST` contém o evento (ex: `transaction.completed`)
+   - Seu sistema processa esse evento e responde `200 OK`
+
+---
+
+## Segurança dos webhooks
+
+Toda requisição enviada inclui dois mecanismos de segurança:
+
+<Card title="Assinatura HMAC" horizontal>
+  Cada webhook inclui o header `X-Webhook-Signature: sha256=...` gerado com **HMAC-SHA256**.
+  Sempre valide essa assinatura antes de processar o evento — garante que a requisição foi enviada pela Upay e que o corpo não foi alterado.
+</Card>
+
+<Card title="Headers de identificação" horizontal>
+  Além da assinatura, cada entrega inclui:
+  - `X-Webhook-Event` — tipo do evento (ex: `transaction.completed`)
+  - `X-Webhook-Delivery` — UUID único da entrega
+  - `User-Agent: UPAY-Webhook/1.0`
+</Card>
+
+### Validação da assinatura
+
+<CodeGroup>
+```typescript Node.js
+import crypto from 'crypto';
+
+app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  const signature = req.headers['x-webhook-signature'] as string;
+  const expected  = `sha256=${crypto
+    .createHmac('sha256', process.env.UPAY_WEBHOOK_SECRET!)
+    .update(req.body)
+    .digest('hex')}`;
+
+  if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
+    return res.status(401).json({ error: 'Assinatura inválida' });
+  }
+
+  const event = JSON.parse(req.body.toString());
+  // processar event.type ...
+  res.json({ received: true });
+});
 ```
-Authorization: Bearer SUA_API_KEY
+
+```python Python
+import hmac, hashlib, os
+from flask import Flask, request, jsonify
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    sig      = request.headers.get('x-webhook-signature', '')
+    expected = 'sha256=' + hmac.new(
+        os.getenv('UPAY_WEBHOOK_SECRET').encode(),
+        request.data, hashlib.sha256
+    ).hexdigest()
+    if not hmac.compare_digest(sig, expected):
+        return jsonify(error='Assinatura inválida'), 401
+    event = request.json
+    return jsonify(received=True)
 ```
 
-## Base URL
-
+```php PHP
+$payload   = file_get_contents('php://input');
+$signature = $_SERVER['HTTP_X_WEBHOOK_SIGNATURE'] ?? '';
+$expected  = 'sha256=' . hash_hmac('sha256', $payload, $_ENV['UPAY_WEBHOOK_SECRET']);
+if (!hash_equals($expected, $signature)) {
+    http_response_code(401); exit;
+}
+$event = json_decode($payload, true);
 ```
-https://upay-sistema-api.onrender.com
+</CodeGroup>
+
+---
+
+## Estrutura do payload
+
+Todos os webhooks compartilham o mesmo envelope:
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "type": "transaction.completed",
+  "timestamp": "2026-04-08T12:00:00.000Z",
+  "data": { ... },
+  "subscription": {
+    "id": "whs_abc123",
+    "url": "https://meusite.com.br/webhooks/upay"
+  }
+}
 ```
 
+---
+
+## Eventos suportados
+
+| Evento | Quando é disparado |
+|--------|--------------------|
+| `transaction.created` | Nova transação criada |
+| `transaction.completed` | Pagamento confirmado |
+| `transaction.failed` | Pagamento falhou |
+| `transaction.updated` | Status da transação atualizado |
+| `payment_link.created` | Novo link de pagamento criado |
+| `payment_link.updated` | Link de pagamento atualizado |
+| `balance.updated` | Saldo da conta alterado |
+
+---
+
+## Payloads por evento
+
+### Transações
+
+<Tabs>
+  <Tab title="transaction.completed">
+    Disparado quando um pagamento é confirmado.
+
+    ```json
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "type": "transaction.completed",
+      "timestamp": "2026-04-08T12:00:00.000Z",
+      "data": {
+        "transactionId": "txn_abc123",
+        "status": "PAID",
+        "amount": 9900,
+        "currency": "BRL",
+        "paymentMethod": "PIX",
+        "paidAt": "2026-04-08T12:00:00.000Z"
+      },
+      "subscription": {
+        "id": "whs_abc123",
+        "url": "https://meusite.com.br/webhooks/upay"
+      }
+    }
+    ```
+  </Tab>
+
+  <Tab title="transaction.failed">
+    Disparado quando um pagamento falha.
+
+    ```json
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "type": "transaction.failed",
+      "timestamp": "2026-04-08T12:00:00.000Z",
+      "data": {
+        "transactionId": "txn_abc123",
+        "status": "FAILED",
+        "reason": "Saldo insuficiente",
+        "failedAt": "2026-04-08T12:00:00.000Z"
+      },
+      "subscription": {
+        "id": "whs_abc123",
+        "url": "https://meusite.com.br/webhooks/upay"
+      }
+    }
+    ```
+  </Tab>
+
+  <Tab title="transaction.created">
+    Disparado quando uma nova transação é criada (ainda pendente).
+
+    ```json
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "type": "transaction.created",
+      "timestamp": "2026-04-08T12:00:00.000Z",
+      "data": {
+        "transactionId": "txn_abc123",
+        "status": "PENDING",
+        "amount": 9900,
+        "currency": "BRL",
+        "paymentMethod": "PIX"
+      },
+      "subscription": {
+        "id": "whs_abc123",
+        "url": "https://meusite.com.br/webhooks/upay"
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+### Links de Pagamento
+
+<Tabs>
+  <Tab title="payment_link.created">
+    ```json
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "type": "payment_link.created",
+      "timestamp": "2026-04-08T12:00:00.000Z",
+      "data": {
+        "paymentLinkId": "lnk_abc123",
+        "title": "Produto Premium",
+        "slug": "produto-premium",
+        "createdAt": "2026-04-08T12:00:00.000Z"
+      },
+      "subscription": {
+        "id": "whs_abc123",
+        "url": "https://meusite.com.br/webhooks/upay"
+      }
+    }
+    ```
+  </Tab>
+
+  <Tab title="payment_link.updated">
+    ```json
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "type": "payment_link.updated",
+      "timestamp": "2026-04-08T12:00:00.000Z",
+      "data": {
+        "paymentLinkId": "lnk_abc123",
+        "title": "Produto Premium",
+        "updatedAt": "2026-04-08T12:00:00.000Z"
+      },
+      "subscription": {
+        "id": "whs_abc123",
+        "url": "https://meusite.com.br/webhooks/upay"
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Criando uma assinatura de webhook
+
+<Steps>
+  <Step title="Crie uma assinatura via API">
+    ```bash
+    curl --request POST \
+      --url https://upay-sistema-api.onrender.com/api/webhooks/subscriptions \
+      --header 'Authorization: Bearer SUA_API_KEY' \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "url": "https://meusite.com.br/webhooks/upay",
+        "events": ["transaction.completed", "transaction.failed"]
+      }'
+    ```
+  </Step>
+
+  <Step title="Implemente o endpoint">
+    Seu endpoint deve responder `200 OK` em até **10 segundos**. Respostas fora desse prazo são tratadas como falha e a entrega será retentada automaticamente.
+  </Step>
+
+  <Step title="Valide a assinatura">
+    Use o header `X-Webhook-Signature` para verificar que a requisição veio da Upay. Veja os exemplos de código acima.
+  </Step>
+</Steps>
+
+---
+
+## Boas práticas
+
+<Card horizontal>
+  * Use **HTTPS** em todos os endpoints de webhook
+  * Valide sempre a **assinatura HMAC** antes de processar
+  * Registre cada evento recebido — processe cada um **uma única vez** (idempotência)
+  * Responda **200 OK** somente após concluir o processamento
+  * Implemente **retentativas com idempotência** no seu sistema
+  * Não valide o schema completo do payload — mudanças futuras não devem quebrar seu endpoint
+</Card>
+
+---
+
+<Card title="Precisa de ajuda?" icon="headset">
+  Nossa equipe está disponível para ajudar. Entre em contato: <Icon icon="envelope" type="solid" /> suporte@upaybr.com
+</Card>
