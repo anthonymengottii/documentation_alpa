@@ -1,559 +1,161 @@
 ---
-title: "Guia de Integração"
-description: "Referência completa para integrar a Upay API. Endpoints, parâmetros, exemplos e modelos de resposta."
-icon: "code"
+title: 'SDKs'
+description: 'Bibliotecas oficiais para integração com a API da Upay'
+icon: 'boxes-stacked'
 ---
 
-## Visão Geral
+## O que são os SDKs da Upay?
 
-A Upay é um gateway de pagamento que permite criar e gerenciar transações de forma simples e eficiente.
-Aceita pagamentos via **PIX**, **Cartão de Crédito/Débito** e **Boleto**.
+Os SDKs (Software Development Kits) da Upay são bibliotecas oficiais que simplificam a comunicação com nossa API. Eles oferecem uma interface amigável e específica para cada linguagem, permitindo que você integre rapidamente PIX, cartão e boleto ao seu sistema.
+
+<Card title="Benefícios de usar nossos SDKs" horizontal>
+  * **Integração simplificada**: Funções prontas para todos os endpoints da API
+  * **Tipagem forte**: Interfaces e types completos em linguagens com suporte a tipos
+  * **Tratamento de erros**: Gerenciamento automático dos casos de erro mais comuns
+  * **Validação de webhooks**: Utilitários prontos para verificar assinaturas HMAC-SHA256
+  * **Menor curva de aprendizado**: Sem necessidade de conhecer todos os detalhes HTTP da API
+</Card>
+
+## SDKs Disponíveis
+
+Oferecemos SDKs oficiais para as principais linguagens de backend. Escolha o que melhor se adapta à sua stack:
+
+<CardGroup cols={2}>
+  <Card title="Node.js / TypeScript" icon="node-js" color="#68A063" href="./sdk-nodejs">
+    SDK oficial para Node.js 18+, compatível com TypeScript, ESM e edge runtimes.
+  </Card>
+  <Card title="Python" icon="python" color="#366B98" href="./sdk-python">
+    SDK oficial para Python 3.8+, com type hints e suporte a frameworks como Flask e Django.
+  </Card>
+  <Card title="PHP" icon="php" color="#777BB3" href="./sdk-php">
+    SDK oficial para PHP 8.1+, disponível via Composer e sem dependências externas além de cURL.
+  </Card>
+  <Card title="Java" icon="java" color="#E76F00" href="./sdk-java">
+    SDK oficial para Java 17+, compatível com Spring Boot e qualquer projeto Maven/Gradle.
+  </Card>
+</CardGroup>
+
+## Instalação Rápida
 
 <Note>
-  SDKs oficiais publicados em registros de pacotes (npm, PyPI, Packagist, Maven) estão em desenvolvimento. Use os [clientes por linguagem](/pages/sdk-nodejs) enquanto isso — prontos para produção.
+  Os SDKs estão disponíveis no GitHub e ainda não foram publicados nos registros públicos de pacotes (npm, PyPI, Packagist, Maven Central). Consulte a página de cada SDK para instruções de instalação via GitHub.
 </Note>
 
----
-
-## Autenticação
-
-- **Método:** Bearer Token
-- **Detalhes:** Todas as requisições à API devem incluir sua API Key no cabeçalho de autorização.
-- **Exemplo de cabeçalho:**
-
-```
-Authorization: Bearer SUA_API_KEY
-```
-
-Obtenha sua API Key em: **Dashboard → Configurações → Credenciais de API**
-
-<Warning>
-  Nunca exponha sua API Key no código-fonte. Use variáveis de ambiente e adicione `.env` ao `.gitignore`.
-</Warning>
-
----
-
-## URL Base
-
-```
-https://upay-sistema-api.onrender.com/api/v1
-```
-
----
-
-## Transações
-
-### ➤ Criar Transação
-
-- **Endpoint:** `POST /transactions`
-
-```bash
-curl --request POST \
-  --url https://upay-sistema-api.onrender.com/api/v1/transactions \
-  --header 'accept: application/json' \
-  --header 'authorization: Bearer SUA_API_KEY' \
-  --header 'content-type: application/json' \
-  --data '{
-    "product": "Curso Online",
-    "paymentMethod": "PIX",
-    "amountCents": 9900,
-    "clientName": "João Silva",
-    "clientEmail": "joao@example.com",
-    "clientDocument": "12345678900",
-    "clientPhone": "11999999999"
-  }'
-```
-
-**Parâmetros obrigatórios:**
-
-| Campo | Tipo | Descrição |
-|-------|------|-----------|
-| `product` | string | Nome ou descrição do produto/serviço. Máximo 255 caracteres. |
-| `amountCents` | number | Valor em centavos. Mínimo: 100 (R$ 1,00). Exemplo: `9900` = R$ 99,00. |
-| `clientName` | string | Nome completo do cliente. |
-| `clientEmail` | string | E-mail válido do cliente. |
-| `clientDocument` | string | CPF ou CNPJ do cliente (apenas números). Mínimo 11 dígitos. |
-
-**Parâmetros opcionais:**
-
-| Campo | Tipo | Descrição | Padrão |
-|-------|------|-----------|--------|
-| `paymentMethod` | string | Método de pagamento: `"PIX"`, `"CARD"`, `"BOLETO"`. | `"PIX"` |
-| `clientPhone` | string | Telefone do cliente (apenas números). Exemplo: `11999999999`. | — |
-| `installments` | number | Número de parcelas (apenas cartão). Mínimo: 1, máximo: 12. | `1` |
-| `postbackUrl` | string | URL para receber notificação de mudança de status desta transação. Ideal para parceiros que não usam assinaturas de webhook globais. | — |
-| `dueDate` | string | Data de vencimento (ISO 8601). | — |
-| `metadata` | object | Dados adicionais personalizados. Exemplo: `{ "orderId": "123" }`. | — |
-
-**Modelo de resposta:**
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "displayId": "52a8d85b-160b-4f06-b7cb-34845c1955f2",
-    "amountCents": 9900,
-    "amount": 99.00,
-    "currency": "BRL",
-    "paymentMethod": "PIX",
-    "status": "PENDING",
-    "pixCopiaECola": "00020101021226940014br.gov.bcb.pix...",
-    "pixExpiresAt": "2025-12-30T01:00:00-03:00",
-    "client": {
-      "name": "João Silva",
-      "email": "joao@example.com",
-      "phone": "11999999999",
-      "document": "12345678900"
-    },
-    "createdAt": "2025-12-30T00:00:00.000Z"
-  }
-}
-```
-
----
-
-### ➤ Notificação por Postback (por transação)
-
-Se você prefere receber notificações por transação sem configurar uma assinatura de webhook global, passe o campo `postbackUrl` na criação.
-
-Quando o status mudar para `COMPLETED` ou `FAILED`, a Upay enviará automaticamente um `POST` para essa URL com o seguinte payload:
-
-```bash
-curl --request POST \
-  --url https://upay-sistema-api.onrender.com/api/v1/transactions \
-  --header 'authorization: Bearer SUA_API_KEY' \
-  --header 'content-type: application/json' \
-  --data '{
-    "product": "Pedido #001",
-    "paymentMethod": "PIX",
-    "amountCents": 9900,
-    "clientName": "João Silva",
-    "clientEmail": "joao@example.com",
-    "clientDocument": "12345678900",
-    "postbackUrl": "https://meusite.com.br/postback/upay"
-  }'
-```
-
-**Payload enviado para a `postbackUrl`:**
-
-```json
-{
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "displayId": "52a8d85b-160b-4f06-b7cb-34845c1955f2",
-  "status": "COMPLETED",
-  "amountCents": 9900,
-  "amount": 99.00,
-  "currency": "BRL",
-  "paymentMethod": "PIX",
-  "product": "Pedido #001",
-  "client": {
-    "name": "João Silva",
-    "email": "joao@example.com",
-    "document": "12345678900",
-    "phone": "11999999999"
-  },
-  "createdAt": "2025-12-30T00:00:00.000Z",
-  "updatedAt": "2025-12-30T00:01:00.000Z"
-}
-```
-
-O header `X-Webhook-Signature` é enviado com assinatura HMAC-SHA256 — mesmo formato dos webhooks globais. Seu endpoint deve responder com status `2xx` para confirmar o recebimento.
-
----
-
-### ➤ Listar Transações
-
-- **Endpoint:** `GET /transactions`
-
-```bash
-curl --request GET \
-  --url 'https://upay-sistema-api.onrender.com/api/v1/transactions?page=1&limit=20' \
-  --header 'accept: application/json' \
-  --header 'authorization: Bearer SUA_API_KEY'
-```
-
-**Parâmetros de query (opcionais):**
-
-| Parâmetro | Tipo | Descrição |
-|-----------|------|-----------|
-| `page` | number | Página atual. Padrão: `1`. |
-| `limit` | number | Resultados por página. Padrão: `20`. |
-| `status` | string | Filtrar por status: `PENDING`, `COMPLETED`, `FAILED`, `CANCELLED`, `EXPIRED`, `REFUNDED`. |
-| `paymentMethod` | string | Filtrar por método: `PIX`, `CARD`, `BOLETO`. |
-| `startDate` | string | Data de início (ISO 8601). Exemplo: `2025-01-01`. |
-| `endDate` | string | Data de fim (ISO 8601). Exemplo: `2025-12-31`. |
-
-**Modelo de resposta:**
-
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "550e8400-e29b-41d4-a716-446655440000",
-      "displayId": "52a8d85b-160b-4f06-b7cb-34845c1955f2",
-      "amountCents": 9900,
-      "amount": 99.00,
-      "currency": "BRL",
-      "paymentMethod": "PIX",
-      "status": "COMPLETED",
-      "client": {
-        "name": "João Silva",
-        "email": "joao@example.com"
-      },
-      "createdAt": "2025-12-30T00:00:00.000Z"
-    }
-  ],
-  "pagination": {
-    "page": 1,
-    "limit": 20,
-    "total": 150,
-    "totalPages": 8
-  }
-}
-```
-
----
-
-### ➤ Buscar Transação
-
-- **Endpoint:** `GET /transactions/{id}`
-
-```bash
-curl --request GET \
-  --url 'https://upay-sistema-api.onrender.com/api/v1/transactions/550e8400-e29b-41d4-a716-446655440000' \
-  --header 'accept: application/json' \
-  --header 'authorization: Bearer SUA_API_KEY'
-```
-
-**Modelo de resposta:** igual ao objeto individual retornado na listagem.
-
----
-
-## Links de Pagamento
-
-### ➤ Criar Link de Pagamento
-
-- **Endpoint:** `POST /payment-links`
-
-```bash
-curl --request POST \
-  --url https://upay-sistema-api.onrender.com/api/v1/payment-links \
-  --header 'accept: application/json' \
-  --header 'authorization: Bearer SUA_API_KEY' \
-  --header 'content-type: application/json' \
-  --data '{
-    "title": "Produto Premium",
-    "description": "Acesso vitalício ao curso",
-    "amountCents": 9900,
-    "settings": {
-      "pixEnabled": true,
-      "creditCardEnabled": true,
-      "boletoEnabled": false
-    }
-  }'
-```
-
-**Parâmetros obrigatórios:**
-
-| Campo | Tipo | Descrição |
-|-------|------|-----------|
-| `title` | string | Título exibido na página de pagamento. |
-| `amountCents` | number | Valor em centavos. Exemplo: `9900` = R$ 99,00. |
-
-**Parâmetros opcionais:**
-
-| Campo | Tipo | Descrição |
-|-------|------|-----------|
-| `description` | string | Descrição do produto ou serviço. |
-| `settings.pixEnabled` | boolean | Habilita PIX. Padrão: `true`. |
-| `settings.creditCardEnabled` | boolean | Habilita cartão de crédito. Padrão: `true`. |
-| `settings.boletoEnabled` | boolean | Habilita boleto. Padrão: `false`. |
-| `settings.maxInstallments` | number | Máximo de parcelas no cartão. Padrão: `1`. |
-
-**Modelo de resposta:**
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "lnk_abc123",
-    "title": "Produto Premium",
-    "description": "Acesso vitalício ao curso",
-    "amountCents": 9900,
-    "amount": 99.00,
-    "status": "ACTIVE",
-    "url": "https://pay.upaybr.com/l/abc123",
-    "slug": "abc123",
-    "settings": {
-      "pixEnabled": true,
-      "creditCardEnabled": true,
-      "boletoEnabled": false
-    },
-    "createdAt": "2025-12-30T00:00:00.000Z"
-  }
-}
-```
-
----
-
-### ➤ Listar Links de Pagamento
-
-- **Endpoint:** `GET /payment-links`
-
-```bash
-curl --request GET \
-  --url 'https://upay-sistema-api.onrender.com/api/v1/payment-links?page=1&limit=20' \
-  --header 'accept: application/json' \
-  --header 'authorization: Bearer SUA_API_KEY'
-```
-
----
-
-### ➤ Buscar Link de Pagamento
-
-- **Endpoint:** `GET /payment-links/{id}`
-
-```bash
-curl --request GET \
-  --url 'https://upay-sistema-api.onrender.com/api/v1/payment-links/lnk_abc123' \
-  --header 'accept: application/json' \
-  --header 'authorization: Bearer SUA_API_KEY'
-```
-
----
-
-## Clientes
-
-### ➤ Criar Cliente
-
-- **Endpoint:** `POST /customers`
-
-```bash
-curl --request POST \
-  --url https://upay-sistema-api.onrender.com/api/v1/customers \
-  --header 'accept: application/json' \
-  --header 'authorization: Bearer SUA_API_KEY' \
-  --header 'content-type: application/json' \
-  --data '{
-    "name": "João Silva",
-    "email": "joao@example.com",
-    "phone": "11999999999",
-    "document": "12345678900"
-  }'
-```
-
-**Parâmetros:**
-
-| Campo | Tipo | Obrigatório | Descrição |
-|-------|------|-------------|-----------|
-| `name` | string | Sim | Nome completo do cliente. |
-| `email` | string | Sim | E-mail único do cliente. |
-| `document` | string | Sim | CPF ou CNPJ (apenas números). |
-| `phone` | string | Não | Telefone (apenas números). Exemplo: `11999999999`. |
-
-**Modelo de resposta:**
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "clt_abc123",
-    "name": "João Silva",
-    "email": "joao@example.com",
-    "phone": "11999999999",
-    "document": "12345678900",
-    "createdAt": "2025-12-30T00:00:00.000Z"
-  }
-}
-```
-
----
-
-### ➤ Listar Clientes
-
-- **Endpoint:** `GET /customers`
-
-```bash
-curl --request GET \
-  --url 'https://upay-sistema-api.onrender.com/api/v1/customers?page=1&limit=20' \
-  --header 'accept: application/json' \
-  --header 'authorization: Bearer SUA_API_KEY'
-```
-
----
-
-## Produtos
-
-### ➤ Criar Produto
-
-- **Endpoint:** `POST /products`
-
-```bash
-curl --request POST \
-  --url https://upay-sistema-api.onrender.com/api/v1/products \
-  --header 'accept: application/json' \
-  --header 'authorization: Bearer SUA_API_KEY' \
-  --header 'content-type: application/json' \
-  --data '{
-    "name": "Curso de Node.js",
-    "description": "Aprenda Node.js do zero ao avançado",
-    "priceCents": 19900
-  }'
-```
-
-**Parâmetros:**
-
-| Campo | Tipo | Obrigatório | Descrição |
-|-------|------|-------------|-----------|
-| `name` | string | Sim | Nome do produto. |
-| `priceCents` | number | Sim | Preço em centavos. Exemplo: `19900` = R$ 199,00. |
-| `description` | string | Não | Descrição do produto. |
-| `stockEnabled` | boolean | Não | Habilita controle de estoque. Padrão: `false`. |
-| `stockQuantity` | number | Não | Quantidade em estoque (requer `stockEnabled: true`). |
-
-**Modelo de resposta:**
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "prd_abc123",
-    "name": "Curso de Node.js",
-    "description": "Aprenda Node.js do zero ao avançado",
-    "priceCents": 19900,
-    "price": 199.00,
-    "stockEnabled": false,
-    "stockQuantity": null,
-    "createdAt": "2025-12-30T00:00:00.000Z"
-  }
-}
-```
-
----
-
-## Webhooks
-
-Notificações automáticas enviadas pela Upay quando o status de uma transação muda.
-
-**Eventos disponíveis:** `transaction.created`, `transaction.completed`, `transaction.failed`, `transaction.updated`, `payment_link.created`, `payment_link.updated`, `balance.updated`.
-
-### ➤ Criar Assinatura de Webhook
-
-- **Endpoint:** `POST /webhooks/subscriptions`
-
-```bash
-curl --request POST \
-  --url https://upay-sistema-api.onrender.com/api/v1/webhooks/subscriptions \
-  --header 'accept: application/json' \
-  --header 'authorization: Bearer SUA_API_KEY' \
-  --header 'content-type: application/json' \
-  --data '{
-    "url": "https://meusite.com.br/webhook/upay",
-    "events": ["transaction.completed", "transaction.failed"]
-  }'
-```
-
-**Parâmetros:**
-
-| Campo | Tipo | Obrigatório | Descrição |
-|-------|------|-------------|-----------|
-| `url` | string | Sim | URL que receberá os eventos via `POST`. Deve retornar `2xx`. |
-| `events` | array | Sim | Lista de eventos para assinar. |
-
-**Modelo de resposta:**
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "whs_abc123",
-    "url": "https://meusite.com.br/webhook/upay",
-    "events": ["transaction.completed", "transaction.failed"],
-    "active": true,
-    "createdAt": "2025-12-30T00:00:00.000Z"
-  }
-}
-```
-
-### Validação da assinatura
-
-Toda requisição enviada inclui o header `X-Webhook-Signature` com assinatura HMAC-SHA256. Sempre valide antes de processar o evento:
-
 <CodeGroup>
-```javascript Node.js
-import crypto from 'crypto';
-
-app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
-  const signature = req.headers['x-webhook-signature'];
-  const expected  = `sha256=${crypto
-    .createHmac('sha256', process.env.UPAY_WEBHOOK_SECRET)
-    .update(req.body)
-    .digest('hex')}`;
-
-  if (signature !== expected) return res.status(401).end();
-
-  const event = JSON.parse(req.body.toString());
-  // processar event.event ...
-  res.json({ received: true });
-});
+```bash Node.js
+npm install github:anthonymengottii/upay-nodejs-sdk
 ```
 
-```python Python
-import hmac, hashlib, os
-from flask import Flask, request, jsonify
-
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    sig      = request.headers.get('x-webhook-signature', '')
-    expected = 'sha256=' + hmac.new(
-        os.getenv('UPAY_WEBHOOK_SECRET').encode(),
-        request.data, hashlib.sha256
-    ).hexdigest()
-    if not hmac.compare_digest(sig, expected):
-        return jsonify(error='Inválido'), 401
-    return jsonify(received=True)
+```bash Python
+pip install git+https://github.com/anthonymengottii/upay-python-sdk.git
 ```
 
-```php PHP
-$body      = file_get_contents('php://input');
-$signature = $_SERVER['HTTP_X_WEBHOOK_SIGNATURE'] ?? '';
-$expected  = 'sha256=' . hash_hmac('sha256', $body, $_ENV['UPAY_WEBHOOK_SECRET']);
-if (!hash_equals($expected, $signature)) { http_response_code(401); exit; }
-$event = json_decode($body, true);
+```bash PHP
+composer config repositories.upay vcs https://github.com/anthonymengottii/upay-php-sdk
+composer require upay/upay-php:dev-main
+```
+
+```bash Java
+git clone https://github.com/anthonymengottii/upay-java-sdk
+cd upay-java-sdk && mvn install
 ```
 </CodeGroup>
 
----
+## Primeiros Passos
 
-## Status de Transação
+Todos os SDKs seguem o mesmo padrão: instancie o cliente com sua API Key e acesse os recursos diretamente.
 
-| Status | Descrição |
-|--------|-----------|
-| `PENDING` | Aguardando pagamento |
-| `PROCESSING` | Processando |
-| `COMPLETED` | Pagamento confirmado |
-| `FAILED` | Pagamento falhou |
-| `CANCELLED` | Cancelada |
-| `REFUNDED` | Reembolsada |
-| `EXPIRED` | Expirada |
+<CodeGroup>
+```typescript Node.js
+import UpayClient from '@upay/upay-js';
 
----
+const upay = new UpayClient({ apiKey: process.env.UPAY_API_KEY });
 
-## SDKs por Linguagem
+const link = await upay.paymentLinks.create({
+  title: 'Produto Premium',
+  amountCents: 9900,
+});
+console.log('Checkout:', link.url);
+```
+
+```python Python
+from upay import UpayClient
+
+upay = UpayClient(api_key=os.getenv('UPAY_API_KEY'))
+
+link = upay.payment_links.create({
+    'title': 'Produto Premium',
+    'amountCents': 9900,
+})
+print('Checkout:', link['url'])
+```
+
+```php PHP
+use Upay\UpayClient;
+
+$upay = new UpayClient($_ENV['UPAY_API_KEY']);
+
+$link = $upay->paymentLinks->create([
+    'title'       => 'Produto Premium',
+    'amountCents' => 9900,
+]);
+echo 'Checkout: ' . $link['url'];
+```
+
+```java Java
+import com.upay.UpayClient;
+
+var upay = new UpayClient(System.getenv("UPAY_API_KEY"));
+
+var link = upay.paymentLinks.create(Map.of(
+    "title",       "Produto Premium",
+    "amountCents", 9900
+));
+System.out.println("Checkout: " + link.path("url").asText());
+```
+</CodeGroup>
+
+## Perguntas Frequentes
+
+<AccordionGroup>
+  <Accordion title="Como obtenho minha API Key?">
+    Acesse o **Dashboard → Configurações → Credenciais de API** e gere uma nova chave. Nunca exponha sua API Key no código-fonte — use variáveis de ambiente e adicione `.env` ao `.gitignore`.
+  </Accordion>
+
+  <Accordion title="Os SDKs funcionam em ambiente de testes?">
+    Sim. Todos os SDKs aceitam um parâmetro `baseUrl` opcional no construtor, permitindo apontar para qualquer ambiente. Use sua chave de API do ambiente desejado (desenvolvimento ou produção).
+  </Accordion>
+
+  <Accordion title="Como validar webhooks com os SDKs?">
+    Todos os SDKs incluem um método `verifyWebhookSignature(payload, signature, secret)` que verifica a assinatura HMAC-SHA256 automaticamente. Consulte a página do SDK da sua linguagem para o exemplo completo.
+  </Accordion>
+
+  <Accordion title="O que fazer se encontrar um bug em um SDK?">
+    Abra uma issue no repositório GitHub do SDK específico. Nossa equipe está sempre atenta para corrigir bugs e melhorar as bibliotecas. Você também pode entrar em contato pelo e-mail <Icon icon="envelope" type="solid" /> suporte@upaybr.com.
+  </Accordion>
+
+  <Accordion title="Falta um SDK para a linguagem que eu uso. O que fazer?">
+    Entre em contato pelo e-mail <Icon icon="envelope" type="solid" /> suporte@upaybr.com informando qual linguagem você precisa. Nossa equipe avaliará a demanda para incluir na roadmap.
+  </Accordion>
+</AccordionGroup>
+
+## Recursos Adicionais
 
 <CardGroup cols={2}>
-  <Card title="Node.js / TypeScript" icon="node-js" href="/pages/sdk-nodejs">
-    Fetch nativo. Node.js 18+, Bun e edge runtimes.
+  <Card title="Autenticação" icon="key" href="../pages/authentication">
+    Como gerar e usar suas credenciais de API.
   </Card>
-  <Card title="Python" icon="python" href="/pages/sdk-python">
-    Baseado em `requests`. Python 3.8+.
+  <Card title="Webhooks" icon="webhook" href="../pages/webhooks/reference">
+    Configure notificações automáticas para eventos de pagamento.
   </Card>
-  <Card title="PHP" icon="php" href="/pages/sdk-php">
-    cURL nativo. PHP 8.0+, sem dependências.
+  <Card title="Referência da API" icon="code" href="../pages/introduction">
+    Documentação completa de todos os endpoints.
   </Card>
-  <Card title="Java" icon="java" href="/pages/sdk-java">
-    `HttpClient` nativo. Java 11+.
+  <Card title="Changelog" icon="clock-rotate-left" href="../pages/changelog">
+    Histórico de versões e atualizações.
   </Card>
 </CardGroup>
+
+<Card title="Precisa de ajuda com a integração?" icon="headset">
+  Nossa equipe está disponível para ajudar. Entre em contato: <Icon icon="envelope" type="solid" /> suporte@upaybr.com
+</Card>
