@@ -1,292 +1,136 @@
 ---
-title: "Chaves de API"
-description: "Aprenda como obter e usar API Keys para autenticar suas requisições na API Upay. Guia completo com exemplos práticos"
+title: 'Chaves de API'
+description: 'Aprenda como funcionam as chaves de API e como utilizá-las para acessar a Upay'
+icon: 'key'
 ---
 
-## Visão geral
+<Tip>
+  A **chave de API** é sua credencial de acesso à Upay. Ela identifica sua conta e autoriza cada requisição enviada para a nossa API. **Sem uma chave válida, nenhum pedido será aceito.**
+</Tip>
 
-A Upay Gateway API utiliza autenticação baseada em **API Keys** (Bearer Token) seguindo o padrão OAuth 2.0. Este método garante que apenas usuários autorizados possam acessar os recursos da API, mantendo a segurança das suas transações.
+## O que você pode fazer com suas chaves
 
-## Obtendo sua API Key
+As chaves de API são gerenciadas diretamente pelo Dashboard. Com elas, você pode:
 
-### Passo 1: Acesse o Dashboard
+- Ver todas as chaves ativas
+- Criar novas chaves para diferentes projetos ou integrações
+- Revogar chaves comprometidas ou que não são mais usadas
 
-1. Faça login no [Dashboard Upay](https://app.upaybr.com)
-2. Complete o processo de KYC (Know Your Customer) se ainda não tiver feito
-3. Navegue até **Configurações → Credenciais de API**
+<Card title="Desenvolvimento x Produção" horizontal>
+  Todas as requisições usam o mesmo endpoint `https://upay-sistema-api.onrender.com`.
+  O ambiente é definido **pela chave utilizada**:
+  - Chaves criadas em **Desenvolvimento** → transações simuladas
+  - Chaves criadas em **Produção** → transações reais
+</Card>
 
-### Passo 2: Crie uma API Key
+<Card title="Erro de Autenticação (401)" horizontal>
+  Você receberá um **HTTP 401** quando:
 
-1. Clique em **"Criar Nova API Key"**
-2. Dê um nome descritivo para sua API Key (ex: "Integração Produção", "App Mobile")
-3. Selecione as permissões necessárias:
-   - `paymentLinks:read` - Ler links de pagamento
-   - `paymentLinks:write` - Criar/editar links de pagamento
-   - `products:read` - Ler produtos
-   - `products:write` - Criar/editar produtos
-   - `coupons:read` - Ler cupons
-   - `coupons:write` - Criar/editar cupons
-   - `transactions:read` - Ler transações
-   - `transactions:write` - Criar transações
-   - `webhooks:read` - Ler webhooks
-   - `webhooks:write` - Criar/editar webhooks
+  - A chave não for enviada no header
+  - A chave estiver incorreta ou mal formatada
+  - A chave tiver sido revogada
+</Card>
 
-4. Clique em **"Gerar API Key"**
-5. **⚠️ IMPORTANTE**: Copie e guarde sua API Key imediatamente. Ela não será exibida novamente!
+## Permissões da chave de API
 
-<Warning>
-  Nunca compartilhe sua API Key publicamente. Mantenha-a segura e use variáveis de ambiente ou serviços de gerenciamento de secrets.
-</Warning>
+A chave define **quais recursos** você pode acessar. Endpoints sem a permissão correspondente retornam **403 Forbidden**.
 
-## 🔑 Usando sua API Key
+### Permissões disponíveis
 
-### Header de Autenticação
+| Recurso           | Permissões                                                              |
+| ----------------- | ----------------------------------------------------------------------- |
+| Links de Pagamento | `paymentLinks:read`, `paymentLinks:write`                              |
+| Transações        | `transactions:read`, `transactions:write`                               |
+| Produtos          | `products:read`, `products:write`                                       |
+| Clientes          | `customers:read`, `customers:write`                                     |
+| Cupons            | `coupons:read`, `coupons:write`                                         |
+| Webhooks          | `webhooks:read`, `webhooks:write`                                       |
+| Saques            | `withdrawals:read`, `withdrawals:write`                                 |
 
-A API aceita autenticação em dois formatos:
+## Boas práticas de segurança
 
-**Formato 1: Bearer Token (Recomendado)**
-```
-Authorization: Bearer SUA_API_KEY_AQUI
-```
+<Card horizontal>
+  * Armazene suas chaves em variáveis de ambiente — nunca no código-fonte
+  * Nunca publique sua chave em repositórios públicos ou grupos
+  * A Upay **nunca** solicitará sua chave por e-mail ou chat
+  * Revogue imediatamente qualquer chave que possa ter vazado
+  * Use chaves diferentes para desenvolvimento e produção
+</Card>
 
-**Formato 2: X-API-Key Header**
-```
-X-API-Key: SUA_API_KEY_AQUI
-```
+---
 
-Ambos os formatos são aceitos. Recomendamos o uso do formato Bearer Token por ser mais padrão.
+## Como criar uma chave de API
 
-### Exemplo com cURL
+<Steps>
+  <Step title="Acesse o Dashboard">
+    Faça login em [app.upaybr.com](https://app.upaybr.com) e navegue até **Configurações → Credenciais de API**.
+  </Step>
+
+  <Step title="Crie uma nova chave">
+    Clique em **"Criar Nova API Key"**, dê um nome descritivo (ex: "Integração Produção") e selecione as permissões necessárias.
+  </Step>
+
+  <Step title="Copie a chave gerada">
+    Copie a chave imediatamente e salve em um local seguro ou gerenciador de segredos. **Ela não será exibida novamente.**
+  </Step>
+</Steps>
+
+---
+
+## Usando sua chave
+
+Inclua a chave no header `Authorization` de todas as requisições:
 
 ```bash
 curl -X GET "https://upay-sistema-api.onrender.com/api/v1/payment-links" \
-  -H "Authorization: Bearer sua_api_key_aqui" \
+  -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json"
 ```
 
-**Resposta de sucesso (200 OK):**
-```json
-{
-  "data": [],
-  "total": 0
-}
-```
-
-### Exemplo com JavaScript (Fetch)
-
-```javascript
-const apiKey = 'sua_api_key_aqui';
-
+<CodeGroup>
+```javascript Node.js
 const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payment-links', {
-  method: 'GET',
   headers: {
-    'Authorization': `Bearer ${apiKey}`,
-    'Content-Type': 'application/json'
-  }
+    'Authorization': `Bearer ${process.env.UPAY_API_KEY}`,
+    'Content-Type': 'application/json',
+  },
 });
-
-const data = await response.json();
 ```
 
-### Exemplo com Python (Requests)
-
-```python
-import requests
-
-api_key = 'sua_api_key_aqui'
-headers = {
-    'Authorization': f'Bearer {api_key}',
-    'Content-Type': 'application/json'
-}
+```python Python
+import os, requests
 
 response = requests.get(
     'https://upay-sistema-api.onrender.com/api/v1/payment-links',
-    headers=headers
+    headers={'Authorization': f'Bearer {os.getenv("UPAY_API_KEY")}'},
 )
-
-data = response.json()
 ```
 
-### Exemplo com Node.js (Axios)
-
-```javascript
-const axios = require('axios');
-
-const apiKey = 'sua_api_key_aqui';
-
-const response = await axios.get('https://upay-sistema-api.onrender.com/api/payment-links', {
-  headers: {
-    'Authorization': `Bearer ${apiKey}`,
-    'Content-Type': 'application/json'
-  }
-});
-
-console.log(response.data);
+```php PHP
+$ch = curl_init('https://upay-sistema-api.onrender.com/api/v1/payment-links');
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Authorization: Bearer ' . $_ENV['UPAY_API_KEY'],
+]);
 ```
+</CodeGroup>
 
-## Segurança
-
-### Boas Práticas
-
-1. **Nunca commite API Keys no código**
-   - Use variáveis de ambiente
-   - Use serviços de gerenciamento de secrets (AWS Secrets Manager, HashiCorp Vault, etc.)
-
-2. **Use diferentes API Keys para diferentes ambientes**
-   - Uma para desenvolvimento
-   - Uma para produção
-   - Facilita revogação se necessário
-
-3. **Revogue API Keys comprometidas imediatamente**
-   - Acesse o Dashboard → Configurações → Credenciais de API
-   - Revogue a API Key comprometida
-   - Gere uma nova API Key
-
-4. **Use apenas as permissões necessárias**
-   - Siga o princípio do menor privilégio
-   - Não conceda permissões desnecessárias
-
-5. **Rotacione suas API Keys periodicamente**
-   - Recomendado a cada 90 dias
-   - Facilita a detecção de uso não autorizado
-
-### Variáveis de Ambiente
-
-#### .env (Node.js/Python)
-
-```env
-UPAY_API_KEY=sua_api_key_aqui
-UPAY_API_URL=https://upay-sistema-api.onrender.com
-```
-
-#### Uso no código
-
-```javascript
-// Node.js
-const apiKey = process.env.UPAY_API_KEY;
-
-// Python
-import os
-api_key = os.getenv('UPAY_API_KEY')
-```
-
-## Tratamento de erros
-
-A API retorna códigos HTTP padrão para indicar sucesso ou falha das requisições.
-
-### Códigos de status HTTP
-
-| Código | Descrição |
-|--------|-----------|
-| `200` | Requisição bem-sucedida |
-| `201` | Recurso criado com sucesso |
-| `400` | Requisição inválida (erro de validação) |
-| `401` | Não autenticado (API Key inválida ou ausente) |
-| `403` | Não autorizado (sem permissão para o recurso) |
-| `404` | Recurso não encontrado |
-| `429` | Muitas requisições (rate limit excedido) |
-| `500` | Erro interno do servidor |
-
-### 401 Unauthorized
-
-```json
-{
-  "error": "Unauthorized",
-  "message": "Token inválido ou expirado",
-  "statusCode": 401
-}
-```
-
-**Causas comuns:**
-- API Key incorreta ou ausente
-- Formato do header de autenticação incorreto
-- API Key revogada ou expirada
-
-**Soluções:**
-- Verifique se a API Key está correta
-- Verifique se está usando o formato `Bearer {api_key}`
-- Verifique se a API Key não foi revogada no dashboard
-
-### 403 Forbidden
-
-```json
-{
-  "error": "Forbidden",
-  "message": "Você não tem permissão para acessar este recurso",
-  "statusCode": 403
-}
-```
-
-**Causas comuns:**
-- API Key sem as permissões necessárias
-- Tentativa de acessar recurso de outro usuário
-
-**Soluções:**
-- Verifique se sua API Key tem as permissões necessárias
-- Entre em contato com o suporte para solicitar permissões adicionais
-
-### 400 Bad Request
-
-```json
-{
-  "error": "Validation Error",
-  "message": "Dados inválidos",
-  "statusCode": 400,
-  "details": [
-    {
-      "field": "amount",
-      "message": "O valor deve ser maior que 0"
-    },
-    {
-      "field": "currency",
-      "message": "Moeda inválida. Use BRL"
-    }
-  ]
-}
-```
-
-**Causas comuns:**
-- Campos obrigatórios ausentes
-- Valores fora do intervalo permitido
-- Formato de dados incorreto
-
-**Soluções:**
-- Verifique a documentação do endpoint para campos obrigatórios
-- Valide os tipos e formatos dos dados antes de enviar
-
-### 429 Too Many Requests
-
-```json
-{
-  "error": "Rate Limit Exceeded",
-  "message": "Você excedeu o limite de requisições",
-  "statusCode": 429,
-  "retryAfter": 60
-}
-```
-
-**Limites de rate:**
-- **Endpoints públicos**: 100 requisições por minuto por IP
-- **Endpoints autenticados**: 1000 requisições por minuto por API Key
-
-**Soluções:**
-- Implemente exponential backoff nas suas requisições
-- Use o header `Retry-After` para saber quando tentar novamente
-- Considere fazer cache de dados que não mudam frequentemente
+<Card title="Nota importante">
+  O mesmo endpoint é usado para desenvolvimento e produção. O ambiente é determinado automaticamente pela chave de API utilizada na requisição.
+</Card>
 
 ## Próximos passos
 
-Agora que você sabe como autenticar suas requisições, explore:
-
 <CardGroup cols={2}>
-  <Card title="Links de Pagamento" icon="link" href="/pages/guides/features/payment-links">
-    Aprenda a criar e gerenciar links de pagamento
+  <Card title="Início rápido" icon="rocket" href="./quickstart">
+    Faça sua primeira requisição em minutos.
   </Card>
-  <Card title="Início Rápido" icon="rocket" href="/pages/quickstart">
-    Faça sua primeira requisição em minutos
+  <Card title="Criar link de pagamento" icon="link" href="../payment-links/create">
+    Gere seu primeiro link de checkout.
   </Card>
-  <Card title="Referência da API" icon="book-open" href="/pages/payment-links/reference">
-    Documentação completa dos endpoints
+  <Card title="Webhooks" icon="bell" href="../webhooks/reference">
+    Configure notificações automáticas de eventos.
+  </Card>
+  <Card title="SDKs" icon="boxes-stacked" href="../sdks">
+    Use nossas bibliotecas oficiais para integrar mais rápido.
   </Card>
 </CardGroup>
-
