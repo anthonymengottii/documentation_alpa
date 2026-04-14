@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "UPay Gateway API",
-    "version": "2.21.0",
+    "version": "2.22.0",
     "description": "Documentação completa da API pública do UPay Gateway. Todas as rotas requerem autenticação via API Key, exceto validação de cupom e checkout público.",
     "contact": {
       "email": "suporte@upay.com.br"
@@ -50,6 +50,10 @@
     {
       "name": "Clientes",
       "description": "Gerenciamento de clientes"
+    },
+    {
+      "name": "Afiliados",
+      "description": "Marketplace de afiliados, links rastreáveis e comissões automáticas"
     }
   ],
   "paths": {
@@ -2604,6 +2608,396 @@
         },
         "operationId": "getWithdraw"
       }
+    },
+    "/api/affiliate/marketplace": {
+      "get": {
+        "tags": ["Afiliados"],
+        "summary": "Listar marketplace",
+        "description": "Lista todos os programas de afiliados ativos disponíveis para afiliação",
+        "security": [{ "apiKeyAuth": [] }],
+        "operationId": "getAffiliateMarketplace",
+        "responses": {
+          "200": {
+            "description": "Lista de programas disponíveis",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/AffiliateProgram" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/affiliate/join/{programId}": {
+      "post": {
+        "tags": ["Afiliados"],
+        "summary": "Solicitar afiliação",
+        "description": "Solicita afiliação a um programa e retorna o link rastreável único",
+        "security": [{ "apiKeyAuth": [] }],
+        "operationId": "joinAffiliateProgram",
+        "parameters": [
+          {
+            "name": "programId",
+            "in": "path",
+            "required": true,
+            "description": "ID do programa de afiliados",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Afiliação realizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/AffiliateLink" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/affiliate/links": {
+      "get": {
+        "tags": ["Afiliados"],
+        "summary": "Meus links de afiliado",
+        "description": "Lista todos os links de afiliado do usuário autenticado com estatísticas",
+        "security": [{ "apiKeyAuth": [] }],
+        "operationId": "getMyAffiliateLinks",
+        "responses": {
+          "200": {
+            "description": "Lista de links de afiliado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/AffiliateLink" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/affiliate/commissions": {
+      "get": {
+        "tags": ["Afiliados"],
+        "summary": "Minhas comissões",
+        "description": "Lista o histórico de comissões do afiliado com paginação",
+        "security": [{ "apiKeyAuth": [] }],
+        "operationId": "getMyAffiliateCommissions",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Número da página",
+            "schema": { "type": "integer", "default": 1 }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Itens por página",
+            "schema": { "type": "integer", "default": 20, "maximum": 100 }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filtrar por status",
+            "schema": { "type": "string", "enum": ["PENDING", "PAID", "CANCELLED"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de comissões",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/AffiliateCommission" }
+                    },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/affiliate/stats": {
+      "get": {
+        "tags": ["Afiliados"],
+        "summary": "Minhas estatísticas",
+        "description": "Retorna estatísticas consolidadas de todos os links e comissões do afiliado",
+        "security": [{ "apiKeyAuth": [] }],
+        "operationId": "getMyAffiliateStats",
+        "responses": {
+          "200": {
+            "description": "Estatísticas consolidadas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "totalLinks": { "type": "integer" },
+                        "activeLinks": { "type": "integer" },
+                        "totalClicks": { "type": "integer" },
+                        "totalConversions": { "type": "integer" },
+                        "totalEarnedCents": { "type": "integer" },
+                        "pendingCents": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/affiliate/programs": {
+      "post": {
+        "tags": ["Afiliados"],
+        "summary": "Criar programa de afiliados",
+        "description": "Cria um programa de afiliados para um produto do anunciante. Cada produto pode ter no máximo um programa.",
+        "security": [{ "apiKeyAuth": [] }],
+        "operationId": "createAffiliateProgram",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["productId", "commissionType", "commissionValue"],
+                "properties": {
+                  "productId": { "type": "string", "format": "uuid", "description": "ID do produto" },
+                  "commissionType": { "type": "string", "enum": ["PERCENTAGE", "FIXED"] },
+                  "commissionValue": {
+                    "type": "integer",
+                    "description": "Para PERCENTAGE: % × 100 (ex: 1000 = 10%). Para FIXED: centavos.",
+                    "minimum": 1
+                  },
+                  "cookieDays": { "type": "integer", "default": 30, "minimum": 1, "maximum": 365 },
+                  "isActive": { "type": "boolean", "default": true },
+                  "description": { "type": "string", "maxLength": 2000 },
+                  "rules": { "type": "string", "maxLength": 5000 },
+                  "affiliatePage": { "type": "string", "format": "uri" },
+                  "salesPage": { "type": "string", "format": "uri" },
+                  "extendedCommission": { "type": "boolean", "default": false }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Programa criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/AffiliateProgram" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "get": {
+        "tags": ["Afiliados"],
+        "summary": "Listar meus programas",
+        "description": "Lista todos os programas de afiliados criados pelo anunciante autenticado",
+        "security": [{ "apiKeyAuth": [] }],
+        "operationId": "listAffiliatePrograms",
+        "responses": {
+          "200": {
+            "description": "Lista de programas do anunciante",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/AffiliateProgram" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/affiliate/programs/{id}": {
+      "patch": {
+        "tags": ["Afiliados"],
+        "summary": "Atualizar programa",
+        "description": "Atualiza as configurações de um programa de afiliados",
+        "security": [{ "apiKeyAuth": [] }],
+        "operationId": "updateAffiliateProgram",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do programa de afiliados",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "commissionType": { "type": "string", "enum": ["PERCENTAGE", "FIXED"] },
+                  "commissionValue": { "type": "integer", "minimum": 1 },
+                  "cookieDays": { "type": "integer", "minimum": 1, "maximum": 365 },
+                  "isActive": { "type": "boolean" },
+                  "description": { "type": "string", "maxLength": 2000 },
+                  "rules": { "type": "string", "maxLength": 5000, "nullable": true },
+                  "affiliatePage": { "type": "string", "format": "uri", "nullable": true },
+                  "salesPage": { "type": "string", "format": "uri", "nullable": true },
+                  "extendedCommission": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Programa atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/AffiliateProgram" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["Afiliados"],
+        "summary": "Remover programa",
+        "description": "Remove um programa de afiliados. Links existentes são desativados.",
+        "security": [{ "apiKeyAuth": [] }],
+        "operationId": "deleteAffiliateProgram",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do programa de afiliados",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Programa removido com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/affiliate/programs/{id}/links": {
+      "get": {
+        "tags": ["Afiliados"],
+        "summary": "Afiliados inscritos",
+        "description": "Lista todos os afiliados inscritos em um programa do anunciante",
+        "security": [{ "apiKeyAuth": [] }],
+        "operationId": "getProgramLinks",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do programa de afiliados",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de afiliados inscritos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/AffiliateLink" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
     }
   },
   "components": {
@@ -3594,6 +3988,73 @@
             "type": "string",
             "nullable": true
           }
+        }
+      },
+      "AffiliateProgram": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "productId": { "type": "string", "format": "uuid" },
+          "commissionType": { "type": "string", "enum": ["PERCENTAGE", "FIXED"] },
+          "commissionValue": { "type": "integer", "description": "Para PERCENTAGE: % × 100. Para FIXED: centavos." },
+          "cookieDays": { "type": "integer" },
+          "isActive": { "type": "boolean" },
+          "description": { "type": "string", "nullable": true },
+          "rules": { "type": "string", "nullable": true },
+          "affiliatePage": { "type": "string", "nullable": true },
+          "salesPage": { "type": "string", "nullable": true },
+          "extendedCommission": { "type": "boolean" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "product": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string", "format": "uuid" },
+              "name": { "type": "string" },
+              "price": { "type": "integer" },
+              "imageUrl": { "type": "string", "nullable": true },
+              "description": { "type": "string", "nullable": true }
+            }
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" }
+            }
+          },
+          "_count": {
+            "type": "object",
+            "properties": {
+              "links": { "type": "integer" }
+            }
+          }
+        }
+      },
+      "AffiliateLink": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "code": { "type": "string", "description": "Código rastreável único (ex: NOME-AB12CD)" },
+          "programId": { "type": "string", "format": "uuid" },
+          "affiliateId": { "type": "string", "format": "uuid" },
+          "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE"] },
+          "clicks": { "type": "integer" },
+          "conversions": { "type": "integer" },
+          "totalEarnedCents": { "type": "integer" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "program": { "$ref": "#/components/schemas/AffiliateProgram" }
+        }
+      },
+      "AffiliateCommission": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "linkId": { "type": "string", "format": "uuid" },
+          "transactionId": { "type": "string", "format": "uuid" },
+          "amountCents": { "type": "integer" },
+          "status": { "type": "string", "enum": ["PENDING", "PAID", "CANCELLED"] },
+          "paidAt": { "type": "string", "format": "date-time", "nullable": true },
+          "createdAt": { "type": "string", "format": "date-time" }
         }
       }
     },

@@ -1,0 +1,218 @@
+---
+title: "Sistema de Afiliados"
+description: "Crie programas de afiliados para seus produtos e promova produtos de outros vendedores"
+---
+
+## Visão geral
+
+O **Sistema de Afiliados** da Upay permite que vendedores criem programas de comissão para seus produtos e que outros usuários promovam esses produtos em troca de uma comissão automática por cada venda realizada.
+
+O fluxo funciona em dois papéis distintos:
+
+- **Anunciante (Merchant)**: cria um programa de afiliados para um produto, define a comissão e gerencia os afiliados inscritos.
+- **Afiliado**: navega no marketplace, solicita afiliação a programas e compartilha um link rastreável único.
+
+Quando uma venda é realizada via link do afiliado, a comissão é creditada automaticamente na carteira do afiliado após a confirmação do pagamento.
+
+## Pré-requisitos
+
+- Uma conta ativa na Upay com KYC aprovado
+- Sua API Key configurada (veja [Autenticação](/pages/authentication))
+- Para criar um programa: ao menos um produto ativo com link de pagamento
+
+## Como funciona o rastreamento
+
+Ao se afiliar a um programa, o afiliado recebe um código único (ex: `NOME-AB12CD`). Esse código é adicionado como parâmetro `aff` na URL do checkout do produto:
+
+```
+https://checkout.upaybr.com/pay/{slug}?aff=NOME-AB12CD
+```
+
+Quando um comprador acessa esse link e realiza uma compra, a transação é vinculada ao link do afiliado e a comissão é calculada e creditada automaticamente.
+
+## Tipos de comissão
+
+| Tipo | Descrição | Exemplo |
+|------|-----------|---------|
+| `PERCENTAGE` | Percentual do valor pago | `1000` = 10% (valor × 100) |
+| `FIXED` | Valor fixo em centavos | `2990` = R$ 29,90 |
+
+<Note>
+  Para comissão percentual, o valor é armazenado multiplicado por 100 para preservar casas decimais. Exemplo: 10,5% → `1050`.
+</Note>
+
+## Criando um programa de afiliados
+
+Somente o dono do produto pode criar um programa de afiliados para ele. Cada produto pode ter no máximo um programa ativo.
+
+```bash
+curl -X POST "https://upay-sistema-api.onrender.com/api/affiliate/programs" \
+  -H "Authorization: Bearer SUA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": "550e8400-e29b-41d4-a716-446655440000",
+    "commissionType": "PERCENTAGE",
+    "commissionValue": 1000,
+    "cookieDays": 30,
+    "description": "Promova nosso curso e ganhe 10% por cada aluno indicado.",
+    "rules": "Proibido tráfego pago em nome da marca. Apenas divulgação orgânica.",
+    "affiliatePage": "https://seusite.com/afiliados",
+    "salesPage": "https://seusite.com/vendas"
+  }'
+```
+
+### Resposta
+
+```json
+{
+  "message": "Programa criado com sucesso.",
+  "data": {
+    "id": "aff-prog-uuid",
+    "productId": "550e8400-e29b-41d4-a716-446655440000",
+    "commissionType": "PERCENTAGE",
+    "commissionValue": 1000,
+    "cookieDays": 30,
+    "isActive": true,
+    "description": "Promova nosso curso e ganhe 10% por cada aluno indicado.",
+    "rules": "Proibido tráfego pago em nome da marca.",
+    "affiliatePage": "https://seusite.com/afiliados",
+    "salesPage": "https://seusite.com/vendas",
+    "createdAt": "2026-04-13T00:00:00.000Z"
+  }
+}
+```
+
+## Navegando no marketplace
+
+Qualquer usuário autenticado pode listar todos os programas ativos disponíveis para afiliação:
+
+```bash
+curl -X GET "https://upay-sistema-api.onrender.com/api/affiliate/marketplace" \
+  -H "Authorization: Bearer SUA_API_KEY"
+```
+
+### Resposta
+
+```json
+{
+  "data": [
+    {
+      "id": "aff-prog-uuid",
+      "commissionType": "PERCENTAGE",
+      "commissionValue": 1000,
+      "cookieDays": 30,
+      "description": "Promova nosso curso e ganhe 10% por cada aluno.",
+      "rules": null,
+      "affiliatePage": "https://seusite.com/afiliados",
+      "salesPage": "https://seusite.com/vendas",
+      "extendedCommission": false,
+      "product": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "Curso de JavaScript Avançado",
+        "price": 19990,
+        "imageUrl": "https://cdn.exemplo.com/curso-js.jpg",
+        "paymentLinks": [
+          { "paymentLink": { "slug": "curso-js" } }
+        ]
+      },
+      "user": { "name": "João da Silva" },
+      "_count": { "links": 42 },
+      "links": []
+    }
+  ]
+}
+```
+
+## Solicitando afiliação
+
+```bash
+curl -X POST "https://upay-sistema-api.onrender.com/api/affiliate/join/aff-prog-uuid" \
+  -H "Authorization: Bearer SUA_API_KEY"
+```
+
+### Resposta
+
+```json
+{
+  "message": "Afiliação realizada com sucesso.",
+  "data": {
+    "id": "link-uuid",
+    "code": "JOAO-AB12CD",
+    "programId": "aff-prog-uuid",
+    "status": "ACTIVE",
+    "clicks": 0,
+    "conversions": 0,
+    "totalEarnedCents": 0,
+    "createdAt": "2026-04-13T00:00:00.000Z"
+  }
+}
+```
+
+O link de divulgação para este produto será:
+
+```
+https://checkout.upaybr.com/pay/curso-js?aff=JOAO-AB12CD
+```
+
+## Consultando meus links e comissões
+
+### Listar links ativos
+
+```bash
+curl -X GET "https://upay-sistema-api.onrender.com/api/affiliate/links" \
+  -H "Authorization: Bearer SUA_API_KEY"
+```
+
+### Listar comissões
+
+```bash
+curl -X GET "https://upay-sistema-api.onrender.com/api/affiliate/commissions?page=1&limit=20" \
+  -H "Authorization: Bearer SUA_API_KEY"
+```
+
+### Estatísticas consolidadas
+
+```bash
+curl -X GET "https://upay-sistema-api.onrender.com/api/affiliate/stats" \
+  -H "Authorization: Bearer SUA_API_KEY"
+```
+
+```json
+{
+  "data": {
+    "totalLinks": 3,
+    "activeLinks": 3,
+    "totalClicks": 148,
+    "totalConversions": 12,
+    "totalEarnedCents": 23880,
+    "pendingCents": 0
+  }
+}
+```
+
+## Status das comissões
+
+| Status | Descrição |
+|--------|-----------|
+| `PENDING` | Aguardando processamento |
+| `PAID` | Creditada na carteira do afiliado |
+| `CANCELLED` | Cancelada (ex: chargeback) |
+
+## Boas práticas
+
+1. **Defina regras claras**: Use o campo `rules` para informar políticas de divulgação (tráfego pago, menção à marca, etc.)
+2. **Página de afiliados**: Crie uma landing page com materiais de divulgação e preencha `affiliatePage`
+3. **Comissão competitiva**: Comissões entre 10–30% tendem a atrair mais afiliados
+4. **Cookie de rastreamento**: `cookieDays` de 30 dias é o padrão; aumente para produtos de decisão longa
+5. **Acompanhe conversões**: Use `GET /api/affiliate/programs/:id/links` para monitorar o desempenho de cada afiliado
+
+## Próximos passos
+
+<CardGroup cols={2}>
+  <Card title="Referência da API" icon="code" href="/pages/affiliates/reference">
+    Todos os endpoints do sistema de afiliados
+  </Card>
+  <Card title="Produtos" icon="box" href="/pages/guides/features/products">
+    Crie produtos para associar a programas de afiliados
+  </Card>
+</CardGroup>

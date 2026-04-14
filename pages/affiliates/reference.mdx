@@ -1,0 +1,87 @@
+---
+title: "Referência"
+description: "Documentação completa da API de Afiliados"
+icon: "book"
+---
+
+## Sistema de Afiliados
+
+Marketplace de afiliados com rastreamento de links, comissões automáticas e painel de performance.
+
+<Note>
+  Para um guia completo sobre o sistema de afiliados, consulte [Guia de Afiliados](/pages/guides/features/affiliates).
+</Note>
+
+## Endpoints — Afiliado
+
+- **GET** `/api/affiliate/marketplace` - [Listar programas disponíveis](/pages/affiliates/marketplace)
+- **POST** `/api/affiliate/join/{programId}` - [Solicitar afiliação](/pages/affiliates/join)
+- **GET** `/api/affiliate/links` - [Meus links de afiliado](/pages/affiliates/my-links)
+- **GET** `/api/affiliate/commissions` - [Minhas comissões](/pages/affiliates/my-commissions)
+- **GET** `/api/affiliate/stats` - [Minhas estatísticas](/pages/affiliates/my-stats)
+
+## Endpoints — Anunciante
+
+- **POST** `/api/affiliate/programs` - [Criar programa](/pages/affiliates/programs-create)
+- **GET** `/api/affiliate/programs` - [Listar meus programas](/pages/affiliates/programs-list)
+- **PATCH** `/api/affiliate/programs/{id}` - [Atualizar programa](/pages/affiliates/programs-update)
+- **DELETE** `/api/affiliate/programs/{id}` - [Remover programa](/pages/affiliates/programs-delete)
+- **GET** `/api/affiliate/programs/{id}/links` - Links inscritos no programa *(ver referência abaixo)*
+
+## Autenticação
+
+Todos os endpoints requerem autenticação via Bearer Token (API Key).
+
+```
+Authorization: Bearer SUA_API_KEY
+```
+
+## Base URL
+
+```
+https://upay-sistema-api.onrender.com
+```
+
+## Modelos de dados
+
+### AffiliateProgram
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | string (uuid) | Identificador único |
+| `productId` | string (uuid) | Produto vinculado ao programa |
+| `commissionType` | `PERCENTAGE` \| `FIXED` | Tipo da comissão |
+| `commissionValue` | integer | Para PERCENTAGE: % × 100 (ex: 1000 = 10%). Para FIXED: centavos |
+| `cookieDays` | integer | Janela de rastreamento em dias (padrão: 30) |
+| `isActive` | boolean | Se o programa aceita novos afiliados |
+| `description` | string \| null | Descrição do programa |
+| `rules` | string \| null | Regras de divulgação |
+| `affiliatePage` | string \| null | URL da página de materiais para afiliados |
+| `salesPage` | string \| null | URL da página de vendas |
+| `extendedCommission` | boolean | Comissão aplicada em upsell/downsell/order bump |
+| `createdAt` | string (ISO 8601) | Data de criação |
+
+### AffiliateLink
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | string (uuid) | Identificador único |
+| `code` | string | Código rastreável único (ex: `NOME-AB12CD`) |
+| `programId` | string (uuid) | Programa ao qual pertence |
+| `status` | `ACTIVE` \| `INACTIVE` | Status do link |
+| `clicks` | integer | Total de cliques no link |
+| `conversions` | integer | Total de vendas realizadas |
+| `totalEarnedCents` | integer | Total ganho em centavos |
+| `createdAt` | string (ISO 8601) | Data de criação |
+
+### AffiliateCommission
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | string (uuid) | Identificador único |
+| `linkId` | string (uuid) | Link que gerou a comissão |
+| `transactionId` | string (uuid) | Transação de origem |
+| `amountCents` | integer | Valor da comissão em centavos |
+| `status` | `PENDING` \| `PAID` \| `CANCELLED` | Status da comissão |
+| `paidAt` | string \| null | Data do crédito na carteira |
+| `createdAt` | string (ISO 8601) | Data de criação |

@@ -10,6 +10,29 @@ Sugestões de features ou melhorias podem ser enviadas pelo Dashboard na seção
 
 ## Atualizações Recentes
 
+<Update label="13 de Abr, 2026">
+## Sistema completo de Marketing de Afiliados (v2.22.0)
+
+**Novos recursos:**
+
+- **Marketplace de afiliados**: endpoint público (autenticado) `GET /api/affiliate/marketplace` lista todos os programas ativos com detalhes do produto, comissão e número de afiliados inscritos
+- **Solicitar afiliação**: `POST /api/affiliate/join/:programId` gera um código de rastreamento único por afiliado no formato `NOME-XXXXXX`
+- **Links rastreáveis**: URL de divulgação no formato `https://checkout.upaybr.com/pay/{slug}?aff={codigo}`
+- **Comissões automáticas**: após confirmação do pagamento, a comissão é calculada e creditada automaticamente na carteira do afiliado
+- **Dois tipos de comissão**: `PERCENTAGE` (percentual do valor pago) ou `FIXED` (valor fixo em centavos)
+- **Rastreamento de cliques e conversões** por link
+- **Dashboard do afiliado**: endpoints para listar links, comissões e estatísticas consolidadas (`/api/affiliate/links`, `/api/affiliate/commissions`, `/api/affiliate/stats`)
+- **Gestão pelo anunciante**: criar, listar, atualizar e remover programas via `/api/affiliate/programs`; listar afiliados inscritos via `/api/affiliate/programs/:id/links`
+- **Campos de programa**: `description`, `rules`, `affiliatePage`, `salesPage`, `cookieDays`, `extendedCommission`
+
+**Novos modelos no banco de dados:**
+
+- `AffiliateProgram` — um por produto, define tipo e valor da comissão
+- `AffiliateLink` — link único por afiliado por programa, com contadores de cliques e conversões
+- `AffiliateCommission` — comissão por transação com status `PENDING`, `PAID` ou `CANCELLED`
+
+</Update>
+
 <Update label="7 de Abr, 2026">
 ## SDKs: correções no endpoint de validação de cupom
 

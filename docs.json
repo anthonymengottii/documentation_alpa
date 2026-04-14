@@ -45,7 +45,8 @@
               "pages/guides/features/customers",
               "pages/guides/features/coupons",
               "pages/guides/features/transactions",
-              "pages/guides/features/webhooks"
+              "pages/guides/features/webhooks",
+              "pages/guides/features/affiliates"
             ]
           },
           {
@@ -123,6 +124,21 @@
               "pages/withdrawals/create",
               "pages/withdrawals/list",
               "pages/withdrawals/get"
+            ]
+          },
+          {
+            "group": "Afiliados",
+            "pages": [
+              "pages/affiliates/reference",
+              "pages/affiliates/marketplace",
+              "pages/affiliates/join",
+              "pages/affiliates/my-links",
+              "pages/affiliates/my-commissions",
+              "pages/affiliates/my-stats",
+              "pages/affiliates/programs-create",
+              "pages/affiliates/programs-list",
+              "pages/affiliates/programs-update",
+              "pages/affiliates/programs-delete"
             ]
           },
           {
