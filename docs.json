@@ -19,8 +19,7 @@
           {
             "group": "Visão Geral",
             "pages": [
-              "pages/introduction",
-              "pages/glossary"
+              "pages/introduction"
             ]
           }
         ]
