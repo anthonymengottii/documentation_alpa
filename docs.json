@@ -21,12 +21,7 @@
             "pages": [
               "pages/introduction"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "Comece Aqui",
-        "groups": [
+          },
           {
             "group": "Primeiros Passos",
             "pages": [
@@ -35,6 +30,18 @@
               "pages/webhooks"
             ]
           },
+          {
+            "group": "Recursos",
+            "pages": [
+              "pages/glossary",
+              "pages/changelog"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Comece Aqui",
+        "groups": [
           {
             "group": "Guias",
             "pages": [
@@ -45,12 +52,6 @@
               "pages/guides/features/transactions",
               "pages/guides/features/webhooks",
               "pages/guides/features/affiliates"
-            ]
-          },
-          {
-            "group": "Suporte",
-            "pages": [
-              "pages/glossary"
             ]
           }
         ]
@@ -172,17 +173,6 @@
           }
         ]
       },
-      {
-        "tab": "Changelog",
-        "groups": [
-          {
-            "group": "Changelog",
-            "pages": [
-              "pages/changelog"
-            ]
-          }
-        ]
-      }
     ]
   },
   "logo": {
