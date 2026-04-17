@@ -1,331 +1,211 @@
 ---
-title: Glossário
-description: Definições de termos técnicos e conceitos utilizados na API Upay
+title: 'Glossário'
+description: 'Conceitos e termos técnicos da Upay explicados de forma simples'
+icon: 'book-open-cover'
 ---
 
-Este glossário contém definições de termos técnicos, conceitos e siglas utilizados na documentação da API Upay.
+<Card title="Bem-vindo ao Glossário" horizontal>
+  Encontrou um termo que não conhece? Este glossário explica os principais conceitos e termos técnicos usados na documentação da Upay de forma simples e direta.
+</Card>
 
-## A
-
-### API (Application Programming Interface)
-Interface de programação de aplicações. Conjunto de definições e protocolos que permite a comunicação entre diferentes sistemas de software.
-
-### API Key
-Chave de autenticação única que identifica e autoriza requisições à API. Na Upay, as API Keys começam com `upay_test_` (teste) ou `upay_live_` (produção).
-
-### Autenticação
-Processo de verificar a identidade de um usuário ou sistema. Na API Upay, utilizamos autenticação via Bearer Token (API Key).
-
-### Autorização
-Processo de verificar se um usuário ou sistema autenticado tem permissão para acessar um recurso específico.
-
-## B
-
-### Backoff exponencial
-Estratégia de retry onde o tempo de espera entre tentativas aumenta exponencialmente (1s, 2s, 4s, 8s, etc.). Recomendado para lidar com rate limits e erros temporários.
+## Autenticação e Segurança
 
 ### Bearer Token
-Tipo de token de acesso usado no header `Authorization` das requisições HTTP. Formato: `Authorization: Bearer {token}`.
-
-### Boleto
-Método de pagamento brasileiro que gera um código de barras para pagamento em bancos, lotéricas ou internet banking.
-
-### Breaking Change
-Mudança na API que quebra compatibilidade com versões anteriores, exigindo alterações no código dos clientes.
-
-## C
-
-### Callback
-Função ou URL que é chamada quando um evento específico ocorre. Sinônimo de webhook no contexto de APIs.
-
-### Centavos
-Unidade monetária usada na API para representar valores. 100 centavos = R$ 1,00. Exemplo: `10000` centavos = R$ 100,00.
-
-### Checkout
-Página ou processo onde o cliente finaliza a compra e realiza o pagamento.
-
-### CORS (Cross-Origin Resource Sharing)
-Mecanismo de segurança que permite ou restringe requisições HTTP entre diferentes domínios.
-
-### Cupom
-Código promocional que oferece desconto em uma compra. Pode ser percentual ou valor fixo.
-
-## D
-
-### Dashboard
-Interface administrativa web onde você gerencia sua conta, visualiza transações e configura integrações.
-
-### Desconto fixo
-Tipo de cupom que oferece um valor fixo de desconto (ex: R$ 50,00 off).
-
-### Desconto percentual
-Tipo de cupom que oferece um percentual de desconto sobre o valor total (ex: 10% off).
-
-## E
-
-### Endpoint
-URL específica de uma API que executa uma função. Exemplo: `POST /api/v1/payment-links` é o endpoint para criar links de pagamento.
-
-### Estoque
-Quantidade disponível de um produto ou link de pagamento. Pode ser limitado ou ilimitado.
-
-### Evento
-Ação ou ocorrência no sistema que pode disparar notificações via webhook. Exemplos: `transaction.paid`, `payment_link.expired`.
-
-## H
-
-### Header
-Parte da requisição HTTP que contém metadados como autenticação, tipo de conteúdo, etc.
-
-### HMAC (Hash-based Message Authentication Code)
-Algoritmo criptográfico usado para verificar a autenticidade e integridade de mensagens. Usado na validação de webhooks.
-
-### HTTP Status Code
-Código numérico que indica o resultado de uma requisição HTTP. Exemplos: 200 (sucesso), 404 (não encontrado), 500 (erro do servidor).
-
-## I
-
-### Idempotência
-Propriedade de uma operação que pode ser executada múltiplas vezes sem alterar o resultado além da primeira execução.
-
-### ISO 8601
-Padrão internacional para representação de datas e horários. Formato: `2024-01-15T10:30:00Z`.
-
-## J
-
-### JSON (JavaScript Object Notation)
-Formato de dados leve e legível usado para troca de informações entre sistemas.
-
-### JWT (JSON Web Token)
-Padrão para criação de tokens de acesso que contêm informações codificadas em JSON.
-
-## K
-
-### KYC (Know Your Customer)
-Processo de verificação de identidade exigido para ativar funcionalidades de pagamento.
-
-## M
-
-### Metadata
-Dados adicionais que podem ser anexados a recursos como transações ou links de pagamento para armazenar informações customizadas.
-
-### Meta Pixel
-Ferramenta de rastreamento do Facebook/Meta que permite monitorar conversões e comportamento de usuários.
-
-## P
-
-### Paginação
-Técnica de dividir grandes conjuntos de resultados em páginas menores. Usa parâmetros `page` e `limit`.
-
-### Parcelamento
-Divisão do pagamento em múltiplas parcelas mensais. Pode ter juros ou ser sem juros.
-
-### Payload
-Dados enviados no corpo de uma requisição HTTP ou recebidos em um webhook.
-
-### PIX
-Sistema de pagamento instantâneo brasileiro que permite transferências 24/7 em segundos.
-
-### Produto
-Item do catálogo que pode ser associado a links de pagamento. Contém informações como nome, preço, descrição e imagens.
-
-## R
-
-### Rate Limit
-Limite de requisições que podem ser feitas à API em um período de tempo. Previne abuso e garante disponibilidade.
-
-### Redirect URL
-URL para onde o usuário é redirecionado após completar uma ação, como finalizar um pagamento.
-
-### Refund (Reembolso)
-Devolução total ou parcial do valor pago em uma transação.
-
-### REST (Representational State Transfer)
-Estilo arquitetural para APIs que usa métodos HTTP padrão (GET, POST, PUT, DELETE).
-
-### Retry
-Tentativa de reexecutar uma operação que falhou. Comum em webhooks e requisições de rede.
-
-## S
-
-### SDK (Software Development Kit)
-Conjunto de ferramentas e bibliotecas que facilitam a integração com uma API. A Upay oferece SDKs para JavaScript, Python, PHP e Java.
-
-### Secret
-Chave secreta usada para validar assinaturas de webhooks. Deve ser mantida em segurança.
-
-### SemVer (Semantic Versioning)
-Sistema de versionamento que usa três números: MAJOR.MINOR.PATCH (ex: 1.2.3).
-
-### Signature (Assinatura)
-Hash criptográfico usado para verificar a autenticidade de webhooks.
-
-### Slug
-Identificador único e legível usado em URLs. Exemplo: `produto-premium-abc123`.
-
-### Status
-Estado atual de um recurso. Exemplos: `ACTIVE`, `INACTIVE`, `PAID`, `PENDING`.
-
-## T
-
-### Timeout
-Tempo máximo de espera por uma resposta antes de considerar a requisição como falha.
-
-### Token
-Sequência de caracteres usada para autenticação. Na Upay, sinônimo de API Key.
-
-### Transação
-Registro de uma operação financeira (pagamento, reembolso, etc.).
-
-## U
-
-### UUID (Universally Unique Identifier)
-Identificador único de 128 bits usado para identificar recursos. Formato: `550e8400-e29b-41d4-a716-446655440000`.
-
-### URL (Uniform Resource Locator)
-Endereço web que identifica um recurso na internet.
-
-## V
-
-### Validação
-Processo de verificar se dados fornecidos atendem aos requisitos esperados.
-
-### Variável de ambiente
-Valor configurado no sistema operacional ou plataforma de hospedagem, usado para armazenar configurações sensíveis como API Keys.
-
-### Versionamento
-Sistema de numeração que identifica diferentes versões da API. A versão atual é v1.
-
-## W
-
-### Webhook
-Mecanismo de notificação HTTP que envia dados para uma URL quando um evento ocorre. Permite comunicação em tempo real.
+Também chamado de **API Key** ou **chave de API**, é o método de autenticação usado para autorizar suas requisições à API da Upay. A chave é enviada no header HTTP `Authorization: Bearer SUA_API_KEY`. Sem uma chave válida, nenhuma requisição será aceita.
 
 ### Webhook Secret
-Chave secreta usada para gerar e validar assinaturas HMAC de webhooks.
-
-### White-label
-Produto ou serviço que pode ser rebrandizado e vendido como se fosse próprio.
-
-## Termos de pagamento
-
-### Adquirente
-Instituição financeira que processa pagamentos com cartão de crédito/débito.
-
-### Bandeira
-Empresa que opera a rede de pagamentos (Visa, Mastercard, Elo, etc.).
-
-### Chargeback
-Contestação de uma transação pelo cliente junto ao banco emissor do cartão.
-
-### Gateway de pagamento
-Serviço que processa e autoriza pagamentos online.
-
-### Split de pagamento
-Divisão automática de um pagamento entre múltiplos recebedores.
-
-### Taxa de conversão
-Percentual de visitantes que completam uma compra.
-
-### Taxa de juros
-Percentual cobrado sobre parcelas de pagamento.
-
-### Tokenização
-Processo de substituir dados sensíveis (como número de cartão) por um token único.
-
-## Códigos e formatos
-
-### BRL
-Código ISO 4217 para Real Brasileiro (R$).
-
-### CPF (Cadastro de Pessoas Físicas)
-Documento de identificação brasileiro para pessoas físicas. Formato: 11 dígitos.
-
-### CNPJ (Cadastro Nacional da Pessoa Jurídica)
-Documento de identificação brasileiro para empresas. Formato: 14 dígitos.
-
-### E.164
-Padrão internacional para números de telefone. Formato: `+5511999999999`.
-
-### UTF-8
-Codificação de caracteres que suporta todos os caracteres Unicode, incluindo acentuação portuguesa.
-
-## Conceitos de segurança
-
-### Criptografia
-Processo de codificar informações para proteger contra acesso não autorizado.
+String secreta configurada ao criar uma assinatura de webhook. Garante que as notificações recebidas vieram realmente da Upay. Deve ser validada no seu servidor para evitar requisições maliciosas.
 
 ### HTTPS
-Versão segura do protocolo HTTP que usa criptografia TLS/SSL.
-
-### Man-in-the-middle
-Tipo de ataque onde um invasor intercepta comunicação entre duas partes.
-
-### Princípio do menor privilégio
-Prática de conceder apenas as permissões mínimas necessárias para executar uma tarefa.
+Versão segura do HTTP que usa criptografia TLS/SSL. Todos os endpoints da Upay e as URLs de webhook **precisam obrigatoriamente usar HTTPS**.
 
 ### TLS/SSL
-Protocolos de segurança que criptografam comunicação na internet.
+Protocolos de segurança que criptografam a comunicação na internet. Utilizados em todas as conexões com a API da Upay.
 
-## Conceitos de desenvolvimento
+## Ambientes e Modos
 
-### Ambiente de desenvolvimento
-Ambiente usado para desenvolver e testar código antes de ir para produção.
+### Ambiente de Desenvolvimento
+Modo de testes onde as transações são **simuladas** e nenhum valor real é movimentado. Na Upay, o ambiente é definido **pela chave de API utilizada**: chaves de desenvolvimento geram transações de teste.
 
-### Ambiente de produção
-Ambiente onde a aplicação está disponível para usuários finais.
+### Ambiente de Produção
+Modo real onde as transações são processadas e valores reais são movimentados. Requer conta verificada e chave de API de produção.
 
-### Cache
-Armazenamento temporário de dados para melhorar performance e reduzir requisições.
+### Sandbox
+Outro nome para o ambiente de desenvolvimento/testes. Ideal para desenvolver e validar sua integração antes de ir para produção.
 
-### Debug
-Processo de identificar e corrigir erros no código.
+## Pagamentos e Cobranças
 
-### Deploy
-Processo de publicar código em um ambiente (desenvolvimento, staging, produção).
+### Link de Pagamento
+URL reutilizável gerada pela Upay que pode ser compartilhada com clientes para receber pagamentos via PIX, cartão ou boleto. Pode ter estoque limitado, cupons, parcelamento e URLs de redirecionamento configuráveis.
 
-### Staging
-Ambiente de pré-produção usado para testes finais antes do deploy.
+### Checkout
+Processo onde o cliente finaliza a compra e realiza o pagamento. Pode acontecer numa página gerenciada pela Upay (via link de pagamento) ou diretamente na sua aplicação.
 
-## Métricas e análise
+### Gateway de Pagamento
+Plataforma intermediária que processa pagamentos entre o cliente e o vendedor. A Upay é um gateway de pagamento que facilita transações PIX, cartão e boleto.
 
-### Conversão
-Ação desejada completada por um usuário (ex: finalizar compra).
+### Transação
+Registro de uma operação financeira. Cada transação tem um ID único, status, método de pagamento e informações do cliente.
 
-### KPI (Key Performance Indicator)
-Métrica usada para avaliar o sucesso de uma operação ou objetivo.
+### PIX
+Sistema de pagamento instantâneo brasileiro que permite transferências 24h/7 em segundos, sem custo para o pagador.
 
-### ROI (Return on Investment)
-Retorno sobre investimento. Métrica que avalia a rentabilidade.
+### Boleto
+Método de pagamento brasileiro que gera um código de barras para pagamento em bancos, lotéricas ou internet banking. Pode levar até 3 dias úteis para compensar.
 
-### Taxa de abandono
-Percentual de usuários que iniciam mas não completam uma compra.
+### Parcelamento
+Divisão do pagamento em múltiplas parcelas mensais no cartão de crédito. Pode ser com ou sem juros.
 
-### Uptime
-Percentual de tempo que um serviço está disponível e funcionando.
+### Payout / Saque
+Transferência do saldo da sua conta Upay para sua chave PIX ou conta bancária. Métodos suportados: PIX e TED.
 
-## Recursos adicionais
+## Estrutura de Dados
 
-<CardGroup cols={2}>
-  <Card title="Códigos de erro" icon="triangle-exclamation" href="/troubleshooting">
-    Referência completa de erros da API
-  </Card>
-  
-  <Card title="Troubleshooting" icon="wrench" href="/troubleshooting">
-    Soluções para problemas comuns
-  </Card>
-  
-  <Card title="Changelog" icon="clock" href="/changelog">
-    Histórico de mudanças da API
-  </Card>
-  
-  <Card title="Introdução" icon="book" href="/introduction">
-    Comece aqui com a API Upay
-  </Card>
-</CardGroup>
+### Centavos
+Unidade usada pela API para representar valores monetários. 100 centavos = R$ 1,00.
 
-## Contribua
+**Exemplo:** `10000` = R$ 100,00.
 
-Não encontrou um termo? Sugira adições ao glossário:
-- Email: docs@upaybr.com
-- GitHub: [Issues](https://github.com/anthonymengottii/upay-sdks/issues)
+### Slug
+Identificador único e legível usado em URLs de links de pagamento. Gerado automaticamente, mas pode ser personalizado.
+
+**Exemplo:** `meu-produto-premium`
+
+### Metadata
+Campo opcional que permite armazenar informações adicionais personalizadas junto com recursos da API (transações, links de pagamento, etc.). Aceita qualquer objeto JSON.
+
+**Exemplo:**
+```json
+{
+  "metadata": {
+    "pedido_interno": "12345",
+    "origem": "site",
+    "campanha": "black-friday"
+  }
+}
+```
+
+### External ID
+Identificador único do seu sistema para relacionar recursos da Upay com registros internos. Útil para buscar transações usando seus próprios códigos de pedido.
+
+### UUID
+Identificador único de 128 bits gerado automaticamente para identificar recursos na API. Formato: `550e8400-e29b-41d4-a716-446655440000`.
+
+## Cupons e Descontos
+
+### Cupom
+Código promocional que oferece desconto em uma compra. Pode ser percentual (ex: 10% off) ou valor fixo (ex: R$ 5,00 off). Suporta limite de usos e validade.
+
+### Desconto Percentual
+Tipo de desconto aplicado como porcentagem sobre o valor total.
+
+**Exemplo:** Cupom de 15% em uma compra de R$ 100,00 → desconto de R$ 15,00.
+
+### Desconto Fixo
+Tipo de desconto com valor fixo independente do total da compra.
+
+**Exemplo:** Cupom de R$ 20,00 em qualquer compra.
+
+## Afiliados
+
+### Programa de Afiliados
+Configuração criada por um anunciante que define a comissão paga a afiliados que indicarem clientes. Cada programa tem sua taxa de comissão e regras próprias.
+
+### Link de Afiliado
+URL única gerada para cada afiliado dentro de um programa. Rastreia as vendas originadas por aquele afiliado.
+
+### Comissão
+Valor pago automaticamente ao afiliado quando uma venda é realizada através do seu link. Calculada com base nas regras do programa.
+
+## Status
+
+### Status da Transação
+- **PENDING**: Aguardando pagamento
+- **PAID**: Pago e confirmado
+- **CANCELLED**: Cancelada
+- **EXPIRED**: Expirada
+- **REFUNDED**: Reembolsada
+
+### Status do Saque
+- **PENDING**: Solicitação recebida, aguardando processamento
+- **PROCESSING**: Em processamento
+- **COMPLETED**: Concluído com sucesso
+- **CANCELLED**: Cancelado
+- **FAILED**: Falhou
+
+## Webhooks
+
+### Webhook
+Mecanismo onde a Upay **envia notificações automáticas** para o seu servidor sempre que algo importante acontece (como um pagamento confirmado), sem você precisar consultar a API constantemente.
+
+### Assinatura de Webhook
+Configuração que define para qual URL e para quais eventos a Upay deve enviar notificações. Uma conta pode ter múltiplas assinaturas.
+
+### Evento
+Ação que dispara um webhook. Exemplos: `transaction.paid`, `payment_link.expired`, `withdrawal.completed`. Cada evento contém informações sobre o que aconteceu.
+
+### Payload
+Dados enviados pela Upay no corpo da notificação HTTP ao seu endpoint de webhook.
+
+## URLs e Endpoints
+
+### Base URL
+Endereço raiz de todas as requisições à API: `https://upay-sistema-api.onrender.com`
+
+### Endpoint
+URL específica que executa uma função na API.
+
+**Exemplo:** `POST /api/v1/payment-links` cria um novo link de pagamento.
+
+### Return URL
+URL para onde o cliente é redirecionado ao clicar em "voltar" no checkout, antes de completar o pagamento.
+
+### Completion URL
+URL para onde o cliente é redirecionado **após completar** o pagamento com sucesso.
+
+## Padrões Técnicos
+
+### REST
+Estilo arquitetural para APIs que usa métodos HTTP padrão: GET (consultar), POST (criar), PATCH (atualizar), DELETE (remover).
+
+### JSON
+Formato de dados leve e legível usado para troca de informações entre sistemas. Toda a API da Upay usa JSON.
+
+### ISO 8601
+Padrão internacional para datas e horários. Formato: `2026-01-15T10:30:00Z`.
+
+### BRL
+Código ISO 4217 para Real Brasileiro (R$). Moeda padrão de toda a API.
+
+### CPF / CNPJ
+Documentos de identificação brasileiros. CPF para pessoas físicas (11 dígitos) e CNPJ para empresas (14 dígitos).
+
+## Estrutura de Resposta
+
+Todas as respostas da API seguem o padrão:
+
+```json
+{
+  "data": { },
+  "error": null,
+  "success": true
+}
+```
+
+- Se `success` for `true`, a operação foi bem-sucedida e os dados estarão em `data`
+- Se `success` for `false`, a operação falhou e a mensagem de erro estará no campo `error`
+
+### Códigos HTTP comuns
+- **200 OK** — Sucesso
+- **201 Created** — Recurso criado com sucesso
+- **400 Bad Request** — Requisição inválida (verifique os parâmetros)
+- **401 Unauthorized** — API Key ausente ou inválida
+- **404 Not Found** — Recurso não encontrado
+- **429 Too Many Requests** — Rate limit atingido
+- **500 Internal Server Error** — Erro interno da Upay
+
+---
+
+<Card title="Não encontrou o termo que procura?" icon="question-circle" color="#9747FF">
+  Entre em contato com nosso suporte: <Icon icon="envelope" type="solid"/> suporte@upaybr.com
+</Card>
