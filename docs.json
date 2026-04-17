@@ -33,7 +33,6 @@
             "pages": [
               "pages/quickstart",
               "pages/authentication",
-              "pages/fist-request",
               "pages/webhooks"
             ]
           },
@@ -194,12 +193,12 @@
   "navbar": {
     "links": [
       {
-        "label": "Suporte",
-        "href": "mailto:suporte@upay.com.br"
-      },
-      {
         "label": "llms.txt",
         "href": "/llms.txt"
+      },
+      {
+        "label": "Suporte",
+        "href": "mailto:suporte@upay.com.br"
       }
     ],
     "primary": {
