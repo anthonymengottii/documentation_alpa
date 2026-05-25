@@ -66,6 +66,10 @@
     {
       "name": "Antecipações",
       "description": "Antecipação de recebíveis de transações de cartão parceladas"
+    },
+    {
+      "name": "Indicações",
+      "description": "Programa de indicações — código de convite, estatísticas e histórico de recompensas"
     }
   ],
   "paths": {
@@ -1691,6 +1695,44 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Clientes"
+        ],
+        "summary": "Deletar cliente",
+        "description": "Remove um cliente permanentemente. Retorna 204 sem corpo.",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do cliente",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Cliente removido com sucesso"
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
@@ -3436,6 +3478,116 @@
           "200": { "description": "Detalhes da antecipação" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/referral/code": {
+      "get": {
+        "tags": ["Indicações"],
+        "summary": "Obter código de indicação",
+        "description": "Retorna o código único e o link de convite do usuário autenticado",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Código e link de indicação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "string", "example": "UPAY-123-ABC" },
+                    "link": { "type": "string", "example": "https://app.upaybr.com/register?ref=UPAY-123-ABC" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "description": "Sistema de Indique e Ganhe não habilitado para esta conta" }
+        }
+      }
+    },
+    "/api/referral/stats": {
+      "get": {
+        "tags": ["Indicações"],
+        "summary": "Estatísticas de indicações",
+        "description": "Retorna o resumo de desempenho: indicações, recompensas fixas (Tipo 1), comissões recorrentes (Tipo 2) e saldo disponível",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Estatísticas do programa de indicações",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "totalReferrals": { "type": "integer" },
+                    "completedReferrals": { "type": "integer" },
+                    "pendingReferrals": { "type": "integer" },
+                    "totalFixedRewards": { "type": "integer" },
+                    "totalFixedRewardAmountCents": { "type": "integer" },
+                    "totalCommissions": { "type": "integer" },
+                    "totalCommissionAmountCents": { "type": "integer" },
+                    "totalRewards": { "type": "integer" },
+                    "totalRewardAmountCents": { "type": "integer" },
+                    "totalWithdrawnCents": { "type": "integer" },
+                    "availableBalanceCents": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "description": "Sistema de Indique e Ganhe não habilitado para esta conta" }
+        }
+      }
+    },
+    "/api/referral/history": {
+      "get": {
+        "tags": ["Indicações"],
+        "summary": "Histórico de indicações",
+        "description": "Lista as indicações realizadas com status, datas e comissões, com paginação",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20, "maximum": 100 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Histórico de indicações",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referrals": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string", "format": "uuid" },
+                          "referredName": { "type": "string" },
+                          "status": { "type": "string", "enum": ["PENDING", "APPROVED", "REJECTED", "EXPIRED"] },
+                          "createdAt": { "type": "string", "format": "date-time" },
+                          "commissionCents": { "type": "integer" }
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": { "type": "integer" },
+                        "page": { "type": "integer" },
+                        "limit": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "description": "Sistema de Indique e Ganhe não habilitado para esta conta" }
         }
       }
     }

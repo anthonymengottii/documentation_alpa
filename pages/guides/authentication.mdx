@@ -183,6 +183,121 @@ api_key = os.getenv('UPAY_API_KEY')
 - Verifique se sua API Key tem as permissões necessárias
 - Entre em contato com o suporte para solicitar permissões adicionais
 
+---
+
+## Login com Google (OAuth)
+
+Autentique usuários via conta Google usando o ID token gerado pelo SDK do Google no frontend.
+
+```
+POST /api/auth/google
+```
+
+**Auth**: nenhuma
+
+### Corpo da requisição
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `idToken` | `string` | ID token retornado pelo Google Sign-In no frontend |
+
+```bash
+curl --request POST \
+  --url https://upay-sistema-api.onrender.com/api/auth/google \
+  --header 'Content-Type: application/json' \
+  --data '{ "idToken": "eyJhbGciOiJSUzI1NiIsI..." }'
+```
+
+### Resposta (`200 OK`)
+
+Mesmo formato do login email/senha:
+
+```json
+{
+  "user": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "email": "joao@gmail.com",
+    "name": "João Silva",
+    "role": "USER",
+    "kycStatus": "PENDING",
+    "mfaEnabled": false
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+<Note>
+  Se o usuário tiver MFA ativado, o login Google também retorna `{ mfaRequired: true }` — o fluxo segue igual ao login normal com senha.
+</Note>
+
+---
+
+## Autenticação de Dois Fatores (MFA)
+
+MFA é opcional. Quando ativado, o login retorna `mfaRequired: true` em vez dos tokens. O cliente deve então enviar o código TOTP do app autenticador.
+
+### Configurar MFA
+
+**Passo 1** — Gerar QR code (requer autenticação):
+
+```bash
+curl --request POST \
+  --url https://upay-sistema-api.onrender.com/api/auth/mfa/enable \
+  --header 'Authorization: Bearer SEU_JWT_TOKEN'
+```
+
+Resposta:
+```json
+{
+  "qrCode": "data:image/png;base64,...",
+  "secret": "JBSWY3DPEHPK3PXP",
+  "manualEntryKey": "JBSWY3DPEHPK3PXP",
+  "mfaEnabled": false
+}
+```
+
+Mostre o `qrCode` para o usuário escanear com Google Authenticator ou Authy.
+
+**Passo 2** — Confirmar código TOTP (ativa o MFA):
+
+```bash
+curl --request POST \
+  --url https://upay-sistema-api.onrender.com/api/auth/mfa/confirm \
+  --header 'Authorization: Bearer SEU_JWT_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{ "code": "123456" }'
+```
+
+### Login com MFA ativo
+
+1. Faça o login normalmente (`POST /api/auth/login`)
+2. Se MFA estiver ativado, a resposta será:
+
+```json
+{
+  "mfaRequired": true,
+  "message": "Digite o código do seu aplicativo autenticador."
+}
+```
+
+3. Envie o código TOTP:
+
+```bash
+curl --request POST \
+  --url https://upay-sistema-api.onrender.com/api/auth/mfa/verify \
+  --header 'Content-Type: application/json' \
+  --data '{ "email": "joao@example.com", "code": "123456" }'
+```
+
+Resposta: mesmo formato do login normal (`user` + `token` + `refreshToken`).
+
+<Warning>
+  Cada código TOTP é válido por 30 segundos e só pode ser usado uma vez. Reutilizar o mesmo código dentro da janela retorna `400`.
+</Warning>
+
+---
+
 ## 📚 Próximos Passos
 
 Agora que você sabe como autenticar suas requisições, explore:

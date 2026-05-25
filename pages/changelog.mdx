@@ -10,18 +10,6 @@ Sugestões de features ou melhorias podem ser enviadas pelo Dashboard na seção
 
 ## Atualizações Recentes
 
-<Update label="25 de Mai, 2026">
-## Hardening de Segurança (Waves 9–12)
-
-**Correções de segurança:**
-
-- **XSS em branding (BUG #231)**: URLs de logo e banner sanitizadas antes de usadas em `href`/`src` — previne XSS via configuração de white-label
-- **SMS rate-limit fail-closed (BUG #224, #228)**: Falha de conexão ao Redis resulta em rejeição da operação (fail-closed), não em bypass; números validados no formato E.164 antes de disparar SMS
-- **Auditoria SETTINGS_UPDATED (BUG #221)**: Evento de auditoria agora registra `oldValue` e `newValue` — rastreabilidade completa de mudanças de configuração do sistema
-- **WAF IP blocklist persistida (BUG #208)**: Lista negra de IPs armazenada no Redis com TTL 24h — o estado de bloqueio sobrevive a restarts do servidor
-
-</Update>
-
 <Update label="13 de Mai, 2026">
 ## Sistema de Assinaturas Recorrentes e Cart Abandonment (v2.23.0)
 

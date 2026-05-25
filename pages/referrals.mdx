@@ -9,7 +9,7 @@ O Sistema de Indicações permite que os usuários convidem outros para a plataf
 
 ## Endpoints Disponíveis
 
-Todos os endpoints abaixo requerem autenticação via **API Key**.
+Todos os endpoints abaixo requerem autenticação via **Bearer Token (JWT)**.
 
 ### 1. Obter Código de Indicação
 
@@ -28,7 +28,9 @@ Retorna o código único e o link de convite do usuário.
 
 ### 2. Verificar Estatísticas
 
-Obtém um resumo do desempenho das indicações.
+Obtém um resumo do desempenho das indicações. Inclui os dois tipos de ganho:
+- **Recompensa fixa (Tipo 1)**: bônus único creditado quando o indicado completa o KYC
+- **Comissão recorrente (Tipo 2)**: percentual sobre as transações do indicado
 
 **GET** `/api/referral/stats`
 
@@ -37,8 +39,16 @@ Obtém um resumo do desempenho das indicações.
 ```json
 {
   "totalReferrals": 15,
-  "activeReferrals": 12,
-  "totalEarnings": 50000
+  "completedReferrals": 12,
+  "pendingReferrals": 3,
+  "totalFixedRewards": 5,
+  "totalFixedRewardAmountCents": 10000,
+  "totalCommissions": 10,
+  "totalCommissionAmountCents": 40000,
+  "totalRewards": 15,
+  "totalRewardAmountCents": 50000,
+  "totalWithdrawnCents": 20000,
+  "availableBalanceCents": 30000
 }
 ```
 

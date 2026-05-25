@@ -1,5 +1,42 @@
 ---
 title: "Deletar Cliente"
 description: "Remove um cliente permanentemente"
-openapi: "DELETE /api/v1/customers/{id}"
+icon: "trash"
 ---
+
+## Deletar cliente
+
+```
+DELETE /api/clients/{id}
+```
+
+**Autenticação**: Bearer Token (API Key)
+
+### Parâmetros de path
+
+| Parâmetro | Tipo | Descrição |
+|---|---|---|
+| `id` | `string (UUID)` | ID do cliente a ser removido |
+
+### Exemplo
+
+```bash
+curl --request DELETE \
+  --url https://upay-sistema-api.onrender.com/api/clients/550e8400-e29b-41d4-a716-446655440000 \
+  --header 'Authorization: Bearer SUA_API_KEY'
+```
+
+### Resposta (`204 No Content`)
+
+Nenhum corpo retornado. Resposta vazia indica sucesso.
+
+### Erros comuns
+
+| Código | Descrição |
+|---|---|
+| `404` | Cliente não encontrado |
+| `500` | Falha interna ao deletar |
+
+<Card title="Listar clientes" icon="list" href="./list" horizontal>
+  Consulte todos os clientes cadastrados.
+</Card>
