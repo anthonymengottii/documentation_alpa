@@ -1,0 +1,126 @@
+---
+title: 'Assinaturas Recorrentes'
+description: 'Crie planos de cobrança recorrente, gerencie assinantes e acompanhe métricas de MRR e churn'
+icon: 'rotate'
+---
+
+<Info>
+  O sistema de assinaturas da Upay permite cobrar clientes de forma recorrente com retry automático, período de trial e métricas em tempo real — sem precisar gerenciar cobranças manualmente.
+</Info>
+
+## O que você pode fazer
+
+<CardGroup cols={2}>
+  <Card title="Criar planos" icon="plus">
+    Configure nome, valor, intervalo (mensal, trimestral, semestral, anual) e dias de trial.
+  </Card>
+  <Card title="Checkout público" icon="cart-shopping">
+    Clientes se inscrevem sem autenticação — ideal para landing pages e funis de vendas.
+  </Card>
+  <Card title="Retry automático" icon="rotate">
+    Cobranças falhas são retentadas automaticamente, reduzindo o churn involuntário.
+  </Card>
+  <Card title="Métricas MRR/Churn" icon="chart-line">
+    Acompanhe Receita Mensal Recorrente, taxa de cancelamento e assinantes ativos em tempo real.
+  </Card>
+</CardGroup>
+
+## Fluxo do assinante
+
+<Steps>
+  <Step title="Descobre o plano">
+    O cliente acessa a página pública do plano via `GET /api/subscriptions/public/:planId` ou uma landing page customizada.
+  </Step>
+  <Step title="Se inscreve">
+    O cliente preenche nome, email, CPF/CNPJ e dados de pagamento. A inscrição é feita via `POST /api/subscriptions/checkout` — sem necessidade de conta na Upay.
+  </Step>
+  <Step title="Trial (se configurado)">
+    Se o plano tem `trialDays > 0`, o cliente fica em status `TRIAL` e a primeira cobrança só ocorre após o período de trial.
+  </Step>
+  <Step title="Cobranças automáticas">
+    A Upay processa a cobrança no intervalo do plano. Em caso de falha, o status muda para `PAST_DUE` e o retry é disparado automaticamente.
+  </Step>
+  <Step title="Gestão pelo assinante">
+    O assinante pode pausar, retomar ou cancelar a assinatura, e atualizar o cartão de cobrança.
+  </Step>
+</Steps>
+
+## Criando seu primeiro plano
+
+```bash
+curl --request POST \
+  --url https://upay-sistema-api.onrender.com/api/subscriptions/plans \
+  --header 'Authorization: Bearer SUA_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "name": "Plano Mensal",
+    "amountCents": 9900,
+    "interval": "MONTHLY",
+    "trialDays": 7
+  }'
+```
+
+## Intervalos disponíveis
+
+| Valor | Descrição | Cobrança a cada |
+|---|---|---|
+| `MONTHLY` | Mensal | 30 dias |
+| `QUARTERLY` | Trimestral | 90 dias |
+| `SEMIANNUAL` | Semestral | 180 dias |
+| `ANNUAL` | Anual | 365 dias |
+
+## Métricas em tempo real
+
+```bash
+curl https://upay-sistema-api.onrender.com/api/subscriptions/metrics \
+  -H 'Authorization: Bearer SUA_API_KEY'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "mrr": 99000,
+    "activeSubscribers": 42,
+    "churnRate": 0.048
+  }
+}
+```
+
+- **MRR**: soma das cobranças mensais de todos os assinantes ativos (em centavos)
+- **activeSubscribers**: assinantes com status `ACTIVE` ou `TRIAL`
+- **churnRate**: cancelamentos do mês ÷ assinantes do início do mês (0–1)
+
+## Webhooks de assinatura
+
+Configure um webhook para receber notificações automáticas:
+
+| Evento | Quando disparado |
+|---|---|
+| `subscription.created` | Nova inscrição |
+| `subscription.activated` | Primeira cobrança aprovada |
+| `subscription.charge_failed` | Cobrança falhou |
+| `subscription.cancelled` | Assinante cancelou |
+| `subscription.paused` | Assinante pausou |
+
+<Card title="Configurar webhooks" icon="bell" href="../webhooks/reference" horizontal>
+  Receba notificações em tempo real sobre eventos de assinatura.
+</Card>
+
+## Boas práticas
+
+<Card horizontal>
+  - Use `trialDays` para reduzir a barreira de entrada — trials convertem melhor
+  - Configure webhooks para `subscription.charge_failed` e entre em contato proativamente com o assinante
+  - Utilize `maxSubscribers` para criar planos com vagas limitadas e gerar urgência
+  - Ofereça desconto no plano anual para reduzir o churn (ex: 2 meses grátis)
+</Card>
+
+<CardGroup cols={2}>
+  <Card title="Criar plano" icon="plus" href="../../subscriptions/create-plan">
+    Referência completa do endpoint de criação.
+  </Card>
+  <Card title="Checkout público" icon="cart-shopping" href="../../subscriptions/checkout">
+    Como inscrever clientes sem autenticação.
+  </Card>
+</CardGroup>

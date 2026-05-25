@@ -1,6 +1,137 @@
 ---
-title: "Listar Eventos de Webhook"
-description: "Lista eventos de webhook com paginação"
-openapi: "GET /api/v1/webhooks/events"
+title: 'Tipos de Eventos'
+description: 'Referência completa de todos os eventos de webhook disponíveis na Upay'
+icon: 'bell'
 ---
 
+## Eventos disponíveis
+
+Configure seus webhooks para receber notificações dos eventos relevantes para sua integração. Cada evento entrega um payload JSON com os dados do objeto afetado.
+
+### Transações
+
+| Evento | Quando disparado |
+|---|---|
+| `transaction.created` | Nova transação criada (status `PENDING`) |
+| `transaction.updated` | Status da transação foi alterado |
+| `transaction.completed` | Pagamento confirmado e saldo creditado (`PAID`) |
+| `transaction.failed` | Pagamento falhou (`FAILED`) |
+
+### Links de pagamento
+
+| Evento | Quando disparado |
+|---|---|
+| `payment_link.created` | Novo link de pagamento criado |
+| `payment_link.updated` | Link de pagamento atualizado (ex: estoque zerado, desativado) |
+
+### Saldo
+
+| Evento | Quando disparado |
+|---|---|
+| `balance.updated` | Saldo da carteira atualizado (crédito ou débito) |
+
+### Assinaturas
+
+| Evento | Quando disparado |
+|---|---|
+| `subscription.created` | Nova assinatura criada |
+| `subscription.activated` | Primeira cobrança aprovada — assinatura ativa |
+| `subscription.charge_failed` | Cobrança recorrente falhou — status muda para `PAST_DUE` |
+| `subscription.cancelled` | Assinatura cancelada (pelo assinante ou pelo merchant) |
+| `subscription.paused` | Assinatura pausada pelo assinante |
+| `subscription.resumed` | Assinatura retomada após pausa |
+
+---
+
+## Formato do payload
+
+Todos os eventos seguem a mesma estrutura de envelope:
+
+```json
+{
+  "event": "transaction.completed",
+  "timestamp": "2026-05-25T14:30:00.000Z",
+  "data": { }
+}
+```
+
+### Exemplo: `transaction.completed`
+
+```json
+{
+  "event": "transaction.completed",
+  "timestamp": "2026-05-25T14:30:00.000Z",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "status": "PAID",
+    "amountCents": 9900,
+    "paymentMethod": "PIX",
+    "clientEmail": "joao@example.com",
+    "createdAt": "2026-05-25T14:29:00.000Z",
+    "paidAt": "2026-05-25T14:30:00.000Z"
+  }
+}
+```
+
+### Exemplo: `subscription.charge_failed`
+
+```json
+{
+  "event": "subscription.charge_failed",
+  "timestamp": "2026-05-25T10:00:00.000Z",
+  "data": {
+    "subscriptionId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+    "planName": "Plano Mensal Premium",
+    "clientEmail": "maria@example.com",
+    "amountCents": 9900,
+    "failureReason": "insufficient_funds",
+    "retryAt": "2026-05-28T10:00:00.000Z"
+  }
+}
+```
+
+---
+
+## Verificar assinatura do webhook
+
+Todos os eventos incluem o header `X-Webhook-Signature` com um HMAC-SHA256 do payload, assinado com o segredo configurado na assinatura.
+
+```javascript
+const crypto = require('crypto');
+
+function verifyWebhook(payload, signature, secret) {
+  const expected = crypto
+    .createHmac('sha256', secret)
+    .update(payload)
+    .digest('hex');
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expected)
+  );
+}
+```
+
+<Warning>
+  Sempre valide a assinatura antes de processar o evento. Ignore requests sem o header ou com assinatura inválida.
+</Warning>
+
+---
+
+## Listar eventos recebidos
+
+Use o endpoint de eventos para consultar o histórico de webhooks disparados:
+
+```bash
+curl --request GET \
+  --url 'https://upay-sistema-api.onrender.com/api/v1/webhooks/events?limit=20' \
+  --header 'Authorization: Bearer SUA_API_KEY'
+```
+
+<CardGroup cols={2}>
+  <Card title="Criar assinatura de webhook" icon="plus" href="./subscriptions-create">
+    Configure quais eventos receber e para qual URL.
+  </Card>
+  <Card title="Referência de webhooks" icon="book" href="./reference">
+    Visão geral do sistema de webhooks.
+  </Card>
+</CardGroup>

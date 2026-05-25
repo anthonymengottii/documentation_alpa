@@ -1,0 +1,95 @@
+---
+title: 'Assinaturas Recorrentes'
+description: 'Visão geral do sistema de assinaturas da Upay — planos, cobranças automáticas e métricas'
+icon: 'rotate'
+---
+
+<Info>
+  O sistema de assinaturas permite cobrar clientes de forma recorrente com planos configuráveis, retry automático em caso de falha e métricas em tempo real de MRR e churn.
+</Info>
+
+## Como funciona
+
+1. O merchant cria um **plano** com nome, valor, intervalo e período de trial opcional.
+2. O cliente se inscreve via **checkout público** (sem autenticação) ou via API.
+3. A Upay gera cobranças automáticas no intervalo do plano.
+4. Em caso de falha, o sistema realiza **retry automático**.
+5. O merchant acompanha **MRR, churn rate e assinantes ativos** em tempo real.
+
+## Modelos
+
+### Plano (`SubscriptionPlan`)
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `id` | `uuid` | Identificador único do plano |
+| `name` | `string` | Nome do plano |
+| `description` | `string?` | Descrição opcional |
+| `amountCents` | `integer` | Valor da cobrança em centavos |
+| `interval` | `enum` | `MONTHLY`, `QUARTERLY`, `SEMIANNUAL`, `ANNUAL` |
+| `trialDays` | `integer?` | Dias de trial gratuito |
+| `maxSubscribers` | `integer?` | Limite de assinantes (`null` = ilimitado) |
+| `active` | `boolean` | Se o plano aceita novas inscrições |
+| `createdAt` | `datetime` | Data de criação |
+
+### Assinatura (`Subscription`)
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `id` | `uuid` | Identificador único |
+| `planId` | `uuid` | Plano vinculado |
+| `status` | `enum` | `ACTIVE`, `TRIAL`, `PAUSED`, `CANCELLED`, `PAST_DUE` |
+| `nextBillingDate` | `datetime` | Próxima data de cobrança |
+| `cancelledAt` | `datetime?` | Data de cancelamento |
+
+## Status da assinatura
+
+| Status | Descrição |
+|---|---|
+| `TRIAL` | Período de trial ativo — ainda não foi cobrado |
+| `ACTIVE` | Assinatura ativa e em dia |
+| `PAST_DUE` | Último pagamento falhou — retry pendente |
+| `PAUSED` | Assinatura pausada pelo assinante |
+| `CANCELLED` | Assinatura cancelada |
+
+## Endpoints disponíveis
+
+### Gestão de planos (API Key)
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| `GET` | `/api/subscriptions/plans` | Listar planos |
+| `POST` | `/api/subscriptions/plans` | Criar plano |
+| `GET` | `/api/subscriptions/plans/:id` | Obter plano específico |
+| `PATCH` | `/api/subscriptions/plans/:id` | Atualizar plano |
+| `DELETE` | `/api/subscriptions/plans/:id` | Remover plano |
+| `GET` | `/api/subscriptions/metrics` | MRR, churn rate, assinantes ativos |
+| `GET` | `/api/subscriptions/subscribers` | Listar todos os assinantes |
+| `POST` | `/api/subscriptions/:id/retry` | Reprocessar cobrança falha |
+
+### Endpoints públicos (sem autenticação)
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| `GET` | `/api/subscriptions/public/:planId` | Detalhes do plano para landing pages |
+| `POST` | `/api/subscriptions/checkout` | Inscrever cliente em um plano |
+| `GET` | `/api/subscriptions/customer?email=...` | Listar assinaturas do cliente por email |
+| `PATCH` | `/api/subscriptions/customer/:id/cancel` | Assinante cancela assinatura |
+| `PATCH` | `/api/subscriptions/customer/:id/pause` | Assinante pausa assinatura |
+| `PATCH` | `/api/subscriptions/customer/:id/resume` | Assinante retoma assinatura |
+| `PATCH` | `/api/subscriptions/customer/:id/card` | Assinante atualiza cartão de cobrança |
+
+<CardGroup cols={2}>
+  <Card title="Criar plano" icon="plus" href="./create-plan">
+    Configure nome, valor, intervalo e trial.
+  </Card>
+  <Card title="Listar planos" icon="list" href="./list-plans">
+    Consulte todos os planos do seu merchant.
+  </Card>
+  <Card title="Checkout público" icon="cart-shopping" href="./checkout">
+    Inscreva clientes sem autenticação.
+  </Card>
+  <Card title="Self-service do assinante" icon="user" href="./customer">
+    Rotas para o assinante gerenciar a própria assinatura.
+  </Card>
+</CardGroup>

@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "UPay Gateway API",
-    "version": "2.22.0",
-    "description": "Documentação completa da API pública do UPay Gateway. Todas as rotas requerem autenticação via API Key, exceto validação de cupom e checkout público.",
+    "version": "2.23.0",
+    "description": "Documentação completa da API pública do UPay Gateway (v2.23.0). Todas as rotas requerem autenticação via API Key, exceto validação de cupom, checkout público e checkout de assinaturas. Novidades em 2.23.0: sistema de assinaturas recorrentes com planos, retry automático e métricas MRR/churn; cart abandonment para recuperação de vendas.",
     "contact": {
       "email": "suporte@upay.com.br"
     },
@@ -54,6 +54,18 @@
     {
       "name": "Afiliados",
       "description": "Marketplace de afiliados, links rastreáveis e comissões automáticas"
+    },
+    {
+      "name": "Assinaturas",
+      "description": "Planos de assinatura recorrente, checkout público e métricas MRR/churn"
+    },
+    {
+      "name": "Saques",
+      "description": "Solicitações de saque, saldo disponível e métodos de retirada"
+    },
+    {
+      "name": "Antecipações",
+      "description": "Antecipação de recebíveis de transações de cartão parceladas"
     }
   ],
   "paths": {
@@ -2998,6 +3010,434 @@
           "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
+    },
+    "/api/subscriptions/plans": {
+      "get": {
+        "tags": ["Assinaturas"],
+        "summary": "Listar planos",
+        "description": "Lista todos os planos de assinatura do usuário autenticado",
+        "security": [{ "apiKeyAuth": [] }],
+        "parameters": [
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20 } },
+          { "name": "page", "in": "query", "schema": { "type": "integer", "minimum": 1, "default": 1 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de planos retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/SubscriptionPlan" }
+                    },
+                    "meta": { "$ref": "#/components/schemas/PaginationMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+      "post": {
+        "tags": ["Assinaturas"],
+        "summary": "Criar plano",
+        "description": "Cria um novo plano de assinatura recorrente",
+        "security": [{ "apiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateSubscriptionPlanRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Plano criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": { "$ref": "#/components/schemas/SubscriptionPlan" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/subscriptions/plans/{id}": {
+      "patch": {
+        "tags": ["Assinaturas"],
+        "summary": "Atualizar plano",
+        "description": "Atualiza campos de um plano de assinatura existente",
+        "security": [{ "apiKeyAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateSubscriptionPlanRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Plano atualizado" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["Assinaturas"],
+        "summary": "Remover plano",
+        "description": "Remove um plano de assinatura (apenas se não houver assinantes ativos)",
+        "security": [{ "apiKeyAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": {
+          "200": { "description": "Plano removido" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/subscriptions/checkout": {
+      "post": {
+        "tags": ["Assinaturas"],
+        "summary": "Checkout de assinatura (público)",
+        "description": "Inscreve um cliente em um plano de assinatura. Não requer autenticação.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["planId", "clientName", "clientEmail", "clientDocument", "paymentMethod"],
+                "properties": {
+                  "planId": { "type": "string", "format": "uuid", "description": "ID do plano de assinatura" },
+                  "clientName": { "type": "string", "example": "João Silva" },
+                  "clientEmail": { "type": "string", "format": "email", "example": "joao@example.com" },
+                  "clientDocument": { "type": "string", "description": "CPF (11 dígitos) ou CNPJ (14 dígitos)", "example": "12345678901" },
+                  "paymentMethod": { "type": "string", "enum": ["CREDIT_CARD", "PIX"], "example": "CREDIT_CARD" },
+                  "cardToken": { "type": "string", "description": "Token do cartão (obrigatório para CREDIT_CARD)" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Assinatura criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "subscriptionId": { "type": "string", "format": "uuid" },
+                        "status": { "type": "string", "enum": ["ACTIVE", "TRIAL", "PENDING"] },
+                        "nextBillingDate": { "type": "string", "format": "date-time" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/subscriptions/metrics": {
+      "get": {
+        "tags": ["Assinaturas"],
+        "summary": "Métricas de assinaturas",
+        "description": "Retorna MRR, churn rate e contagem de assinantes ativos do merchant",
+        "security": [{ "apiKeyAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Métricas retornadas com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "mrr": { "type": "integer", "description": "Receita mensal recorrente em centavos", "example": 99000 },
+                        "activeSubscribers": { "type": "integer", "example": 42 },
+                        "churnRate": { "type": "number", "format": "float", "description": "Taxa de cancelamento no mês (0-1)", "example": 0.05 }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/withdraws/balance": {
+      "get": {
+        "tags": ["Saques"],
+        "summary": "Obter saldo disponível para saque",
+        "description": "Retorna o saldo disponível para saque, incluindo detalhamento por método",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Saldo retornado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "availableBalance": { "type": "integer", "description": "Saldo disponível em centavos", "example": 150000 },
+                        "pendingBalance": { "type": "integer", "description": "Saldo em trânsito em centavos", "example": 30000 }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/withdraws/providers": {
+      "get": {
+        "tags": ["Saques"],
+        "summary": "Listar provedores de saque",
+        "description": "Lista os provedores de pagamento disponíveis para saque",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Lista de provedores" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/withdraws/methods": {
+      "get": {
+        "tags": ["Saques"],
+        "summary": "Listar métodos de saque",
+        "description": "Lista os métodos de saque suportados (PIX, TED, etc)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Lista de métodos disponíveis" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/withdraws/{id}/process": {
+      "post": {
+        "tags": ["Saques"],
+        "summary": "Processar saque",
+        "description": "Processa uma solicitação de saque pendente (operação administrativa)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": {
+          "200": { "description": "Saque processado" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/withdraws/{id}/cancel": {
+      "post": {
+        "tags": ["Saques"],
+        "summary": "Cancelar saque",
+        "description": "Cancela uma solicitação de saque pendente",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": {
+          "200": { "description": "Saque cancelado" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/payment-links/public/slug/{slug}/start": {
+      "post": {
+        "tags": ["Links de Pagamento"],
+        "summary": "Iniciar checkout (público)",
+        "description": "Cria uma transação PENDING sem dados do cliente — usado para inicializar o checkout antes do preenchimento do formulário",
+        "security": [],
+        "parameters": [{ "name": "slug", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "201": { "description": "Transação PENDING criada" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/payment-links/public/slug/{slug}/cart-abandonment": {
+      "post": {
+        "tags": ["Links de Pagamento"],
+        "summary": "Registrar abandono de carrinho",
+        "description": "Registra que um cliente iniciou mas não concluiu o checkout. Usado para análise de conversão e recuperação de vendas.",
+        "security": [],
+        "parameters": [{ "name": "slug", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["clientEmail"],
+                "properties": {
+                  "clientEmail": { "type": "string", "format": "email" },
+                  "clientName": { "type": "string" },
+                  "clientDocument": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Abandono registrado" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/subscriptions/public/{planId}": {
+      "get": {
+        "tags": ["Assinaturas"],
+        "summary": "Detalhes do plano (público)",
+        "description": "Retorna informações de um plano de assinatura sem autenticação. Ideal para landing pages.",
+        "security": [],
+        "parameters": [{ "name": "planId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": {
+          "200": {
+            "description": "Detalhes do plano",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": { "$ref": "#/components/schemas/SubscriptionPlan" }
+                  }
+                }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/subscriptions/customer": {
+      "get": {
+        "tags": ["Assinaturas"],
+        "summary": "Listar assinaturas do cliente (público)",
+        "description": "Retorna as assinaturas vinculadas ao email informado. Sem autenticação.",
+        "security": [],
+        "parameters": [{ "name": "email", "in": "query", "required": true, "schema": { "type": "string", "format": "email" } }],
+        "responses": {
+          "200": { "description": "Lista de assinaturas do cliente" },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/api/subscriptions/customer/{id}/cancel": {
+      "patch": {
+        "tags": ["Assinaturas"],
+        "summary": "Assinante cancela assinatura",
+        "description": "Endpoint público para o assinante cancelar a própria assinatura sem autenticação.",
+        "security": [],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": { "email": { "type": "string", "format": "email" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Assinatura cancelada" },
+          "403": { "description": "Email não corresponde ao assinante" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/api/advances": {
+      "get": {
+        "tags": ["Antecipações"],
+        "summary": "Listar antecipações",
+        "description": "Lista todas as solicitações de antecipação do merchant",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20, "maximum": 100 } }
+        ],
+        "responses": {
+          "200": { "description": "Lista de antecipações" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+      "post": {
+        "tags": ["Antecipações"],
+        "summary": "Solicitar antecipação",
+        "description": "Cria uma solicitação de antecipação de recebíveis. Apenas uma antecipação PENDING ou APPROVED por vez é permitida.",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "amountCents": { "type": "integer", "description": "Valor a antecipar em centavos. Se omitido, antecipa tudo disponível." },
+                  "reason": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Antecipação criada com status PENDING" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "description": "KYC não aprovado" },
+          "409": { "description": "Já existe uma antecipação PENDING ou APPROVED" }
+        }
+      }
+    },
+    "/api/advances/{id}": {
+      "get": {
+        "tags": ["Antecipações"],
+        "summary": "Obter antecipação",
+        "description": "Retorna os detalhes de uma antecipação específica",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": {
+          "200": { "description": "Detalhes da antecipação" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
     }
   },
   "components": {
@@ -3007,9 +3447,50 @@
         "in": "header",
         "name": "API-Key",
         "description": "Chave de API obtida através do endpoint /api/credentials. Também aceita formato Bearer Token: Authorization: Bearer <api_key>"
+      },
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token obtido via POST /api/auth/login. Usado em rotas autenticadas do dashboard."
       }
     },
     "schemas": {
+      "SubscriptionPlan": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "example": "Plano Mensal" },
+          "description": { "type": "string", "nullable": true },
+          "amountCents": { "type": "integer", "description": "Valor da cobrança em centavos", "example": 9900 },
+          "interval": { "type": "string", "enum": ["MONTHLY", "QUARTERLY", "SEMIANNUAL", "ANNUAL"], "example": "MONTHLY" },
+          "trialDays": { "type": "integer", "nullable": true, "description": "Dias de período de trial", "example": 7 },
+          "maxSubscribers": { "type": "integer", "nullable": true, "description": "Limite de assinantes (null = ilimitado)" },
+          "active": { "type": "boolean", "example": true },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CreateSubscriptionPlanRequest": {
+        "type": "object",
+        "required": ["name", "amountCents", "interval"],
+        "properties": {
+          "name": { "type": "string", "example": "Plano Mensal Premium" },
+          "description": { "type": "string", "example": "Acesso completo com suporte prioritário" },
+          "amountCents": { "type": "integer", "minimum": 500, "example": 9900, "description": "Valor em centavos (mínimo R$ 5,00)" },
+          "interval": { "type": "string", "enum": ["MONTHLY", "QUARTERLY", "SEMIANNUAL", "ANNUAL"], "example": "MONTHLY" },
+          "trialDays": { "type": "integer", "minimum": 0, "example": 7 },
+          "maxSubscribers": { "type": "integer", "minimum": 1, "nullable": true }
+        }
+      },
+      "PaginationMeta": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "integer", "example": 1 },
+          "limit": { "type": "integer", "example": 20 },
+          "total": { "type": "integer", "example": 100 },
+          "totalPages": { "type": "integer", "example": 5 }
+        }
+      },
       "Transaction": {
         "type": "object",
         "properties": {

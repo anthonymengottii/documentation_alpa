@@ -44,7 +44,8 @@
               "pages/guides/features/coupons",
               "pages/guides/features/transactions",
               "pages/guides/features/webhooks",
-              "pages/guides/features/affiliates"
+              "pages/guides/features/affiliates",
+              "pages/guides/features/subscriptions"
             ]
           },
           {
@@ -137,6 +138,24 @@
               "pages/affiliates/programs-list",
               "pages/affiliates/programs-update",
               "pages/affiliates/programs-delete"
+            ]
+          },
+          {
+            "group": "Assinaturas",
+            "pages": [
+              "pages/subscriptions/reference",
+              "pages/subscriptions/create-plan",
+              "pages/subscriptions/list-plans",
+              "pages/subscriptions/checkout",
+              "pages/subscriptions/customer"
+            ]
+          },
+          {
+            "group": "Antecipações",
+            "pages": [
+              "pages/advances/reference",
+              "pages/advances/create",
+              "pages/advances/list"
             ]
           },
           {

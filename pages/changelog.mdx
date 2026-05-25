@@ -10,6 +10,48 @@ Sugestões de features ou melhorias podem ser enviadas pelo Dashboard na seção
 
 ## Atualizações Recentes
 
+<Update label="25 de Mai, 2026">
+## Hardening de Segurança (Waves 9–12)
+
+**Correções de segurança:**
+
+- **XSS em branding (BUG #231)**: URLs de logo e banner sanitizadas antes de usadas em `href`/`src` — previne XSS via configuração de white-label
+- **SMS rate-limit fail-closed (BUG #224, #228)**: Falha de conexão ao Redis resulta em rejeição da operação (fail-closed), não em bypass; números validados no formato E.164 antes de disparar SMS
+- **Auditoria SETTINGS_UPDATED (BUG #221)**: Evento de auditoria agora registra `oldValue` e `newValue` — rastreabilidade completa de mudanças de configuração do sistema
+- **WAF IP blocklist persistida (BUG #208)**: Lista negra de IPs armazenada no Redis com TTL 24h — o estado de bloqueio sobrevive a restarts do servidor
+
+</Update>
+
+<Update label="13 de Mai, 2026">
+## Sistema de Assinaturas Recorrentes e Cart Abandonment (v2.23.0)
+
+**Novos recursos:**
+
+- **Planos de Assinatura**: Crie planos com nome, preço, intervalo (mensal, anual, etc.), período de trial e limite de assinantes
+  - `GET/POST /api/subscriptions/plans` — listar e criar planos
+  - `PATCH/DELETE /api/subscriptions/plans/:id` — editar e remover planos
+  - `GET /api/subscriptions/public/:planId` — página pública do plano para landing pages
+- **Checkout público de assinatura**: `POST /api/subscriptions/checkout` — clientes se inscrevem sem autenticação
+- **Gestão pelo assinante**: cancelar, pausar, retomar assinatura e atualizar cartão de cobrança
+- **Métricas MRR/Churn**: `GET /api/subscriptions/metrics` — MRR, churn rate e assinantes ativos
+- **Retry automático**: `POST /api/subscriptions/:id/retry` — reprocessa cobranças falhas
+- **Cart Abandonment**:
+  - `POST /api/payment-links/public/slug/:slug/cart-abandonment` — captura clientes que não concluíram o checkout
+  - `POST /api/payment-links/public/slug/:slug/cart-abandonment/recover` — marca abandono como recuperado
+  - `GET /api/admin/cart-abandonment` — painel admin com filtros por link e período
+
+**Painel Admin:**
+- `GET /api/admin/subscriptions/metrics` — métricas globais da plataforma
+- `GET /api/admin/subscriptions/all` — todas as assinaturas
+- `GET /api/admin/subscriptions/subscribers` — listar assinantes
+
+**Correções de segurança (Waves 6–8):**
+- Trust proxy: IP real propagado corretamente em deploys com reverse proxy (Render)
+- Race condition em saques: corrigida via `updateMany` atômico — previne duplo processamento
+- Sentry: integrado em frontend e backend para rastreamento de erros em produção
+
+</Update>
+
 <Update label="13 de Abr, 2026">
 ## Sistema completo de Marketing de Afiliados (v2.22.0)
 

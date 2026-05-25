@@ -25,6 +25,8 @@ Estes endpoints são públicos e não requerem autenticação. São usados no ch
 | **POST** | `/api/payment-links/public/slug/{slug}/checkout` | Criar checkout completo com dados do cliente |
 | **GET** | `/api/payment-links/public/transactions/{id}/status` | Consultar status de uma transação |
 | **GET** | `/api/payment-links/public/transactions/{id}/sync-status` | Sincronizar status consultando gateway diretamente |
+| **POST** | `/api/payment-links/public/slug/{slug}/cart-abandonment` | Registrar abandono de carrinho (cliente não concluiu checkout) |
+| **POST** | `/api/payment-links/public/slug/{slug}/cart-abandonment/recover` | Marcar carrinho abandonado como recuperado (compra concluída) |
 
 ### Endpoints privados (API v1)
 

@@ -1,0 +1,52 @@
+---
+title: 'Antecipações'
+description: 'Antecipe recebíveis de transações de cartão parceladas antes do prazo de liberação'
+icon: 'forward'
+---
+
+<Info>
+  Antecipações permitem receber antes do prazo o saldo de transações de cartão parceladas que ainda estão em período de retenção. Disponível para contas com KYC aprovado.
+</Info>
+
+## Como funciona
+
+Por padrão, transações de cartão são liberadas automaticamente:
+- **À vista**: 30 dias após a confirmação
+- **Parceladas**: uma parcela a cada 30 dias
+
+Com uma antecipação, o merchant recebe o valor líquido das parcelas futuras **imediatamente**, descontada uma taxa de antecipação configurada pela plataforma.
+
+## Regras importantes
+
+<Warning>
+  **Somente uma antecipação pode estar pendente ou aprovada por vez.** Tentativas de criar uma nova antecipação enquanto há uma em andamento retornam `409 Conflict`.
+</Warning>
+
+## Status da antecipação
+
+| Status | Descrição |
+|---|---|
+| `PENDING` | Solicitação criada — aguardando análise |
+| `APPROVED` | Aprovada — processamento em andamento |
+| `COMPLETED` | Concluída — valor creditado na carteira |
+| `REJECTED` | Rejeitada pela plataforma |
+| `CANCELLED` | Cancelada pelo merchant antes da aprovação |
+
+## Endpoints disponíveis
+
+Todos os endpoints requerem autenticação via **Bearer Token (JWT)**.
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| `GET` | `/api/advances/` | Listar antecipações |
+| `GET` | `/api/advances/:id` | Obter detalhes de uma antecipação |
+| `POST` | `/api/advances/` | Solicitar nova antecipação |
+
+<CardGroup cols={2}>
+  <Card title="Solicitar antecipação" icon="plus" href="./create">
+    Como criar uma solicitação de antecipação.
+  </Card>
+  <Card title="Listar antecipações" icon="list" href="./list">
+    Consulte o histórico de solicitações.
+  </Card>
+</CardGroup>

@@ -1,0 +1,79 @@
+---
+title: 'Listar planos'
+description: 'Consulte todos os planos de assinatura do seu merchant'
+icon: 'list'
+---
+
+## Endpoint
+
+```
+GET /api/subscriptions/plans
+```
+
+**Autenticação**: API Key (`Authorization: Bearer SUA_API_KEY`)
+
+## Parâmetros de query
+
+| Parâmetro | Tipo | Padrão | Descrição |
+|---|---|---|---|
+| `page` | `integer` | `1` | Página da listagem |
+| `limit` | `integer` | `20` | Itens por página (máximo 100) |
+
+## Exemplo
+
+```bash
+curl --request GET \
+  --url 'https://upay-sistema-api.onrender.com/api/subscriptions/plans?page=1&limit=20' \
+  --header 'Authorization: Bearer SUA_API_KEY'
+```
+
+## Resposta de sucesso (`200 OK`)
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "name": "Plano Mensal Premium",
+      "amountCents": 9900,
+      "interval": "MONTHLY",
+      "trialDays": 7,
+      "maxSubscribers": null,
+      "active": true,
+      "createdAt": "2026-05-25T00:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "limit": 20,
+    "total": 3,
+    "totalPages": 1
+  }
+}
+```
+
+## Métricas dos planos
+
+Para consultar MRR, churn rate e assinantes ativos, use o endpoint de métricas:
+
+```bash
+curl --request GET \
+  --url https://upay-sistema-api.onrender.com/api/subscriptions/metrics \
+  --header 'Authorization: Bearer SUA_API_KEY'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "mrr": 99000,
+    "activeSubscribers": 42,
+    "churnRate": 0.048
+  }
+}
+```
+
+<Card title="Criar plano" icon="plus" href="./create-plan" horizontal>
+  Adicione um novo plano de assinatura.
+</Card>

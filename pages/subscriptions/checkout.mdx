@@ -1,0 +1,85 @@
+---
+title: 'Checkout de assinatura'
+description: 'Inscreva clientes em planos de assinatura sem autenticação'
+icon: 'cart-shopping'
+---
+
+<Info>
+  O checkout de assinaturas é **público** — não requer API Key. Ideal para landing pages e páginas de planos.
+</Info>
+
+## Endpoint
+
+```
+POST /api/subscriptions/checkout
+```
+
+**Autenticação**: Nenhuma (público)
+
+## Corpo da requisição
+
+| Campo | Tipo | Obrigatório | Descrição |
+|---|---|---|---|
+| `planId` | `uuid` | ✅ | ID do plano de assinatura |
+| `clientName` | `string` | ✅ | Nome completo do assinante |
+| `clientEmail` | `string` | ✅ | Email do assinante |
+| `clientDocument` | `string` | ✅ | CPF (11 dígitos) ou CNPJ (14 dígitos) |
+| `paymentMethod` | `string` | ✅ | `CREDIT_CARD` ou `PIX` |
+| `cardToken` | `string` | Condicional | Token do cartão (obrigatório para `CREDIT_CARD`) |
+
+## Exemplo — Cartão de crédito
+
+```bash
+curl --request POST \
+  --url https://upay-sistema-api.onrender.com/api/subscriptions/checkout \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "planId": "550e8400-e29b-41d4-a716-446655440000",
+    "clientName": "João Silva",
+    "clientEmail": "joao@example.com",
+    "clientDocument": "12345678901",
+    "paymentMethod": "CREDIT_CARD",
+    "cardToken": "tok_abc123"
+  }'
+```
+
+## Resposta de sucesso (`201 Created`)
+
+```json
+{
+  "success": true,
+  "data": {
+    "subscriptionId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+    "status": "TRIAL",
+    "nextBillingDate": "2026-06-01T00:00:00.000Z"
+  }
+}
+```
+
+<Card title="Nota sobre trial" horizontal>
+  Se o plano possui `trialDays > 0`, o `status` retornado será `TRIAL` e a primeira cobrança só ocorre após o período de trial.
+</Card>
+
+## Eventos de webhook disparados
+
+Após inscrição bem-sucedida:
+
+| Evento | Quando |
+|---|---|
+| `subscription.created` | Imediatamente após inscrição |
+| `subscription.trial_started` | Quando trial é iniciado |
+| `subscription.activated` | Quando primeira cobrança é aprovada |
+| `subscription.charge_failed` | Quando cobrança falha |
+| `subscription.cancelled` | Quando assinante cancela |
+
+<Card title="Configurar webhooks" icon="bell" href="../webhooks/reference" horizontal>
+  Receba notificações automáticas de eventos de assinatura.
+</Card>
+
+## Erros comuns
+
+| Código | Descrição |
+|---|---|
+| `400` | Campo obrigatório ausente ou inválido |
+| `404` | Plano não encontrado ou inativo |
+| `409` | Assinante já possui assinatura ativa neste plano |

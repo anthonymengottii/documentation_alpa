@@ -1,0 +1,143 @@
+---
+title: 'Self-service do assinante'
+description: 'Endpoints públicos para o assinante gerenciar a própria assinatura sem autenticação'
+icon: 'user'
+---
+
+<Info>
+  Todos os endpoints desta página são **públicos** — não requerem API Key nem autenticação. São identificados pelo email do assinante + ID da assinatura.
+</Info>
+
+## Consultar assinaturas
+
+```
+GET /api/subscriptions/customer?email=EMAIL_DO_ASSINANTE
+```
+
+Retorna todas as assinaturas vinculadas ao email informado.
+
+```bash
+curl --request GET \
+  --url 'https://upay-sistema-api.onrender.com/api/subscriptions/customer?email=joao@example.com'
+```
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+      "planName": "Plano Mensal Premium",
+      "amountCents": 9900,
+      "status": "ACTIVE",
+      "nextBillingDate": "2026-06-25T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+---
+
+## Cancelar assinatura
+
+```
+PATCH /api/subscriptions/customer/:id/cancel
+```
+
+O assinante cancela a própria assinatura. O status muda para `CANCELLED` e nenhuma cobrança futura é gerada.
+
+```bash
+curl --request PATCH \
+  --url https://upay-sistema-api.onrender.com/api/subscriptions/customer/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11/cancel \
+  --header 'Content-Type: application/json' \
+  --data '{ "email": "joao@example.com" }'
+```
+
+---
+
+## Pausar assinatura
+
+```
+PATCH /api/subscriptions/customer/:id/pause
+```
+
+Pausa temporariamente a assinatura. Cobranças ficam suspensas até o assinante retomar.
+
+```bash
+curl --request PATCH \
+  --url https://upay-sistema-api.onrender.com/api/subscriptions/customer/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11/pause \
+  --header 'Content-Type: application/json' \
+  --data '{ "email": "joao@example.com" }'
+```
+
+---
+
+## Retomar assinatura
+
+```
+PATCH /api/subscriptions/customer/:id/resume
+```
+
+Retoma uma assinatura pausada. O status volta para `ACTIVE` e as cobranças são reiniciadas.
+
+```bash
+curl --request PATCH \
+  --url https://upay-sistema-api.onrender.com/api/subscriptions/customer/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11/resume \
+  --header 'Content-Type: application/json' \
+  --data '{ "email": "joao@example.com" }'
+```
+
+---
+
+## Atualizar cartão de cobrança
+
+```
+PATCH /api/subscriptions/customer/:id/card
+```
+
+Substitui o cartão de cobrança. Útil quando o cartão expirou ou foi bloqueado.
+
+| Campo | Tipo | Obrigatório | Descrição |
+|---|---|---|---|
+| `email` | `string` | ✅ | Email do assinante (validação de identidade) |
+| `cardToken` | `string` | ✅ | Novo token de cartão gerado pelo PSP |
+
+```bash
+curl --request PATCH \
+  --url https://upay-sistema-api.onrender.com/api/subscriptions/customer/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11/card \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "email": "joao@example.com",
+    "cardToken": "tok_novo_cartao"
+  }'
+```
+
+---
+
+## Resposta padrão de sucesso
+
+Todos os endpoints de ação retornam `200 OK` com o objeto atualizado da assinatura:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+    "status": "PAUSED",
+    "nextBillingDate": null
+  }
+}
+```
+
+## Erros comuns
+
+| Código | Descrição |
+|---|---|
+| `400` | Email ausente ou cartão inválido |
+| `403` | Email não corresponde ao assinante da assinatura |
+| `404` | Assinatura não encontrada |
+| `409` | Operação inválida para o status atual (ex: pausar assinatura já cancelada) |
+
+<Card title="Checkout de assinatura" icon="cart-shopping" href="./checkout" horizontal>
+  Como criar uma nova assinatura do zero.
+</Card>
