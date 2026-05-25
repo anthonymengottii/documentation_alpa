@@ -26,17 +26,6 @@ Sugestões de features ou melhorias podem ser enviadas pelo Dashboard na seção
 - **Cart Abandonment**:
   - `POST /api/payment-links/public/slug/:slug/cart-abandonment` — captura clientes que não concluíram o checkout
   - `POST /api/payment-links/public/slug/:slug/cart-abandonment/recover` — marca abandono como recuperado
-  - `GET /api/admin/cart-abandonment` — painel admin com filtros por link e período
-
-**Painel Admin:**
-- `GET /api/admin/subscriptions/metrics` — métricas globais da plataforma
-- `GET /api/admin/subscriptions/all` — todas as assinaturas
-- `GET /api/admin/subscriptions/subscribers` — listar assinantes
-
-**Correções de segurança (Waves 6–8):**
-- Trust proxy: IP real propagado corretamente em deploys com reverse proxy (Render)
-- Race condition em saques: corrigida via `updateMany` atômico — previne duplo processamento
-- Sentry: integrado em frontend e backend para rastreamento de erros em produção
 
 </Update>
 
