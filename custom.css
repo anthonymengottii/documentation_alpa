@@ -28,20 +28,20 @@ html[data-theme="dark"] ::-webkit-scrollbar,
 html[data-theme="dark"] ::-webkit-scrollbar-track,
 .dark ::-webkit-scrollbar-track,
 [data-theme="dark"] ::-webkit-scrollbar-track {
-  background: #1e1b24; /* Fundo escuro com tom roxo sutil */
+  background: #241c1b; /* Fundo escuro com tom roxo sutil */
 }
 
 html[data-theme="dark"] ::-webkit-scrollbar-thumb,
 .dark ::-webkit-scrollbar-thumb,
 [data-theme="dark"] ::-webkit-scrollbar-thumb {
-  background: #5B21B6; /* Roxo escuro (#5B21B6) - cor dark do tema */
+  background: #D13000; /* Roxo escuro (#D13000) - cor dark do tema */
   border-radius: 5px;
 }
 
 html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover,
 .dark ::-webkit-scrollbar-thumb:hover,
 [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
-  background: #9747FF; /* Roxo primário (#9747FF) - cor principal */
+  background: #FF3D02; /* Roxo primário (#FF3D02) - cor principal */
 }
 
 /* Firefox - modo claro */
@@ -55,6 +55,6 @@ html[data-theme="dark"] *,
 .dark *,
 [data-theme="dark"] * {
   scrollbar-width: thin;
-  scrollbar-color: #5B21B6 #1e1b24; /* Thumb roxo escuro, track fundo escuro com tom roxo */
+  scrollbar-color: #D13000 #241c1b; /* Thumb roxo escuro, track fundo escuro com tom roxo */
 }
 

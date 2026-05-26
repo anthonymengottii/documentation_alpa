@@ -54,7 +54,7 @@ curl -X POST "https://alpa-sistema-api.onrender.com/api/v1/payment-links" \
     "amount": 9900,
     "currency": "BRL",
     "status": "ACTIVE",
-    "url": "https://checkout.alpabr.com/pay/produto-premium-abc123",
+    "url": "https://checkout.usealpa.com/pay/produto-premium-abc123",
     "createdAt": "2025-12-30T00:00:00.000Z",
     "updatedAt": "2025-12-30T00:00:00.000Z"
   }
@@ -123,7 +123,7 @@ O campo `checkoutConfig` permite personalizar a aparência e o comportamento vis
 
 | Campo | Tipo | Descrição |
 |-------|------|-----------|
-| `primaryColor` | string | Cor principal em Hexadecimal (ex: `#9747FF`). |
+| `primaryColor` | string | Cor principal em Hexadecimal (ex: `#FF3D02`). |
 | `logoUrl` | string | URL da logomarca da sua empresa. |
 | `buttonText` | string | Texto personalizado para o botão de pagamento. |
 | `bannerUrl` | string | URL da imagem do banner de topo. |
@@ -303,7 +303,7 @@ curl -X DELETE "https://alpa-sistema-api.onrender.com/api/v1/payment-links/{id}"
 Após criar um link, você receberá uma URL no formato:
 
 ```
-https://checkout.alpabr.com/pay/{slug}
+https://checkout.usealpa.com/pay/{slug}
 ```
 
 Esta URL pode ser compartilhada diretamente com seus clientes.

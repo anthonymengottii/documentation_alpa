@@ -5,7 +5,7 @@
     "version": "2.23.0",
     "description": "Documentação completa da API pública do UPay Gateway (v2.23.0). Todas as rotas requerem autenticação via API Key, exceto validação de cupom, checkout público e checkout de assinaturas. Novidades em 2.23.0: sistema de assinaturas recorrentes com planos, retry automático e métricas MRR/churn; cart abandonment para recuperação de vendas.",
     "contact": {
-      "email": "suporte@alpa.com.br"
+      "email": "suporte@usealpa.com"
     },
     "license": {
       "name": "MIT"
@@ -3496,7 +3496,7 @@
                   "type": "object",
                   "properties": {
                     "code": { "type": "string", "example": "ALPA-123-ABC" },
-                    "link": { "type": "string", "example": "https://app.alpabr.com/register?ref=ALPA-123-ABC" }
+                    "link": { "type": "string", "example": "https://app.usealpa.com/register?ref=ALPA-123-ABC" }
                   }
                 }
               }

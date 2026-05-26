@@ -216,13 +216,13 @@
       },
       {
         "label": "Suporte",
-        "href": "mailto:suporte@alpa.com.br"
+        "href": "mailto:suporte@usealpa.com"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://app.alpabr.com"
+      "href": "https://app.usealpa.com"
     }
   },
   "contextual": {

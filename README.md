@@ -35,7 +35,7 @@ A **UPay Gateway API** é uma solução completa de processamento de pagamentos 
 ### Para Desenvolvedores
 
 1. **Obtenha suas credenciais de API**
-   - Acesse o [Dashboard UPay](https://app.alpabr.com)
+   - Acesse o [Dashboard UPay](https://app.usealpa.com)
    - Complete o processo de verificação (KYC)
    - Gere sua API Key em **Configurações → Credenciais de API**
 
@@ -88,7 +88,7 @@ documentation/
 - Mantenha consistência com o tom e estilo da documentação
 - Inclua exemplos de código quando relevante
 
-**URL da Documentação**: [https://docs.alpa.com.br](https://docs.alpa.com.br)
+**URL da Documentação**: [https://docs.usealpa.com](https://docs.usealpa.com)
 
 ## 📖 Recursos da API
 
@@ -117,10 +117,10 @@ Para mais detalhes, consulte a [documentação de autenticação](/pages/authent
 
 ### Documentação e Recursos
 
-- **Documentação Online**: [https://docs.alpa.com.br](https://docs.alpa.com.br)
+- **Documentação Online**: [https://docs.usealpa.com](https://docs.usealpa.com)
 - **API Base URL**: `https://alpa-sistema-api.onrender.com`
-- **Dashboard**: [https://app.alpabr.com](https://app.alpabr.com)
-- **Status da API**: [Verificar Status](https://status.alpa.com.br)
+- **Dashboard**: [https://app.usealpa.com](https://app.usealpa.com)
+- **Status da API**: [Verificar Status](https://status.usealpa.com)
 
 ### Repositórios
 
@@ -129,7 +129,7 @@ Para mais detalhes, consulte a [documentação de autenticação](/pages/authent
 
 ### Suporte
 
-- **Email**: [suporte@alpa.com.br](mailto:suporte@alpa.com.br)
+- **Email**: [suporte@usealpa.com](mailto:suporte@usealpa.com)
 - **Issues**: [GitHub Issues](https://github.com/anthonymengottii/documentation/issues)
 - **Documentação de Suporte**: [Páginas de Ajuda](/pages/introduction)
 
