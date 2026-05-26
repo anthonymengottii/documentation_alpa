@@ -6,7 +6,7 @@ icon: "handshake"
 
 ## Visão geral
 
-O **Sistema de Afiliados** da Upay permite que vendedores criem programas de comissão para seus produtos e que outros usuários promovam esses produtos em troca de uma comissão automática por cada venda realizada.
+O **Sistema de Afiliados** da Alpa permite que vendedores criem programas de comissão para seus produtos e que outros usuários promovam esses produtos em troca de uma comissão automática por cada venda realizada.
 
 O fluxo funciona em dois papéis distintos:
 
@@ -17,7 +17,7 @@ Quando uma venda é realizada via link do afiliado, a comissão é creditada aut
 
 ## Pré-requisitos
 
-- Uma conta ativa na Upay com KYC aprovado
+- Uma conta ativa na Alpa com KYC aprovado
 - Sua API Key configurada (veja [Autenticação](/pages/authentication))
 - Para criar um programa: ao menos um produto ativo com link de pagamento
 
@@ -26,7 +26,7 @@ Quando uma venda é realizada via link do afiliado, a comissão é creditada aut
 Ao se afiliar a um programa, o afiliado recebe um código único (ex: `NOME-AB12CD`). Esse código é adicionado como parâmetro `aff` na URL do checkout do produto:
 
 ```
-https://checkout.upaybr.com/pay/{slug}?aff=NOME-AB12CD
+https://checkout.alpabr.com/pay/{slug}?aff=NOME-AB12CD
 ```
 
 Quando um comprador acessa esse link e realiza uma compra, a transação é vinculada ao link do afiliado e a comissão é calculada e creditada automaticamente.
@@ -47,7 +47,7 @@ Quando um comprador acessa esse link e realiza uma compra, a transação é vinc
 Somente o dono do produto pode criar um programa de afiliados para ele. Cada produto pode ter no máximo um programa ativo.
 
 ```bash
-curl -X POST "https://upay-sistema-api.onrender.com/api/affiliate/programs" \
+curl -X POST "https://alpa-sistema-api.onrender.com/api/affiliate/programs" \
   -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -88,7 +88,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/affiliate/programs" \
 Qualquer usuário autenticado pode listar todos os programas ativos disponíveis para afiliação:
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/affiliate/marketplace" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/affiliate/marketplace" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
@@ -127,7 +127,7 @@ curl -X GET "https://upay-sistema-api.onrender.com/api/affiliate/marketplace" \
 ## Solicitando afiliação
 
 ```bash
-curl -X POST "https://upay-sistema-api.onrender.com/api/affiliate/join/aff-prog-uuid" \
+curl -X POST "https://alpa-sistema-api.onrender.com/api/affiliate/join/aff-prog-uuid" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
@@ -152,7 +152,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/affiliate/join/aff-prog-
 O link de divulgação para este produto será:
 
 ```
-https://checkout.upaybr.com/pay/curso-js?aff=JOAO-AB12CD
+https://checkout.alpabr.com/pay/curso-js?aff=JOAO-AB12CD
 ```
 
 ## Consultando meus links e comissões
@@ -160,21 +160,21 @@ https://checkout.upaybr.com/pay/curso-js?aff=JOAO-AB12CD
 ### Listar links ativos
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/affiliate/links" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/affiliate/links" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
 ### Listar comissões
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/affiliate/commissions?page=1&limit=20" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/affiliate/commissions?page=1&limit=20" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
 ### Estatísticas consolidadas
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/affiliate/stats" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/affiliate/stats" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 

@@ -1,6 +1,6 @@
 ---
 title: "Cupons"
-api: "https://upay-sistema-api.onrender.com"
+api: "https://alpa-sistema-api.onrender.com"
 ---
 
 ## Cupons
@@ -16,7 +16,7 @@ Crie e gerencie cupons de desconto para aplicar em pagamentos.
 <RequestExample>
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/coupons?page=1&limit=20" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/coupons?page=1&limit=20" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
@@ -27,7 +27,7 @@ curl -X GET "https://upay-sistema-api.onrender.com/api/coupons?page=1&limit=20" 
 <RequestExample>
 
 ```bash
-curl -X POST "https://upay-sistema-api.onrender.com/api/coupons" \
+curl -X POST "https://alpa-sistema-api.onrender.com/api/coupons" \
   -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -87,7 +87,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/coupons" \
 <RequestExample>
 
 ```bash
-curl -X POST "https://upay-sistema-api.onrender.com/api/coupons/validate" \
+curl -X POST "https://alpa-sistema-api.onrender.com/api/coupons/validate" \
   -H "Content-Type: application/json" \
   -d '{
     "code": "DESCONTO10",
@@ -122,7 +122,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/coupons/validate" \
 <RequestExample>
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/coupons/{id}" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/coupons/{id}" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
@@ -133,7 +133,7 @@ curl -X GET "https://upay-sistema-api.onrender.com/api/coupons/{id}" \
 <RequestExample>
 
 ```bash
-curl -X PATCH "https://upay-sistema-api.onrender.com/api/coupons/{id}" \
+curl -X PATCH "https://alpa-sistema-api.onrender.com/api/coupons/{id}" \
   -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -148,7 +148,7 @@ curl -X PATCH "https://upay-sistema-api.onrender.com/api/coupons/{id}" \
 <RequestExample>
 
 ```bash
-curl -X DELETE "https://upay-sistema-api.onrender.com/api/coupons/{id}" \
+curl -X DELETE "https://alpa-sistema-api.onrender.com/api/coupons/{id}" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 

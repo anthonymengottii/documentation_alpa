@@ -5,11 +5,11 @@ icon: 'node-js'
 ---
 
 <Card
-  title="Upay Node.js SDK"
+  title="Alpa Node.js SDK"
   icon="node-js"
-  href="https://github.com/anthonymengottii/upay-nodejs-sdk"
+  href="https://github.com/anthonymengottii/alpa-nodejs-sdk"
 >
-  SDK oficial da Upay para JavaScript e TypeScript. Compatível com Node.js 18+, Bun e edge runtimes.
+  SDK oficial da Alpa para JavaScript e TypeScript. Compatível com Node.js 18+, Bun e edge runtimes.
 </Card>
 
 ## Instalação
@@ -19,21 +19,21 @@ icon: 'node-js'
 </Note>
 
 ```bash
-npm install github:anthonymengottii/upay-nodejs-sdk
+npm install github:anthonymengottii/alpa-nodejs-sdk
 ```
 
 ## Uso Rápido
 
 ```ts
-import UpayClient from '@upay/upay-js';
+import AlpaClient from '@alpa/alpa-js';
 
-const upay = new UpayClient({ apiKey: process.env.UPAY_API_KEY });
+const alpa = new AlpaClient({ apiKey: process.env.ALPA_API_KEY });
 ```
 
 ## Criar Link de Pagamento
 
 ```ts
-const link = await upay.paymentLinks.create({
+const link = await alpa.paymentLinks.create({
   title: 'Produto Premium',
   amountCents: 9900,
   description: 'Acesso vitalício',
@@ -49,7 +49,7 @@ const link = await upay.paymentLinks.create({
   description: "Acesso vitalício",
   amountCents: 9900,
   status: "ACTIVE",
-  url: "https://pay.upaybr.com/l/abc123",
+  url: "https://pay.alpabr.com/l/abc123",
   createdAt: "2026-04-08T00:00:00.000Z",
   updatedAt: "2026-04-08T00:00:00.000Z"
 }
@@ -58,7 +58,7 @@ const link = await upay.paymentLinks.create({
 ## Criar Transação PIX
 
 ```ts
-const tx = await upay.transactions.create({
+const tx = await alpa.transactions.create({
   product: 'Curso Node.js',
   paymentMethod: 'PIX',
   amountCents: 19900,
@@ -73,7 +73,7 @@ console.log(tx.pixCopiaECola);
 ## Validar Cupom
 
 ```ts
-const result = await upay.coupons.validate({
+const result = await alpa.coupons.validate({
   code: 'DESCONTO10',
   amountCents: 19900,
 });
@@ -85,10 +85,10 @@ const result = await upay.coupons.validate({
 
 ```ts
 app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
-  const isValid = upay.verifyWebhookSignature(
+  const isValid = alpa.verifyWebhookSignature(
     req.body,
     req.headers['x-webhook-signature'] as string,
-    process.env.UPAY_WEBHOOK_SECRET!
+    process.env.ALPA_WEBHOOK_SECRET!
   );
 
   if (!isValid) return res.status(401).json({ error: 'Assinatura inválida' });
@@ -101,14 +101,14 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
 ## Tratamento de Erros
 
 ```ts
-import { UpayError, UpayValidationError } from '@upay/upay-js';
+import { AlpaError, AlpaValidationError } from '@alpa/alpa-js';
 
 try {
-  const tx = await upay.transactions.create({ ... });
+  const tx = await alpa.transactions.create({ ... });
 } catch (error) {
-  if (error instanceof UpayValidationError) {
+  if (error instanceof AlpaValidationError) {
     console.error('Dados inválidos:', error.message);
-  } else if (error instanceof UpayError) {
+  } else if (error instanceof AlpaError) {
     console.error(`Erro ${error.statusCode}:`, error.message);
   }
 }

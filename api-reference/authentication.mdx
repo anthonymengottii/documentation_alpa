@@ -1,6 +1,6 @@
 ---
 title: "Autenticação"
-api: "https://upay-sistema-api.onrender.com"
+api: "https://alpa-sistema-api.onrender.com"
 ---
 
 ## Autenticação
@@ -8,7 +8,7 @@ api: "https://upay-sistema-api.onrender.com"
 A UPay Gateway API usa autenticação baseada em **Bearer Token** (API Key). Todas as requisições autenticadas devem incluir o header `Authorization` com sua API Key.
 
 <Note>
-  Para obter sua API Key, acesse o [Dashboard UPay](https://app.upaybr.com) → Configurações → Credenciais de API.
+  Para obter sua API Key, acesse o [Dashboard UPay](https://app.alpabr.com) → Configurações → Credenciais de API.
 </Note>
 
 ## Header de Autenticação
@@ -22,7 +22,7 @@ Authorization: Bearer SUA_API_KEY_AQUI
 <RequestExample>
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/payment-links" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/payment-links" \
   -H "Authorization: Bearer sua_api_key_aqui" \
   -H "Content-Type: application/json"
 ```

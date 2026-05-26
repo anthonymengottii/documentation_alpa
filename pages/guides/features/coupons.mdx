@@ -11,7 +11,7 @@ O sistema de **Cupons de Desconto** permite que você crie e gerencie cupons pro
 ## Pré-requisitos
 
 Antes de começar, você precisa:
-- Uma conta ativa na Upay
+- Uma conta ativa na Alpa
 - Sua API Key configurada (veja [Autenticação](/pages/authentication))
 - Conhecimento básico de APIs REST
 
@@ -30,7 +30,7 @@ Antes de começar, você precisa:
 ### Requisição Básica - Desconto Percentual
 
 ```bash
-curl -X POST "https://upay-sistema-api.onrender.com/api/v1/coupons" \
+curl -X POST "https://alpa-sistema-api.onrender.com/api/v1/coupons" \
   -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -44,7 +44,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/coupons" \
 ### Requisição - Desconto Fixo
 
 ```bash
-curl -X POST "https://upay-sistema-api.onrender.com/api/v1/coupons" \
+curl -X POST "https://alpa-sistema-api.onrender.com/api/v1/coupons" \
   -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -109,7 +109,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/coupons" \
 ### Cupom Simples - 10% de Desconto
 
 ```javascript
-const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/coupons', {
+const response = await fetch('https://alpa-sistema-api.onrender.com/api/v1/coupons', {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${apiKey}`,
@@ -131,7 +131,7 @@ const validFrom = new Date();
 const validUntil = new Date();
 validUntil.setDate(validUntil.getDate() + 30); // Válido por 30 dias
 
-const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/coupons', {
+const response = await fetch('https://alpa-sistema-api.onrender.com/api/v1/coupons', {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${apiKey}`,
@@ -155,7 +155,7 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/coupo
 ### Cupom para Produtos Específicos
 
 ```javascript
-const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/coupons', {
+const response = await fetch('https://alpa-sistema-api.onrender.com/api/v1/coupons', {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${apiKey}`,
@@ -181,7 +181,7 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/coupo
 O endpoint de validação é **público** e não requer autenticação. Use-o no checkout para validar cupons:
 
 ```bash
-curl -X POST "https://upay-sistema-api.onrender.com/api/v1/coupons/validate" \
+curl -X POST "https://alpa-sistema-api.onrender.com/api/v1/coupons/validate" \
   -H "Content-Type: application/json" \
   -d '{
     "code": "DESCONTO10",
@@ -220,7 +220,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/coupons/validate" \
 
 ```javascript
 async function validateCoupon(code, amount) {
-  const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/coupons/validate', {
+  const response = await fetch('https://alpa-sistema-api.onrender.com/api/v1/coupons/validate', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -249,21 +249,21 @@ async function validateCoupon(code, amount) {
 ### Listar Todos os Cupons
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/v1/coupons?page=1&limit=20" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/coupons?page=1&limit=20" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
 ### Buscar Cupom Específico
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/v1/coupons/{id}" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/coupons/{id}" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
 ## Atualizando um cupom
 
 ```bash
-curl -X PATCH "https://upay-sistema-api.onrender.com/api/v1/coupons/{id}" \
+curl -X PATCH "https://alpa-sistema-api.onrender.com/api/v1/coupons/{id}" \
   -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -279,7 +279,7 @@ curl -X PATCH "https://upay-sistema-api.onrender.com/api/v1/coupons/{id}" \
 ## 🗑️ Deletando um Cupom
 
 ```bash
-curl -X DELETE "https://upay-sistema-api.onrender.com/api/v1/coupons/{id}" \
+curl -X DELETE "https://alpa-sistema-api.onrender.com/api/v1/coupons/{id}" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 

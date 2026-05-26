@@ -1,10 +1,10 @@
 ---
 title: 'Webhooks'
-description: 'Receba notificações automáticas da Upay sempre que algo importante acontecer — como um pagamento confirmado ou um saque concluído.'
+description: 'Receba notificações automáticas da Alpa sempre que algo importante acontecer — como um pagamento confirmado ou um saque concluído.'
 icon: 'webhook'
 ---
 
-Pense nos webhooks como **"mensagens enviadas pela Upay para o seu sistema"**, sem que você precise ficar consultando a API o tempo todo.
+Pense nos webhooks como **"mensagens enviadas pela Alpa para o seu sistema"**, sem que você precise ficar consultando a API o tempo todo.
 
 ---
 
@@ -14,7 +14,7 @@ Sem webhooks, sua aplicação teria que **perguntar para a API a cada segundo**:
 
 > "Essa transação já foi confirmada?"
 
-Com webhooks, a Upay avisa você **imediatamente**:
+Com webhooks, a Alpa avisa você **imediatamente**:
 
 > "A transação foi confirmada. Aqui estão os dados."
 
@@ -32,12 +32,12 @@ Tudo isso de forma automática, sem fazer seu cliente esperar.
 ## Como funciona na prática?
 
 1. **Você cria um endpoint no seu sistema**
-   Ex.: `https://meusite.com.br/webhooks/upay`
+   Ex.: `https://meusite.com.br/webhooks/alpa`
 
 2. **Você cadastra esse endpoint via API ou Dashboard**
 
 3. **Sempre que algo importante acontece**, como uma transação paga:
-   - A Upay envia um `POST` para a sua URL
+   - A Alpa envia um `POST` para a sua URL
    - O `POST` contém o evento (ex: `transaction.completed`)
    - Seu sistema processa esse evento e responde `200 OK`
 
@@ -49,14 +49,14 @@ Toda requisição enviada inclui dois mecanismos de segurança:
 
 <Card title="Assinatura HMAC" horizontal>
   Cada webhook inclui o header `X-Webhook-Signature: sha256=...` gerado com **HMAC-SHA256**.
-  Sempre valide essa assinatura antes de processar o evento — garante que a requisição foi enviada pela Upay e que o corpo não foi alterado.
+  Sempre valide essa assinatura antes de processar o evento — garante que a requisição foi enviada pela Alpa e que o corpo não foi alterado.
 </Card>
 
 <Card title="Headers de identificação" horizontal>
   Além da assinatura, cada entrega inclui:
   - `X-Webhook-Event` — tipo do evento (ex: `transaction.completed`)
   - `X-Webhook-Delivery` — UUID único da entrega
-  - `User-Agent: UPAY-Webhook/1.0`
+  - `User-Agent: ALPA-Webhook/1.0`
 </Card>
 
 ### Validação da assinatura
@@ -68,7 +68,7 @@ import crypto from 'crypto';
 app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
   const signature = req.headers['x-webhook-signature'] as string;
   const expected  = `sha256=${crypto
-    .createHmac('sha256', process.env.UPAY_WEBHOOK_SECRET!)
+    .createHmac('sha256', process.env.ALPA_WEBHOOK_SECRET!)
     .update(req.body)
     .digest('hex')}`;
 
@@ -90,7 +90,7 @@ from flask import Flask, request, jsonify
 def webhook():
     sig      = request.headers.get('x-webhook-signature', '')
     expected = 'sha256=' + hmac.new(
-        os.getenv('UPAY_WEBHOOK_SECRET').encode(),
+        os.getenv('ALPA_WEBHOOK_SECRET').encode(),
         request.data, hashlib.sha256
     ).hexdigest()
     if not hmac.compare_digest(sig, expected):
@@ -102,7 +102,7 @@ def webhook():
 ```php PHP
 $payload   = file_get_contents('php://input');
 $signature = $_SERVER['HTTP_X_WEBHOOK_SIGNATURE'] ?? '';
-$expected  = 'sha256=' . hash_hmac('sha256', $payload, $_ENV['UPAY_WEBHOOK_SECRET']);
+$expected  = 'sha256=' . hash_hmac('sha256', $payload, $_ENV['ALPA_WEBHOOK_SECRET']);
 if (!hash_equals($expected, $signature)) {
     http_response_code(401); exit;
 }
@@ -124,7 +124,7 @@ Todos os webhooks compartilham o mesmo envelope:
   "data": { ... },
   "subscription": {
     "id": "whs_abc123",
-    "url": "https://meusite.com.br/webhooks/upay"
+    "url": "https://meusite.com.br/webhooks/alpa"
   }
 }
 ```
@@ -168,7 +168,7 @@ Todos os webhooks compartilham o mesmo envelope:
       },
       "subscription": {
         "id": "whs_abc123",
-        "url": "https://meusite.com.br/webhooks/upay"
+        "url": "https://meusite.com.br/webhooks/alpa"
       }
     }
     ```
@@ -190,7 +190,7 @@ Todos os webhooks compartilham o mesmo envelope:
       },
       "subscription": {
         "id": "whs_abc123",
-        "url": "https://meusite.com.br/webhooks/upay"
+        "url": "https://meusite.com.br/webhooks/alpa"
       }
     }
     ```
@@ -213,7 +213,7 @@ Todos os webhooks compartilham o mesmo envelope:
       },
       "subscription": {
         "id": "whs_abc123",
-        "url": "https://meusite.com.br/webhooks/upay"
+        "url": "https://meusite.com.br/webhooks/alpa"
       }
     }
     ```
@@ -237,7 +237,7 @@ Todos os webhooks compartilham o mesmo envelope:
       },
       "subscription": {
         "id": "whs_abc123",
-        "url": "https://meusite.com.br/webhooks/upay"
+        "url": "https://meusite.com.br/webhooks/alpa"
       }
     }
     ```
@@ -256,7 +256,7 @@ Todos os webhooks compartilham o mesmo envelope:
       },
       "subscription": {
         "id": "whs_abc123",
-        "url": "https://meusite.com.br/webhooks/upay"
+        "url": "https://meusite.com.br/webhooks/alpa"
       }
     }
     ```
@@ -271,11 +271,11 @@ Todos os webhooks compartilham o mesmo envelope:
   <Step title="Crie uma assinatura via API">
     ```bash
     curl --request POST \
-      --url https://upay-sistema-api.onrender.com/api/webhooks/subscriptions \
+      --url https://alpa-sistema-api.onrender.com/api/webhooks/subscriptions \
       --header 'Authorization: Bearer SUA_API_KEY' \
       --header 'Content-Type: application/json' \
       --data '{
-        "url": "https://meusite.com.br/webhooks/upay",
+        "url": "https://meusite.com.br/webhooks/alpa",
         "events": ["transaction.completed", "transaction.failed"]
       }'
     ```
@@ -286,7 +286,7 @@ Todos os webhooks compartilham o mesmo envelope:
   </Step>
 
   <Step title="Valide a assinatura">
-    Use o header `X-Webhook-Signature` para verificar que a requisição veio da Upay. Veja os exemplos de código acima.
+    Use o header `X-Webhook-Signature` para verificar que a requisição veio da Alpa. Veja os exemplos de código acima.
   </Step>
 </Steps>
 
@@ -306,5 +306,5 @@ Todos os webhooks compartilham o mesmo envelope:
 ---
 
 <Card title="Precisa de ajuda?" icon="headset">
-  Nossa equipe está disponível para ajudar. Entre em contato: <Icon icon="envelope" type="solid" /> suporte@upaybr.com
+  Nossa equipe está disponível para ajudar. Entre em contato: <Icon icon="envelope" type="solid" /> suporte@alpabr.com
 </Card>

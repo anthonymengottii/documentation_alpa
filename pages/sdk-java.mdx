@@ -5,11 +5,11 @@ icon: 'java'
 ---
 
 <Card
-  title="Upay Java SDK"
+  title="Alpa Java SDK"
   icon="java"
-  href="https://github.com/anthonymengottii/upay-java-sdk"
+  href="https://github.com/anthonymengottii/alpa-java-sdk"
 >
-  SDK oficial da Upay para Java. Compatível com Java 17+ e Spring Boot.
+  SDK oficial da Alpa para Java. Compatível com Java 17+ e Spring Boot.
 </Card>
 
 ## Instalação
@@ -39,16 +39,16 @@ choco install maven -y
 </Note>
 
 ```bash
-git clone https://github.com/anthonymengottii/upay-java-sdk
-cd upay-java-sdk && mvn install -DskipTests
+git clone https://github.com/anthonymengottii/alpa-java-sdk
+cd alpa-java-sdk && mvn install -DskipTests
 ```
 
 Após o `mvn install`, adicione ao seu `pom.xml`:
 
 ```xml
 <dependency>
-    <groupId>com.upay</groupId>
-    <artifactId>upay-java</artifactId>
+    <groupId>com.alpa</groupId>
+    <artifactId>alpa-java</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```
@@ -66,22 +66,22 @@ E a dependência de serialização JSON:
 ## Uso Rápido
 
 ```java
-import com.upay.UpayClient;
+import com.alpa.AlpaClient;
 
 // Inicialize o SDK com sua API Key
-UpayClient upay = new UpayClient(System.getenv("UPAY_API_KEY"));
+AlpaClient alpa = new AlpaClient(System.getenv("ALPA_API_KEY"));
 ```
 
 ## Criando um Link de Pagamento
 
 ```java
-import com.upay.UpayClient;
+import com.alpa.AlpaClient;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Map;
 
-UpayClient upay = new UpayClient(System.getenv("UPAY_API_KEY"));
+AlpaClient alpa = new AlpaClient(System.getenv("ALPA_API_KEY"));
 
-JsonNode link = upay.paymentLinks.create(Map.of(
+JsonNode link = alpa.paymentLinks.create(Map.of(
     "title",       "Produto Premium",
     "amountCents", 9900,
     "description", "Acesso vitalício"
@@ -99,7 +99,7 @@ System.out.println(link.path("url").asText()); // URL de checkout para o cliente
   "description": "Acesso vitalício",
   "amountCents": 9900,
   "status": "ACTIVE",
-  "url": "https://pay.upaybr.com/l/abc123",
+  "url": "https://pay.alpabr.com/l/abc123",
   "createdAt": "2026-04-08T00:00:00.000Z",
   "updatedAt": "2026-04-08T00:00:00.000Z"
 }
@@ -108,7 +108,7 @@ System.out.println(link.path("url").asText()); // URL de checkout para o cliente
 ## Criando uma Transação PIX
 
 ```java
-JsonNode tx = upay.transactions.create(Map.of(
+JsonNode tx = alpa.transactions.create(Map.of(
     "product",        "Curso Java",
     "paymentMethod",  "PIX",
     "amountCents",    19900,
@@ -123,7 +123,7 @@ System.out.println(tx.path("pixCopiaECola").asText());
 ## Validando um Cupom
 
 ```java
-JsonNode result = upay.coupons.validate("DESCONTO10", 19900);
+JsonNode result = alpa.coupons.validate("DESCONTO10", 19900);
 
 if (result.path("valid").asBoolean()) {
     System.out.println("Desconto: " + result.path("discountCents").asInt());
@@ -140,7 +140,7 @@ public ResponseEntity<?> webhook(
         @RequestBody byte[] body,
         @RequestHeader("x-webhook-signature") String signature
 ) throws Exception {
-    if (!upay.verifyWebhookSignature(new String(body), signature, System.getenv("UPAY_WEBHOOK_SECRET"))) {
+    if (!alpa.verifyWebhookSignature(new String(body), signature, System.getenv("ALPA_WEBHOOK_SECRET"))) {
         return ResponseEntity.status(401).body(Map.of("error", "Assinatura inválida"));
     }
     return ResponseEntity.ok(Map.of("received", true));
@@ -150,11 +150,11 @@ public ResponseEntity<?> webhook(
 ## Tratamento de Erros
 
 ```java
-import com.upay.utils.UpayException;
+import com.alpa.utils.AlpaException;
 
 try {
-    JsonNode tx = upay.transactions.create(Map.of(...));
-} catch (UpayException e) {
+    JsonNode tx = alpa.transactions.create(Map.of(...));
+} catch (AlpaException e) {
     System.err.println("Erro " + e.getStatusCode() + ": " + e.getMessage());
 } catch (IOException | InterruptedException e) {
     System.err.println("Erro de rede: " + e.getMessage());

@@ -1,30 +1,30 @@
 ---
 title: 'Primeira requisição'
-description: 'Comece a usar a API da Upay em minutos'
+description: 'Comece a usar a API da Alpa em minutos'
 icon: 'rocket'
 ---
 
 <Info>
-  Este guia rápido te ajudará a fazer sua primeira requisição à API da Upay em poucos minutos.
+  Este guia rápido te ajudará a fazer sua primeira requisição à API da Alpa em poucos minutos.
 </Info>
 
 ## Pré-requisitos
 
 Antes de começar, você precisa de:
 
-- Uma conta na Upay
+- Uma conta na Alpa
 - Uma chave de API (criada no Dashboard)
 - Conhecimento básico de HTTP e JSON
 
-<Card title="Novo na Upay?" icon="user-plus" horizontal>
-  Se você ainda não tem uma conta, acesse o <a href="https://app.upaybr.com" target="_blank">Dashboard</a> e crie sua conta gratuitamente.
+<Card title="Novo na Alpa?" icon="user-plus" horizontal>
+  Se você ainda não tem uma conta, acesse o <a href="https://app.alpabr.com" target="_blank">Dashboard</a> e crie sua conta gratuitamente.
 </Card>
 
 ## Passo 1: Obter sua Chave de API
 
 <Steps>
   <Step title="Acesse o Dashboard">
-    Faça login em <a href="https://app.upaybr.com" target="_blank">app.upaybr.com</a>.
+    Faça login em <a href="https://app.alpabr.com" target="_blank">app.alpabr.com</a>.
   </Step>
   <Step title="Crie uma Chave de API">
     Navegue até **Configurações → Credenciais de API** e clique em **"Criar Nova API Key"**.
@@ -53,7 +53,7 @@ Vamos criar seu primeiro link de pagamento:
 
 ```bash
 curl --request POST \
-  --url https://upay-sistema-api.onrender.com/api/v1/payment-links \
+  --url https://alpa-sistema-api.onrender.com/api/v1/payment-links \
   --header 'Authorization: Bearer SUA_API_KEY' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -72,20 +72,20 @@ curl --request POST \
   "description": "Acesso vitalício",
   "amountCents": 9900,
   "status": "ACTIVE",
-  "url": "https://pay.upaybr.com/l/abc123",
+  "url": "https://pay.alpabr.com/l/abc123",
   "createdAt": "2026-04-08T00:00:00.000Z"
 }
 ```
 
 <Card title="Visualize no Dashboard" horizontal>
-  Após criar seu link, acesse o <a href="https://app.upaybr.com" target="_blank">Dashboard</a> e navegue até **Links de Pagamento** para ver todos os detalhes, status e histórico de pagamentos.
+  Após criar seu link, acesse o <a href="https://app.alpabr.com" target="_blank">Dashboard</a> e navegue até **Links de Pagamento** para ver todos os detalhes, status e histórico de pagamentos.
 </Card>
 
 ## Passo 3: Criar uma Transação PIX
 
 ```bash
 curl --request POST \
-  --url https://upay-sistema-api.onrender.com/api/v1/transactions \
+  --url https://alpa-sistema-api.onrender.com/api/v1/transactions \
   --header 'Authorization: Bearer SUA_API_KEY' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -132,5 +132,5 @@ curl --request POST \
 ## Precisa de Ajuda?
 
 <Card title="Suporte" horizontal>
-  Nossa equipe está sempre à disposição. Entre em contato: <Icon icon="envelope" type="solid" /> suporte@upaybr.com
+  Nossa equipe está sempre à disposição. Entre em contato: <Icon icon="envelope" type="solid" /> suporte@alpabr.com
 </Card>

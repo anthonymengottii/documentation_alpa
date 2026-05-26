@@ -1,6 +1,6 @@
 ---
 title: "Webhooks"
-api: "https://upay-sistema-api.onrender.com"
+api: "https://alpa-sistema-api.onrender.com"
 ---
 
 ## Webhooks
@@ -16,7 +16,7 @@ Configure webhooks para receber notificações em tempo real sobre eventos impor
 <RequestExample>
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/v1/webhooks/subscriptions" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/webhooks/subscriptions" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
@@ -27,11 +27,11 @@ curl -X GET "https://upay-sistema-api.onrender.com/api/v1/webhooks/subscriptions
 <RequestExample>
 
 ```bash
-curl -X POST "https://upay-sistema-api.onrender.com/api/v1/webhooks/subscriptions" \
+curl -X POST "https://alpa-sistema-api.onrender.com/api/v1/webhooks/subscriptions" \
   -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://meusite.com.br/webhooks/upay",
+    "url": "https://meusite.com.br/webhooks/alpa",
     "events": ["payment.completed", "payment.failed"],
     "description": "Webhook para notificações de pagamento"
   }'
@@ -79,7 +79,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/webhooks/subscription
 <RequestExample>
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/v1/webhooks/events?page=1&limit=20" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/webhooks/events?page=1&limit=20" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
@@ -90,11 +90,11 @@ curl -X GET "https://upay-sistema-api.onrender.com/api/v1/webhooks/events?page=1
 <RequestExample>
 
 ```bash
-curl -X PUT "https://upay-sistema-api.onrender.com/api/v1/webhooks/subscriptions/{id}" \
+curl -X PUT "https://alpa-sistema-api.onrender.com/api/v1/webhooks/subscriptions/{id}" \
   -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://meusite.com.br/webhooks/upay-v2",
+    "url": "https://meusite.com.br/webhooks/alpa-v2",
     "events": ["payment.completed", "payment.failed", "payment.refunded"],
     "status": "ACTIVE"
   }'
@@ -107,7 +107,7 @@ curl -X PUT "https://upay-sistema-api.onrender.com/api/v1/webhooks/subscriptions
 <RequestExample>
 
 ```bash
-curl -X DELETE "https://upay-sistema-api.onrender.com/api/v1/webhooks/subscriptions/{id}" \
+curl -X DELETE "https://alpa-sistema-api.onrender.com/api/v1/webhooks/subscriptions/{id}" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
@@ -120,7 +120,7 @@ Envia um evento de teste para a URL configurada na assinatura, permitindo verifi
 <RequestExample>
 
 ```bash
-curl -X POST "https://upay-sistema-api.onrender.com/api/v1/webhooks/subscriptions/{id}/test" \
+curl -X POST "https://alpa-sistema-api.onrender.com/api/v1/webhooks/subscriptions/{id}/test" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
@@ -128,7 +128,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/webhooks/subscription
 
 ## Validação de Webhooks
 
-Todas as requisições de webhook incluem o header `X-Upay-Signature` com uma assinatura HMAC-SHA256. Use o `secret` da assinatura para validar que a requisição veio da UPay.
+Todas as requisições de webhook incluem o header `X-Alpa-Signature` com uma assinatura HMAC-SHA256. Use o `secret` da assinatura para validar que a requisição veio da UPay.
 
 <Card title="Guia Completo" icon="bell" href="/pages/guides/features/webhooks">
   Aprenda mais sobre Webhooks e validação

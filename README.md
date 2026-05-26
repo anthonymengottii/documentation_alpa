@@ -3,8 +3,8 @@
   
   # UPay Gateway API - Documentação Pública
   
-  [![Documentation](https://img.shields.io/badge/Documentation-Live-brightgreen)](https://docs.upay.com)
-  [![API Version](https://img.shields.io/badge/API-v1.0-blue)](https://upay-sistema-api.onrender.com)
+  [![Documentation](https://img.shields.io/badge/Documentation-Live-brightgreen)](https://docs.alpa.com)
+  [![API Version](https://img.shields.io/badge/API-v1.0-blue)](https://alpa-sistema-api.onrender.com)
   [![License](https://img.shields.io/badge/License-MIT-purple)](LICENSE)
   
   **Documentação oficial e completa da API UPay Gateway**
@@ -35,13 +35,13 @@ A **UPay Gateway API** é uma solução completa de processamento de pagamentos 
 ### Para Desenvolvedores
 
 1. **Obtenha suas credenciais de API**
-   - Acesse o [Dashboard UPay](https://app.upaybr.com)
+   - Acesse o [Dashboard UPay](https://app.alpabr.com)
    - Complete o processo de verificação (KYC)
    - Gere sua API Key em **Configurações → Credenciais de API**
 
 2. **Faça sua primeira requisição**
    ```bash
-   curl -X GET "https://upay-sistema-api.onrender.com/api/v1/payment-links" \
+   curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/payment-links" \
      -H "Authorization: Bearer SUA_API_KEY" \
      -H "Content-Type: application/json"
    ```
@@ -88,7 +88,7 @@ documentation/
 - Mantenha consistência com o tom e estilo da documentação
 - Inclua exemplos de código quando relevante
 
-**URL da Documentação**: [https://docs.upay.com.br](https://docs.upay.com.br)
+**URL da Documentação**: [https://docs.alpa.com.br](https://docs.alpa.com.br)
 
 ## 📖 Recursos da API
 
@@ -117,19 +117,19 @@ Para mais detalhes, consulte a [documentação de autenticação](/pages/authent
 
 ### Documentação e Recursos
 
-- **Documentação Online**: [https://docs.upay.com.br](https://docs.upay.com.br)
-- **API Base URL**: `https://upay-sistema-api.onrender.com`
-- **Dashboard**: [https://app.upaybr.com](https://app.upaybr.com)
-- **Status da API**: [Verificar Status](https://status.upay.com.br)
+- **Documentação Online**: [https://docs.alpa.com.br](https://docs.alpa.com.br)
+- **API Base URL**: `https://alpa-sistema-api.onrender.com`
+- **Dashboard**: [https://app.alpabr.com](https://app.alpabr.com)
+- **Status da API**: [Verificar Status](https://status.alpa.com.br)
 
 ### Repositórios
 
 - **Documentação**: [GitHub Repository](https://github.com/anthonymengottii/documentation)
-- **Sistema Principal**: [GitHub Repository](https://github.com/anthonymengottii/upay_sistema)
+- **Sistema Principal**: [GitHub Repository](https://github.com/anthonymengottii/alpa_sistema)
 
 ### Suporte
 
-- **Email**: [suporte@upay.com.br](mailto:suporte@upay.com.br)
+- **Email**: [suporte@alpa.com.br](mailto:suporte@alpa.com.br)
 - **Issues**: [GitHub Issues](https://github.com/anthonymengottii/documentation/issues)
 - **Documentação de Suporte**: [Páginas de Ajuda](/pages/introduction)
 

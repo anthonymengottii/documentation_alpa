@@ -1,31 +1,31 @@
 ---
 title: 'Glossário'
-description: 'Conceitos e termos técnicos da Upay explicados de forma simples'
+description: 'Conceitos e termos técnicos da Alpa explicados de forma simples'
 icon: 'book-open-cover'
 ---
 
 <Card title="Bem-vindo ao Glossário" horizontal>
-  Encontrou um termo que não conhece? Este glossário explica os principais conceitos e termos técnicos usados na documentação da Upay de forma simples e direta.
+  Encontrou um termo que não conhece? Este glossário explica os principais conceitos e termos técnicos usados na documentação da Alpa de forma simples e direta.
 </Card>
 
 ## Autenticação e Segurança
 
 ### Bearer Token
-Também chamado de **API Key** ou **chave de API**, é o método de autenticação usado para autorizar suas requisições à API da Upay. A chave é enviada no header HTTP `Authorization: Bearer SUA_API_KEY`. Sem uma chave válida, nenhuma requisição será aceita.
+Também chamado de **API Key** ou **chave de API**, é o método de autenticação usado para autorizar suas requisições à API da Alpa. A chave é enviada no header HTTP `Authorization: Bearer SUA_API_KEY`. Sem uma chave válida, nenhuma requisição será aceita.
 
 ### Webhook Secret
-String secreta configurada ao criar uma assinatura de webhook. Garante que as notificações recebidas vieram realmente da Upay. Deve ser validada no seu servidor para evitar requisições maliciosas.
+String secreta configurada ao criar uma assinatura de webhook. Garante que as notificações recebidas vieram realmente da Alpa. Deve ser validada no seu servidor para evitar requisições maliciosas.
 
 ### HTTPS
-Versão segura do HTTP que usa criptografia TLS/SSL. Todos os endpoints da Upay e as URLs de webhook **precisam obrigatoriamente usar HTTPS**.
+Versão segura do HTTP que usa criptografia TLS/SSL. Todos os endpoints da Alpa e as URLs de webhook **precisam obrigatoriamente usar HTTPS**.
 
 ### TLS/SSL
-Protocolos de segurança que criptografam a comunicação na internet. Utilizados em todas as conexões com a API da Upay.
+Protocolos de segurança que criptografam a comunicação na internet. Utilizados em todas as conexões com a API da Alpa.
 
 ## Ambientes e Modos
 
 ### Ambiente de Desenvolvimento
-Modo de testes onde as transações são **simuladas** e nenhum valor real é movimentado. Na Upay, o ambiente é definido **pela chave de API utilizada**: chaves de desenvolvimento geram transações de teste.
+Modo de testes onde as transações são **simuladas** e nenhum valor real é movimentado. Na Alpa, o ambiente é definido **pela chave de API utilizada**: chaves de desenvolvimento geram transações de teste.
 
 ### Ambiente de Produção
 Modo real onde as transações são processadas e valores reais são movimentados. Requer conta verificada e chave de API de produção.
@@ -36,13 +36,13 @@ Outro nome para o ambiente de desenvolvimento/testes. Ideal para desenvolver e v
 ## Pagamentos e Cobranças
 
 ### Link de Pagamento
-URL reutilizável gerada pela Upay que pode ser compartilhada com clientes para receber pagamentos via PIX, cartão ou boleto. Pode ter estoque limitado, cupons, parcelamento e URLs de redirecionamento configuráveis.
+URL reutilizável gerada pela Alpa que pode ser compartilhada com clientes para receber pagamentos via PIX, cartão ou boleto. Pode ter estoque limitado, cupons, parcelamento e URLs de redirecionamento configuráveis.
 
 ### Checkout
-Processo onde o cliente finaliza a compra e realiza o pagamento. Pode acontecer numa página gerenciada pela Upay (via link de pagamento) ou diretamente na sua aplicação.
+Processo onde o cliente finaliza a compra e realiza o pagamento. Pode acontecer numa página gerenciada pela Alpa (via link de pagamento) ou diretamente na sua aplicação.
 
 ### Gateway de Pagamento
-Plataforma intermediária que processa pagamentos entre o cliente e o vendedor. A Upay é um gateway de pagamento que facilita transações PIX, cartão e boleto.
+Plataforma intermediária que processa pagamentos entre o cliente e o vendedor. A Alpa é um gateway de pagamento que facilita transações PIX, cartão e boleto.
 
 ### Transação
 Registro de uma operação financeira. Cada transação tem um ID único, status, método de pagamento e informações do cliente.
@@ -57,7 +57,7 @@ Método de pagamento brasileiro que gera um código de barras para pagamento em 
 Divisão do pagamento em múltiplas parcelas mensais no cartão de crédito. Pode ser com ou sem juros.
 
 ### Payout / Saque
-Transferência do saldo da sua conta Upay para sua chave PIX ou conta bancária. Métodos suportados: PIX e TED.
+Transferência do saldo da sua conta Alpa para sua chave PIX ou conta bancária. Métodos suportados: PIX e TED.
 
 ## Estrutura de Dados
 
@@ -86,7 +86,7 @@ Campo opcional que permite armazenar informações adicionais personalizadas jun
 ```
 
 ### External ID
-Identificador único do seu sistema para relacionar recursos da Upay com registros internos. Útil para buscar transações usando seus próprios códigos de pedido.
+Identificador único do seu sistema para relacionar recursos da Alpa com registros internos. Útil para buscar transações usando seus próprios códigos de pedido.
 
 ### UUID
 Identificador único de 128 bits gerado automaticamente para identificar recursos na API. Formato: `550e8400-e29b-41d4-a716-446655440000`.
@@ -136,21 +136,21 @@ Valor pago automaticamente ao afiliado quando uma venda é realizada através do
 ## Webhooks
 
 ### Webhook
-Mecanismo onde a Upay **envia notificações automáticas** para o seu servidor sempre que algo importante acontece (como um pagamento confirmado), sem você precisar consultar a API constantemente.
+Mecanismo onde a Alpa **envia notificações automáticas** para o seu servidor sempre que algo importante acontece (como um pagamento confirmado), sem você precisar consultar a API constantemente.
 
 ### Assinatura de Webhook
-Configuração que define para qual URL e para quais eventos a Upay deve enviar notificações. Uma conta pode ter múltiplas assinaturas.
+Configuração que define para qual URL e para quais eventos a Alpa deve enviar notificações. Uma conta pode ter múltiplas assinaturas.
 
 ### Evento
 Ação que dispara um webhook. Exemplos: `transaction.paid`, `payment_link.expired`, `withdrawal.completed`. Cada evento contém informações sobre o que aconteceu.
 
 ### Payload
-Dados enviados pela Upay no corpo da notificação HTTP ao seu endpoint de webhook.
+Dados enviados pela Alpa no corpo da notificação HTTP ao seu endpoint de webhook.
 
 ## URLs e Endpoints
 
 ### Base URL
-Endereço raiz de todas as requisições à API: `https://upay-sistema-api.onrender.com`
+Endereço raiz de todas as requisições à API: `https://alpa-sistema-api.onrender.com`
 
 ### Endpoint
 URL específica que executa uma função na API.
@@ -169,7 +169,7 @@ URL para onde o cliente é redirecionado **após completar** o pagamento com suc
 Estilo arquitetural para APIs que usa métodos HTTP padrão: GET (consultar), POST (criar), PATCH (atualizar), DELETE (remover).
 
 ### JSON
-Formato de dados leve e legível usado para troca de informações entre sistemas. Toda a API da Upay usa JSON.
+Formato de dados leve e legível usado para troca de informações entre sistemas. Toda a API da Alpa usa JSON.
 
 ### ISO 8601
 Padrão internacional para datas e horários. Formato: `2026-01-15T10:30:00Z`.
@@ -202,10 +202,10 @@ Todas as respostas da API seguem o padrão:
 - **401 Unauthorized** — API Key ausente ou inválida
 - **404 Not Found** — Recurso não encontrado
 - **429 Too Many Requests** — Rate limit atingido
-- **500 Internal Server Error** — Erro interno da Upay
+- **500 Internal Server Error** — Erro interno da Alpa
 
 ---
 
 <Card title="Não encontrou o termo que procura?" icon="question-circle" color="#9747FF">
-  Entre em contato com nosso suporte: <Icon icon="envelope" type="solid"/> suporte@upaybr.com
+  Entre em contato com nosso suporte: <Icon icon="envelope" type="solid"/> suporte@alpabr.com
 </Card>

@@ -1,11 +1,11 @@
 ---
 title: 'Chaves de API'
-description: 'Aprenda como funcionam as chaves de API e como utilizá-las para acessar a Upay'
+description: 'Aprenda como funcionam as chaves de API e como utilizá-las para acessar a Alpa'
 icon: 'key'
 ---
 
 <Tip>
-  A **chave de API** é sua credencial de acesso à Upay. Ela identifica sua conta e autoriza cada requisição enviada para a nossa API. **Sem uma chave válida, nenhum pedido será aceito.**
+  A **chave de API** é sua credencial de acesso à Alpa. Ela identifica sua conta e autoriza cada requisição enviada para a nossa API. **Sem uma chave válida, nenhum pedido será aceito.**
 </Tip>
 
 ## O que você pode fazer com suas chaves
@@ -17,7 +17,7 @@ As chaves de API são gerenciadas diretamente pelo Dashboard. Com elas, você po
 - Revogar chaves comprometidas ou que não são mais usadas
 
 <Card title="Desenvolvimento x Produção" horizontal>
-  Todas as requisições usam o mesmo endpoint `https://upay-sistema-api.onrender.com`.
+  Todas as requisições usam o mesmo endpoint `https://alpa-sistema-api.onrender.com`.
   O ambiente é definido **pela chave utilizada**:
   - Chaves criadas em **Desenvolvimento** → transações simuladas
   - Chaves criadas em **Produção** → transações reais
@@ -52,7 +52,7 @@ A chave define **quais recursos** você pode acessar. Endpoints sem a permissão
 <Card horizontal>
   * Armazene suas chaves em variáveis de ambiente — nunca no código-fonte
   * Nunca publique sua chave em repositórios públicos ou grupos
-  * A Upay **nunca** solicitará sua chave por e-mail ou chat
+  * A Alpa **nunca** solicitará sua chave por e-mail ou chat
   * Revogue imediatamente qualquer chave que possa ter vazado
   * Use chaves diferentes para desenvolvimento e produção
 </Card>
@@ -63,7 +63,7 @@ A chave define **quais recursos** você pode acessar. Endpoints sem a permissão
 
 <Steps>
   <Step title="Acesse o Dashboard">
-    Faça login em [app.upaybr.com](https://app.upaybr.com) e navegue até **Configurações → Credenciais de API**.
+    Faça login em [app.alpabr.com](https://app.alpabr.com) e navegue até **Configurações → Credenciais de API**.
   </Step>
 
   <Step title="Crie uma nova chave">
@@ -82,16 +82,16 @@ A chave define **quais recursos** você pode acessar. Endpoints sem a permissão
 Inclua a chave no header `Authorization` de todas as requisições:
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/v1/payment-links" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/payment-links" \
   -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json"
 ```
 
 <CodeGroup>
 ```javascript Node.js
-const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payment-links', {
+const response = await fetch('https://alpa-sistema-api.onrender.com/api/v1/payment-links', {
   headers: {
-    'Authorization': `Bearer ${process.env.UPAY_API_KEY}`,
+    'Authorization': `Bearer ${process.env.ALPA_API_KEY}`,
     'Content-Type': 'application/json',
   },
 });
@@ -101,15 +101,15 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payme
 import os, requests
 
 response = requests.get(
-    'https://upay-sistema-api.onrender.com/api/v1/payment-links',
-    headers={'Authorization': f'Bearer {os.getenv("UPAY_API_KEY")}'},
+    'https://alpa-sistema-api.onrender.com/api/v1/payment-links',
+    headers={'Authorization': f'Bearer {os.getenv("ALPA_API_KEY")}'},
 )
 ```
 
 ```php PHP
-$ch = curl_init('https://upay-sistema-api.onrender.com/api/v1/payment-links');
+$ch = curl_init('https://alpa-sistema-api.onrender.com/api/v1/payment-links');
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Authorization: Bearer ' . $_ENV['UPAY_API_KEY'],
+    'Authorization: Bearer ' . $_ENV['ALPA_API_KEY'],
 ]);
 ```
 </CodeGroup>

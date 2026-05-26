@@ -18,7 +18,7 @@ Retorna todas as assinaturas vinculadas ao email informado.
 
 ```bash
 curl --request GET \
-  --url 'https://upay-sistema-api.onrender.com/api/subscriptions/customer?email=joao@example.com'
+  --url 'https://alpa-sistema-api.onrender.com/api/subscriptions/customer?email=joao@example.com'
 ```
 
 ```json
@@ -48,7 +48,7 @@ O assinante cancela a própria assinatura. O status muda para `CANCELLED` e nenh
 
 ```bash
 curl --request PATCH \
-  --url https://upay-sistema-api.onrender.com/api/subscriptions/customer/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11/cancel \
+  --url https://alpa-sistema-api.onrender.com/api/subscriptions/customer/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11/cancel \
   --header 'Content-Type: application/json' \
   --data '{ "email": "joao@example.com" }'
 ```
@@ -65,7 +65,7 @@ Pausa temporariamente a assinatura. Cobranças ficam suspensas até o assinante 
 
 ```bash
 curl --request PATCH \
-  --url https://upay-sistema-api.onrender.com/api/subscriptions/customer/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11/pause \
+  --url https://alpa-sistema-api.onrender.com/api/subscriptions/customer/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11/pause \
   --header 'Content-Type: application/json' \
   --data '{ "email": "joao@example.com" }'
 ```
@@ -82,7 +82,7 @@ Retoma uma assinatura pausada. O status volta para `ACTIVE` e as cobranças são
 
 ```bash
 curl --request PATCH \
-  --url https://upay-sistema-api.onrender.com/api/subscriptions/customer/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11/resume \
+  --url https://alpa-sistema-api.onrender.com/api/subscriptions/customer/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11/resume \
   --header 'Content-Type: application/json' \
   --data '{ "email": "joao@example.com" }'
 ```
@@ -104,7 +104,7 @@ Substitui o cartão de cobrança. Útil quando o cartão expirou ou foi bloquead
 
 ```bash
 curl --request PATCH \
-  --url https://upay-sistema-api.onrender.com/api/subscriptions/customer/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11/card \
+  --url https://alpa-sistema-api.onrender.com/api/subscriptions/customer/a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11/card \
   --header 'Content-Type: application/json' \
   --data '{
     "email": "joao@example.com",

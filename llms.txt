@@ -1,6 +1,6 @@
-# Upay Gateway API
+# Alpa Gateway API
 
-> Upay é uma plataforma brasileira de pagamentos via API. Permite cobrar clientes via Links de Pagamento reutilizáveis, processar transações com PIX e cartão, gerenciar produtos, cupons, clientes, afiliados, saques e webhooks. Toda a API usa REST + JSON, autenticação Bearer Token e opera em BRL. Base URL: `https://upay-sistema-api.onrender.com`.
+> Alpa é uma plataforma brasileira de pagamentos via API. Permite cobrar clientes via Links de Pagamento reutilizáveis, processar transações com PIX e cartão, gerenciar produtos, cupons, clientes, afiliados, saques e webhooks. Toda a API usa REST + JSON, autenticação Bearer Token e opera em BRL. Base URL: `https://alpa-sistema-api.onrender.com`.
 
 Notas importantes:
 
@@ -14,94 +14,94 @@ Notas importantes:
 
 ## Links de Pagamento
 
-- [Referência de Links de Pagamento](https://docs.upaybr.com/pages/payment-links/reference): Links reutilizáveis compartilháveis com clientes. Suportam PIX, cartão e boleto.
-- [GET /api/payment-links/public/slug/{slug}](https://docs.upaybr.com/pages/payment-links/reference): Obter informações de um link de pagamento público (sem autenticação).
-- [POST /api/payment-links/public/slug/{slug}/checkout](https://docs.upaybr.com/pages/payment-links/reference): Criar checkout completo com dados do cliente.
-- [GET /api/payment-links/public/transactions/{id}/status](https://docs.upaybr.com/pages/payment-links/reference): Consultar status de uma transação.
-- [GET /api/payment-links/public/transactions/{id}/sync-status](https://docs.upaybr.com/pages/payment-links/reference): Sincronizar status consultando gateway diretamente.
-- [POST /api/v1/payment-links](https://docs.upaybr.com/pages/payment-links/create): Criar um link de pagamento.
-- [GET /api/v1/payment-links](https://docs.upaybr.com/pages/payment-links/list): Listar links de pagamento.
-- [GET /api/v1/payment-links/{id}](https://docs.upaybr.com/pages/payment-links/get): Obter um link de pagamento pelo ID.
-- [PATCH /api/v1/payment-links/{id}](https://docs.upaybr.com/pages/payment-links/update): Atualizar um link de pagamento.
-- [DELETE /api/v1/payment-links/{id}](https://docs.upaybr.com/pages/payment-links/delete): Remover um link de pagamento.
+- [Referência de Links de Pagamento](https://docs.alpabr.com/pages/payment-links/reference): Links reutilizáveis compartilháveis com clientes. Suportam PIX, cartão e boleto.
+- [GET /api/payment-links/public/slug/{slug}](https://docs.alpabr.com/pages/payment-links/reference): Obter informações de um link de pagamento público (sem autenticação).
+- [POST /api/payment-links/public/slug/{slug}/checkout](https://docs.alpabr.com/pages/payment-links/reference): Criar checkout completo com dados do cliente.
+- [GET /api/payment-links/public/transactions/{id}/status](https://docs.alpabr.com/pages/payment-links/reference): Consultar status de uma transação.
+- [GET /api/payment-links/public/transactions/{id}/sync-status](https://docs.alpabr.com/pages/payment-links/reference): Sincronizar status consultando gateway diretamente.
+- [POST /api/v1/payment-links](https://docs.alpabr.com/pages/payment-links/create): Criar um link de pagamento.
+- [GET /api/v1/payment-links](https://docs.alpabr.com/pages/payment-links/list): Listar links de pagamento.
+- [GET /api/v1/payment-links/{id}](https://docs.alpabr.com/pages/payment-links/get): Obter um link de pagamento pelo ID.
+- [PATCH /api/v1/payment-links/{id}](https://docs.alpabr.com/pages/payment-links/update): Atualizar um link de pagamento.
+- [DELETE /api/v1/payment-links/{id}](https://docs.alpabr.com/pages/payment-links/delete): Remover um link de pagamento.
 
 ## Transações
 
-- [Referência de Transações](https://docs.upaybr.com/pages/transactions/reference): Consulta e gestão de transações de pagamento (PIX, cartão, boleto).
-- [POST /api/v1/transactions](https://docs.upaybr.com/pages/transactions/create): Criar uma nova transação diretamente via API.
-- [GET /api/v1/transactions](https://docs.upaybr.com/pages/transactions/list): Listar transações com filtros.
-- [GET /api/v1/transactions/{id}](https://docs.upaybr.com/pages/transactions/get): Obter detalhes de uma transação específica.
+- [Referência de Transações](https://docs.alpabr.com/pages/transactions/reference): Consulta e gestão de transações de pagamento (PIX, cartão, boleto).
+- [POST /api/v1/transactions](https://docs.alpabr.com/pages/transactions/create): Criar uma nova transação diretamente via API.
+- [GET /api/v1/transactions](https://docs.alpabr.com/pages/transactions/list): Listar transações com filtros.
+- [GET /api/v1/transactions/{id}](https://docs.alpabr.com/pages/transactions/get): Obter detalhes de uma transação específica.
 
 ## Produtos
 
-- [Referência de Produtos](https://docs.upaybr.com/pages/products/reference): Catálogo de produtos que podem ser associados a links de pagamento.
-- [POST /api/v1/products](https://docs.upaybr.com/pages/products/create): Criar um produto. Campos obrigatórios: `name`, `price` (centavos), `currency` ("BRL"). Opcional: `description`, `imageUrl`.
-- [GET /api/v1/products](https://docs.upaybr.com/pages/products/list): Listar produtos.
-- [GET /api/v1/products/{id}](https://docs.upaybr.com/pages/products/get): Obter produto pelo ID.
-- [PATCH /api/v1/products/{id}](https://docs.upaybr.com/pages/products/update): Atualizar produto.
-- [DELETE /api/v1/products/{id}](https://docs.upaybr.com/pages/products/delete): Remover produto.
+- [Referência de Produtos](https://docs.alpabr.com/pages/products/reference): Catálogo de produtos que podem ser associados a links de pagamento.
+- [POST /api/v1/products](https://docs.alpabr.com/pages/products/create): Criar um produto. Campos obrigatórios: `name`, `price` (centavos), `currency` ("BRL"). Opcional: `description`, `imageUrl`.
+- [GET /api/v1/products](https://docs.alpabr.com/pages/products/list): Listar produtos.
+- [GET /api/v1/products/{id}](https://docs.alpabr.com/pages/products/get): Obter produto pelo ID.
+- [PATCH /api/v1/products/{id}](https://docs.alpabr.com/pages/products/update): Atualizar produto.
+- [DELETE /api/v1/products/{id}](https://docs.alpabr.com/pages/products/delete): Remover produto.
 
 ## Clientes
 
-- [Referência de Clientes](https://docs.upaybr.com/pages/customers/reference): Clientes pré-cadastrados para uso nas cobranças.
-- [POST /api/clients](https://docs.upaybr.com/pages/customers/create): Criar um cliente. Campo obrigatório: `email`. Opcionais: `name`, `taxId` (CPF/CNPJ), `cellphone`, `zipCode`.
-- [GET /api/clients](https://docs.upaybr.com/pages/customers/list): Listar clientes.
-- [GET /api/clients/{id}](https://docs.upaybr.com/pages/customers/get): Obter cliente pelo ID.
+- [Referência de Clientes](https://docs.alpabr.com/pages/customers/reference): Clientes pré-cadastrados para uso nas cobranças.
+- [POST /api/clients](https://docs.alpabr.com/pages/customers/create): Criar um cliente. Campo obrigatório: `email`. Opcionais: `name`, `taxId` (CPF/CNPJ), `cellphone`, `zipCode`.
+- [GET /api/clients](https://docs.alpabr.com/pages/customers/list): Listar clientes.
+- [GET /api/clients/{id}](https://docs.alpabr.com/pages/customers/get): Obter cliente pelo ID.
 
 ## Cupons
 
-- [Referência de Cupons](https://docs.upaybr.com/pages/coupon/reference): Cupons de desconto fixo ou percentual aplicáveis em pagamentos.
-- [POST /api/coupons/validate](https://docs.upaybr.com/pages/coupon/validate): Validar um cupom (público, sem autenticação).
-- [POST /api/v1/coupons](https://docs.upaybr.com/pages/coupon/create): Criar um cupom.
-- [GET /api/v1/coupons](https://docs.upaybr.com/pages/coupon/list): Listar cupons.
-- [GET /api/v1/coupons/{id}](https://docs.upaybr.com/pages/coupon/get): Obter cupom pelo ID.
-- [PATCH /api/v1/coupons/{id}](https://docs.upaybr.com/pages/coupon/update): Atualizar cupom.
-- [DELETE /api/v1/coupons/{id}](https://docs.upaybr.com/pages/coupon/delete): Remover cupom.
+- [Referência de Cupons](https://docs.alpabr.com/pages/coupon/reference): Cupons de desconto fixo ou percentual aplicáveis em pagamentos.
+- [POST /api/coupons/validate](https://docs.alpabr.com/pages/coupon/validate): Validar um cupom (público, sem autenticação).
+- [POST /api/v1/coupons](https://docs.alpabr.com/pages/coupon/create): Criar um cupom.
+- [GET /api/v1/coupons](https://docs.alpabr.com/pages/coupon/list): Listar cupons.
+- [GET /api/v1/coupons/{id}](https://docs.alpabr.com/pages/coupon/get): Obter cupom pelo ID.
+- [PATCH /api/v1/coupons/{id}](https://docs.alpabr.com/pages/coupon/update): Atualizar cupom.
+- [DELETE /api/v1/coupons/{id}](https://docs.alpabr.com/pages/coupon/delete): Remover cupom.
 
 ## Saldo
 
-- [Referência de Saldo](https://docs.upaybr.com/pages/balance/reference): Consulta de saldo disponível e movimentações da conta.
-- [GET /api/v1/balance](https://docs.upaybr.com/pages/balance/get): Obter saldo atual.
-- [GET /api/v1/balance/fees](https://docs.upaybr.com/pages/balance/fees): Consultar taxas aplicáveis.
+- [Referência de Saldo](https://docs.alpabr.com/pages/balance/reference): Consulta de saldo disponível e movimentações da conta.
+- [GET /api/v1/balance](https://docs.alpabr.com/pages/balance/get): Obter saldo atual.
+- [GET /api/v1/balance/fees](https://docs.alpabr.com/pages/balance/fees): Consultar taxas aplicáveis.
 
 ## Saques
 
-- [Referência de Saques](https://docs.upaybr.com/pages/withdrawals/reference): Saques do saldo disponível para chave PIX ou conta bancária. Métodos suportados: PIX, TED.
-- [GET /api/withdraws/balance](https://docs.upaybr.com/pages/withdrawals/reference): Obter saldo disponível para saque.
-- [GET /api/withdraws/providers](https://docs.upaybr.com/pages/withdrawals/reference): Listar provedores de pagamento disponíveis.
-- [GET /api/withdraws/methods](https://docs.upaybr.com/pages/withdrawals/reference): Listar métodos de saque suportados.
-- [POST /api/withdraws](https://docs.upaybr.com/pages/withdrawals/create): Criar uma nova solicitação de saque.
-- [GET /api/withdraws](https://docs.upaybr.com/pages/withdrawals/list): Listar saques.
-- [GET /api/withdraws/{id}](https://docs.upaybr.com/pages/withdrawals/get): Obter detalhes de um saque.
-- [POST /api/withdraws/{id}/cancel](https://docs.upaybr.com/pages/withdrawals/reference): Cancelar uma solicitação de saque pendente.
+- [Referência de Saques](https://docs.alpabr.com/pages/withdrawals/reference): Saques do saldo disponível para chave PIX ou conta bancária. Métodos suportados: PIX, TED.
+- [GET /api/withdraws/balance](https://docs.alpabr.com/pages/withdrawals/reference): Obter saldo disponível para saque.
+- [GET /api/withdraws/providers](https://docs.alpabr.com/pages/withdrawals/reference): Listar provedores de pagamento disponíveis.
+- [GET /api/withdraws/methods](https://docs.alpabr.com/pages/withdrawals/reference): Listar métodos de saque suportados.
+- [POST /api/withdraws](https://docs.alpabr.com/pages/withdrawals/create): Criar uma nova solicitação de saque.
+- [GET /api/withdraws](https://docs.alpabr.com/pages/withdrawals/list): Listar saques.
+- [GET /api/withdraws/{id}](https://docs.alpabr.com/pages/withdrawals/get): Obter detalhes de um saque.
+- [POST /api/withdraws/{id}/cancel](https://docs.alpabr.com/pages/withdrawals/reference): Cancelar uma solicitação de saque pendente.
 
 ## Webhooks
 
-- [Referência de Webhooks](https://docs.upaybr.com/pages/webhooks/reference): Notificações automáticas de eventos enviadas pela Upay para o seu sistema. Endpoint deve ser HTTPS público.
-- [POST /api/v1/webhooks/subscriptions](https://docs.upaybr.com/pages/webhooks/subscriptions-create): Criar uma assinatura de webhook. Campos obrigatórios: `url` (HTTPS), `events` (array de eventos).
-- [GET /api/v1/webhooks/subscriptions](https://docs.upaybr.com/pages/webhooks/subscriptions-list): Listar assinaturas de webhook.
-- [PATCH /api/v1/webhooks/subscriptions/{id}](https://docs.upaybr.com/pages/webhooks/subscriptions-update): Atualizar uma assinatura.
-- [DELETE /api/v1/webhooks/subscriptions/{id}](https://docs.upaybr.com/pages/webhooks/subscriptions-delete): Remover uma assinatura.
-- [GET /api/v1/webhooks/events](https://docs.upaybr.com/pages/webhooks/events): Listar eventos de webhook com paginação.
-- [GET /api/v1/webhooks/{id}](https://docs.upaybr.com/pages/webhooks/get): Obter detalhes de um webhook pelo ID.
+- [Referência de Webhooks](https://docs.alpabr.com/pages/webhooks/reference): Notificações automáticas de eventos enviadas pela Alpa para o seu sistema. Endpoint deve ser HTTPS público.
+- [POST /api/v1/webhooks/subscriptions](https://docs.alpabr.com/pages/webhooks/subscriptions-create): Criar uma assinatura de webhook. Campos obrigatórios: `url` (HTTPS), `events` (array de eventos).
+- [GET /api/v1/webhooks/subscriptions](https://docs.alpabr.com/pages/webhooks/subscriptions-list): Listar assinaturas de webhook.
+- [PATCH /api/v1/webhooks/subscriptions/{id}](https://docs.alpabr.com/pages/webhooks/subscriptions-update): Atualizar uma assinatura.
+- [DELETE /api/v1/webhooks/subscriptions/{id}](https://docs.alpabr.com/pages/webhooks/subscriptions-delete): Remover uma assinatura.
+- [GET /api/v1/webhooks/events](https://docs.alpabr.com/pages/webhooks/events): Listar eventos de webhook com paginação.
+- [GET /api/v1/webhooks/{id}](https://docs.alpabr.com/pages/webhooks/get): Obter detalhes de um webhook pelo ID.
 
 ## Afiliados
 
-- [Referência de Afiliados](https://docs.upaybr.com/pages/affiliates/reference): Marketplace de afiliados com rastreamento de links, comissões automáticas e painel de performance.
+- [Referência de Afiliados](https://docs.alpabr.com/pages/affiliates/reference): Marketplace de afiliados com rastreamento de links, comissões automáticas e painel de performance.
 - **Endpoints — Afiliado:**
-- [GET /api/affiliate/marketplace](https://docs.upaybr.com/pages/affiliates/marketplace): Listar programas de afiliados disponíveis.
-- [POST /api/affiliate/join/{programId}](https://docs.upaybr.com/pages/affiliates/join): Solicitar afiliação a um programa.
-- [GET /api/affiliate/links](https://docs.upaybr.com/pages/affiliates/my-links): Listar meus links de afiliado.
-- [GET /api/affiliate/commissions](https://docs.upaybr.com/pages/affiliates/my-commissions): Consultar minhas comissões.
-- [GET /api/affiliate/stats](https://docs.upaybr.com/pages/affiliates/my-stats): Consultar minhas estatísticas de afiliado.
+- [GET /api/affiliate/marketplace](https://docs.alpabr.com/pages/affiliates/marketplace): Listar programas de afiliados disponíveis.
+- [POST /api/affiliate/join/{programId}](https://docs.alpabr.com/pages/affiliates/join): Solicitar afiliação a um programa.
+- [GET /api/affiliate/links](https://docs.alpabr.com/pages/affiliates/my-links): Listar meus links de afiliado.
+- [GET /api/affiliate/commissions](https://docs.alpabr.com/pages/affiliates/my-commissions): Consultar minhas comissões.
+- [GET /api/affiliate/stats](https://docs.alpabr.com/pages/affiliates/my-stats): Consultar minhas estatísticas de afiliado.
 - **Endpoints — Anunciante:**
-- [POST /api/affiliate/programs](https://docs.upaybr.com/pages/affiliates/programs-create): Criar um programa de afiliados.
-- [GET /api/affiliate/programs](https://docs.upaybr.com/pages/affiliates/programs-list): Listar meus programas.
-- [PATCH /api/affiliate/programs/{id}](https://docs.upaybr.com/pages/affiliates/programs-update): Atualizar um programa.
-- [DELETE /api/affiliate/programs/{id}](https://docs.upaybr.com/pages/affiliates/programs-delete): Remover um programa.
+- [POST /api/affiliate/programs](https://docs.alpabr.com/pages/affiliates/programs-create): Criar um programa de afiliados.
+- [GET /api/affiliate/programs](https://docs.alpabr.com/pages/affiliates/programs-list): Listar meus programas.
+- [PATCH /api/affiliate/programs/{id}](https://docs.alpabr.com/pages/affiliates/programs-update): Atualizar um programa.
+- [DELETE /api/affiliate/programs/{id}](https://docs.alpabr.com/pages/affiliates/programs-delete): Remover um programa.
 
 ## Optional
 
-- [Endpoints (OpenAPI)](https://docs.upaybr.com/api-reference/introduction): Referência completa de todos os endpoints via especificação OpenAPI.
-- [SDKs](https://docs.upaybr.com/pages/sdks): Bibliotecas oficiais para Node.js, Python, PHP e Java.
-- [Changelog](https://docs.upaybr.com/pages/changelog): Histórico de atualizações e melhorias da API.
+- [Endpoints (OpenAPI)](https://docs.alpabr.com/api-reference/introduction): Referência completa de todos os endpoints via especificação OpenAPI.
+- [SDKs](https://docs.alpabr.com/pages/sdks): Bibliotecas oficiais para Node.js, Python, PHP e Java.
+- [Changelog](https://docs.alpabr.com/pages/changelog): Histórico de atualizações e melhorias da API.

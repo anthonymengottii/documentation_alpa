@@ -5,11 +5,11 @@ icon: 'php'
 ---
 
 <Card
-  title="Upay PHP SDK"
+  title="Alpa PHP SDK"
   icon="php"
-  href="https://github.com/anthonymengottii/upay-php-sdk"
+  href="https://github.com/anthonymengottii/alpa-php-sdk"
 >
-  SDK oficial da Upay para PHP. Compatível com PHP 8.1+.
+  SDK oficial da Alpa para PHP. Compatível com PHP 8.1+.
 </Card>
 
 ## Instalação
@@ -19,8 +19,8 @@ icon: 'php'
 </Note>
 
 ```bash
-composer config repositories.upay vcs https://github.com/anthonymengottii/upay-php-sdk
-composer require upay/upay-php:dev-main
+composer config repositories.alpa vcs https://github.com/anthonymengottii/alpa-php-sdk
+composer require alpa/alpa-php:dev-main
 ```
 
 ## Uso Rápido
@@ -29,15 +29,15 @@ composer require upay/upay-php:dev-main
 <?php
 require 'vendor/autoload.php';
 
-use Upay\UpayClient;
+use Alpa\AlpaClient;
 
-$upay = new UpayClient($_ENV['UPAY_API_KEY']);
+$alpa = new AlpaClient($_ENV['ALPA_API_KEY']);
 ```
 
 ## Criar Link de Pagamento
 
 ```php
-$link = $upay->paymentLinks->create([
+$link = $alpa->paymentLinks->create([
     'title'       => 'Produto Premium',
     'amountCents' => 9900,
     'description' => 'Acesso vitalício',
@@ -53,7 +53,7 @@ $link = $upay->paymentLinks->create([
     'description' => 'Acesso vitalício',
     'amountCents' => 9900,
     'status'      => 'ACTIVE',
-    'url'         => 'https://pay.upaybr.com/l/abc123',
+    'url'         => 'https://pay.alpabr.com/l/abc123',
     'createdAt'   => '2026-04-08T00:00:00.000Z',
     'updatedAt'   => '2026-04-08T00:00:00.000Z',
 ]
@@ -62,7 +62,7 @@ $link = $upay->paymentLinks->create([
 ## Criar Transação PIX
 
 ```php
-$tx = $upay->transactions->create([
+$tx = $alpa->transactions->create([
     'product'        => 'Curso PHP',
     'paymentMethod'  => 'PIX',
     'amountCents'    => 19900,
@@ -77,7 +77,7 @@ echo $tx['pixCopiaECola'];
 ## Validar Cupom
 
 ```php
-$result = $upay->coupons->validate('DESCONTO10', 19900);
+$result = $alpa->coupons->validate('DESCONTO10', 19900);
 
 // $result['valid'], $result['discountCents'], $result['finalAmountCents']
 ```
@@ -89,7 +89,7 @@ $result = $upay->coupons->validate('DESCONTO10', 19900);
 $payload   = file_get_contents('php://input');
 $signature = $_SERVER['HTTP_X_WEBHOOK_SIGNATURE'] ?? '';
 
-if (!$upay->verifyWebhookSignature($payload, $signature, $_ENV['UPAY_WEBHOOK_SECRET'])) {
+if (!$alpa->verifyWebhookSignature($payload, $signature, $_ENV['ALPA_WEBHOOK_SECRET'])) {
     http_response_code(401);
     exit(json_encode(['error' => 'Assinatura inválida']));
 }
@@ -102,14 +102,14 @@ echo json_encode(['received' => true]);
 
 ```php
 <?php
-use Upay\Exceptions\UpayValidationException;
-use Upay\Exceptions\UpayException;
+use Alpa\Exceptions\AlpaValidationException;
+use Alpa\Exceptions\AlpaException;
 
 try {
-    $tx = $upay->transactions->create([...]);
-} catch (UpayValidationException $e) {
+    $tx = $alpa->transactions->create([...]);
+} catch (AlpaValidationException $e) {
     echo 'Dados inválidos: ' . $e->getMessage();
-} catch (UpayException $e) {
+} catch (AlpaException $e) {
     echo 'Erro ' . $e->getStatusCode() . ': ' . $e->getMessage();
 }
 ```

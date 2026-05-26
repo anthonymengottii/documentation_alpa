@@ -1,11 +1,11 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Upay Gateway API",
+  "name": "Alpa Gateway API",
   "colors": {
-    "primary": "#9747FF",
-    "light": "#A78BFA",
-    "dark": "#5B21B6"
+    "primary": "#FF3D02",
+    "light": "#FF7448",
+    "dark": "#D13000"
   },
   "favicon": "/favicon.ico",
   "css": [
@@ -216,13 +216,13 @@
       },
       {
         "label": "Suporte",
-        "href": "mailto:suporte@upay.com.br"
+        "href": "mailto:suporte@alpa.com.br"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://app.upaybr.com"
+      "href": "https://app.alpabr.com"
     }
   },
   "contextual": {
@@ -239,9 +239,9 @@
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/anthonymengottii/upay_sistema"
+      "github": "https://github.com/anthonymengottii/alpa_sistema"
     },
-    "text": "© 2026 Upay. Todos os direitos reservados."
+    "text": "© 2026 Alpa. Todos os direitos reservados."
   },
   "i18n": {
     "toc": "Nesta página"

@@ -1,12 +1,12 @@
 ---
 title: 'SDKs'
-description: 'Bibliotecas oficiais para integração com a API da Upay'
+description: 'Bibliotecas oficiais para integração com a API da Alpa'
 icon: 'boxes-stacked'
 ---
 
-## O que são os SDKs da Upay?
+## O que são os SDKs da Alpa?
 
-Os SDKs (Software Development Kits) da Upay são bibliotecas oficiais que simplificam a comunicação com nossa API. Eles oferecem uma interface amigável e específica para cada linguagem, permitindo que você integre rapidamente PIX, cartão e boleto ao seu sistema.
+Os SDKs (Software Development Kits) da Alpa são bibliotecas oficiais que simplificam a comunicação com nossa API. Eles oferecem uma interface amigável e específica para cada linguagem, permitindo que você integre rapidamente PIX, cartão e boleto ao seu sistema.
 
 <Card title="Benefícios de usar nossos SDKs" horizontal>
   * **Integração simplificada**: Funções prontas para todos os endpoints da API
@@ -43,21 +43,21 @@ Oferecemos SDKs oficiais para as principais linguagens de backend. Escolha o que
 
 <CodeGroup>
 ```bash Node.js
-npm install github:anthonymengottii/upay-nodejs-sdk
+npm install github:anthonymengottii/alpa-nodejs-sdk
 ```
 
 ```bash Python
-pip install git+https://github.com/anthonymengottii/upay-python-sdk.git
+pip install git+https://github.com/anthonymengottii/alpa-python-sdk.git
 ```
 
 ```bash PHP
-composer config repositories.upay vcs https://github.com/anthonymengottii/upay-php-sdk
-composer require upay/upay-php:dev-main
+composer config repositories.alpa vcs https://github.com/anthonymengottii/alpa-php-sdk
+composer require alpa/alpa-php:dev-main
 ```
 
 ```bash Java
-git clone https://github.com/anthonymengottii/upay-java-sdk
-cd upay-java-sdk && mvn install
+git clone https://github.com/anthonymengottii/alpa-java-sdk
+cd alpa-java-sdk && mvn install
 ```
 </CodeGroup>
 
@@ -67,11 +67,11 @@ Todos os SDKs seguem o mesmo padrão: instancie o cliente com sua API Key e aces
 
 <CodeGroup>
 ```typescript Node.js
-import UpayClient from '@upay/upay-js';
+import AlpaClient from '@alpa/alpa-js';
 
-const upay = new UpayClient({ apiKey: process.env.UPAY_API_KEY });
+const alpa = new AlpaClient({ apiKey: process.env.ALPA_API_KEY });
 
-const link = await upay.paymentLinks.create({
+const link = await alpa.paymentLinks.create({
   title: 'Produto Premium',
   amountCents: 9900,
 });
@@ -79,11 +79,11 @@ console.log('Checkout:', link.url);
 ```
 
 ```python Python
-from upay import UpayClient
+from alpa import AlpaClient
 
-upay = UpayClient(api_key=os.getenv('UPAY_API_KEY'))
+alpa = AlpaClient(api_key=os.getenv('ALPA_API_KEY'))
 
-link = upay.payment_links.create({
+link = alpa.payment_links.create({
     'title': 'Produto Premium',
     'amountCents': 9900,
 })
@@ -91,11 +91,11 @@ print('Checkout:', link['url'])
 ```
 
 ```php PHP
-use Upay\UpayClient;
+use Alpa\AlpaClient;
 
-$upay = new UpayClient($_ENV['UPAY_API_KEY']);
+$alpa = new AlpaClient($_ENV['ALPA_API_KEY']);
 
-$link = $upay->paymentLinks->create([
+$link = $alpa->paymentLinks->create([
     'title'       => 'Produto Premium',
     'amountCents' => 9900,
 ]);
@@ -103,11 +103,11 @@ echo 'Checkout: ' . $link['url'];
 ```
 
 ```java Java
-import com.upay.UpayClient;
+import com.alpa.AlpaClient;
 
-var upay = new UpayClient(System.getenv("UPAY_API_KEY"));
+var alpa = new AlpaClient(System.getenv("ALPA_API_KEY"));
 
-var link = upay.paymentLinks.create(Map.of(
+var link = alpa.paymentLinks.create(Map.of(
     "title",       "Produto Premium",
     "amountCents", 9900
 ));
@@ -131,11 +131,11 @@ System.out.println("Checkout: " + link.path("url").asText());
   </Accordion>
 
   <Accordion title="O que fazer se encontrar um bug em um SDK?">
-    Abra uma issue no repositório GitHub do SDK específico. Nossa equipe está sempre atenta para corrigir bugs e melhorar as bibliotecas. Você também pode entrar em contato pelo e-mail <Icon icon="envelope" type="solid" /> suporte@upaybr.com.
+    Abra uma issue no repositório GitHub do SDK específico. Nossa equipe está sempre atenta para corrigir bugs e melhorar as bibliotecas. Você também pode entrar em contato pelo e-mail <Icon icon="envelope" type="solid" /> suporte@alpabr.com.
   </Accordion>
 
   <Accordion title="Falta um SDK para a linguagem que eu uso. O que fazer?">
-    Entre em contato pelo e-mail <Icon icon="envelope" type="solid" /> suporte@upaybr.com informando qual linguagem você precisa. Nossa equipe avaliará a demanda para incluir na roadmap.
+    Entre em contato pelo e-mail <Icon icon="envelope" type="solid" /> suporte@alpabr.com informando qual linguagem você precisa. Nossa equipe avaliará a demanda para incluir na roadmap.
   </Accordion>
 </AccordionGroup>
 
@@ -157,5 +157,5 @@ System.out.println("Checkout: " + link.path("url").asText());
 </CardGroup>
 
 <Card title="Precisa de ajuda com a integração?" icon="headset">
-  Nossa equipe está disponível para ajudar. Entre em contato: <Icon icon="envelope" type="solid" /> suporte@upaybr.com
+  Nossa equipe está disponível para ajudar. Entre em contato: <Icon icon="envelope" type="solid" /> suporte@alpabr.com
 </Card>

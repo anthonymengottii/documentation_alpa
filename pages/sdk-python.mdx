@@ -5,11 +5,11 @@ icon: 'python'
 ---
 
 <Card
-  title="Upay Python SDK"
+  title="Alpa Python SDK"
   icon="python"
-  href="https://github.com/anthonymengottii/upay-python-sdk"
+  href="https://github.com/anthonymengottii/alpa-python-sdk"
 >
-  SDK oficial da Upay para Python. Compatível com Python 3.8+.
+  SDK oficial da Alpa para Python. Compatível com Python 3.8+.
 </Card>
 
 ## Instalação
@@ -19,22 +19,22 @@ icon: 'python'
 </Note>
 
 ```bash
-pip install git+https://github.com/anthonymengottii/upay-python-sdk.git
+pip install git+https://github.com/anthonymengottii/alpa-python-sdk.git
 ```
 
 ## Uso Rápido
 
 ```python
 import os
-from upay import UpayClient
+from alpa import AlpaClient
 
-upay = UpayClient(api_key=os.getenv('UPAY_API_KEY'))
+alpa = AlpaClient(api_key=os.getenv('ALPA_API_KEY'))
 ```
 
 ## Criar Link de Pagamento
 
 ```python
-link = upay.payment_links.create({
+link = alpa.payment_links.create({
     'title': 'Produto Premium',
     'amountCents': 9900,
     'description': 'Acesso vitalício',
@@ -50,7 +50,7 @@ link = upay.payment_links.create({
     'description': 'Acesso vitalício',
     'amountCents': 9900,
     'status': 'ACTIVE',
-    'url': 'https://pay.upaybr.com/l/abc123',
+    'url': 'https://pay.alpabr.com/l/abc123',
     'createdAt': '2026-04-08T00:00:00.000Z',
     'updatedAt': '2026-04-08T00:00:00.000Z'
 }
@@ -59,7 +59,7 @@ link = upay.payment_links.create({
 ## Criar Transação PIX
 
 ```python
-tx = upay.transactions.create({
+tx = alpa.transactions.create({
     'product': 'Curso Python',
     'paymentMethod': 'PIX',
     'amountCents': 19900,
@@ -74,7 +74,7 @@ print(tx['pixCopiaECola'])
 ## Validar Cupom
 
 ```python
-result = upay.coupons.validate(
+result = alpa.coupons.validate(
     code='DESCONTO10',
     amount_cents=19900,
 )
@@ -91,10 +91,10 @@ app = Flask(__name__)
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    is_valid = upay.verify_webhook_signature(
+    is_valid = alpa.verify_webhook_signature(
         payload=request.data,
         signature=request.headers.get('x-webhook-signature', ''),
-        secret=os.getenv('UPAY_WEBHOOK_SECRET'),
+        secret=os.getenv('ALPA_WEBHOOK_SECRET'),
     )
 
     if not is_valid:
@@ -107,12 +107,12 @@ def webhook():
 ## Tratamento de Erros
 
 ```python
-from upay import UpayValidationError, UpayError
+from alpa import AlpaValidationError, AlpaError
 
 try:
-    tx = upay.transactions.create({ ... })
-except UpayValidationError as e:
+    tx = alpa.transactions.create({ ... })
+except AlpaValidationError as e:
     print('Dados inválidos:', e)
-except UpayError as e:
+except AlpaError as e:
     print(f'Erro {e.status_code}:', e)
 ```

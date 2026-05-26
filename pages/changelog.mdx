@@ -1,6 +1,6 @@
 ---
 title: 'Changelog da API'
-description: 'Mantenha-se atualizado com as mudanças e histórico de versões da API Upay'
+description: 'Mantenha-se atualizado com as mudanças e histórico de versões da API Alpa'
 icon: 'scroll'
 ---
 
@@ -36,7 +36,7 @@ Sugestões de features ou melhorias podem ser enviadas pelo Dashboard na seção
 
 - **Marketplace de afiliados**: endpoint público (autenticado) `GET /api/affiliate/marketplace` lista todos os programas ativos com detalhes do produto, comissão e número de afiliados inscritos
 - **Solicitar afiliação**: `POST /api/affiliate/join/:programId` gera um código de rastreamento único por afiliado no formato `NOME-XXXXXX`
-- **Links rastreáveis**: URL de divulgação no formato `https://checkout.upaybr.com/pay/{slug}?aff={codigo}`
+- **Links rastreáveis**: URL de divulgação no formato `https://checkout.alpabr.com/pay/{slug}?aff={codigo}`
 - **Comissões automáticas**: após confirmação do pagamento, a comissão é calculada e creditada automaticamente na carteira do afiliado
 - **Dois tipos de comissão**: `PERCENTAGE` (percentual do valor pago) ou `FIXED` (valor fixo em centavos)
 - **Rastreamento de cliques e conversões** por link
@@ -61,7 +61,7 @@ Os SDKs oficiais (Node.js, Python, PHP e Java) receberam correções importantes
 
 - Corrigido campo `amount` no body de `POST /api/coupons/validate` — os SDKs enviavam `amountCents` incorretamente
 - Respostas HTTP 400 com `{ valid: false }` agora são tratadas como resposta válida (cupom inválido), não como erro
-- Java: pacote renomeado de `com.upay.sdk` para `com.upay`
+- Java: pacote renomeado de `com.alpa.sdk` para `com.alpa`
 - Java: `pom.xml` reescrito em UTF-8 (estava em UTF-16, causando falha no Maven)
 - JS: script de teste corrigido no `package.json`
 
@@ -119,14 +119,14 @@ Os SDKs oficiais (Node.js, Python, PHP e Java) receberam correções importantes
 <Update label="15 de Jan, 2026">
 ## Lançamento dos SDKs oficiais
 
-Os SDKs oficiais da Upay estão disponíveis para as principais linguagens de backend.
+Os SDKs oficiais da Alpa estão disponíveis para as principais linguagens de backend.
 
 **SDKs disponíveis:**
 
-- **Node.js / TypeScript** — `@upay/upay-js`
-- **Python** — `upay-python`
-- **PHP** — `upay/upay-php`
-- **Java** — `com.upay:upay-java`
+- **Node.js / TypeScript** — `@alpa/alpa-js`
+- **Python** — `alpa-python`
+- **PHP** — `alpa/alpa-php`
+- **Java** — `com.alpa:alpa-java`
 
 Todos os SDKs incluem:
 - Funções prontas para todos os endpoints (transações, links de pagamento, produtos, cupons)
@@ -185,9 +185,9 @@ Consulte a aba **SDKs** para instalação e exemplos de uso.
 </Update>
 
 <Update label="15 de Out, 2025">
-## 🎉 Lançamento da API Upay v1
+## 🎉 Lançamento da API Alpa v1
 
-A API Upay está no ar. A partir de hoje você pode integrar pagamentos via PIX, Cartão de Crédito/Débito e Boleto ao seu sistema.
+A API Alpa está no ar. A partir de hoje você pode integrar pagamentos via PIX, Cartão de Crédito/Débito e Boleto ao seu sistema.
 
 **Disponível no lançamento:**
 

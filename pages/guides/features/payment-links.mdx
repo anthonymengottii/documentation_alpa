@@ -24,7 +24,7 @@ Os **Links de pagamento** são URLs personalizadas que você pode criar e compar
 ### Requisição Básica
 
 ```bash
-curl -X POST "https://upay-sistema-api.onrender.com/api/v1/payment-links" \
+curl -X POST "https://alpa-sistema-api.onrender.com/api/v1/payment-links" \
   -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -54,7 +54,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/payment-links" \
     "amount": 9900,
     "currency": "BRL",
     "status": "ACTIVE",
-    "url": "https://checkout.upaybr.com/pay/produto-premium-abc123",
+    "url": "https://checkout.alpabr.com/pay/produto-premium-abc123",
     "createdAt": "2025-12-30T00:00:00.000Z",
     "updatedAt": "2025-12-30T00:00:00.000Z"
   }
@@ -137,7 +137,7 @@ O campo `checkoutConfig` permite personalizar a aparência e o comportamento vis
 | Campo | Tipo | Descrição |
 |-------|------|-----------|
 | `showHeader` | boolean | Exibe/oculta o cabeçalho com logo. |
-| `showPoweredBy` | boolean | Se `false`, remove a marca "Powered by Upay". |
+| `showPoweredBy` | boolean | Se `false`, remove a marca "Powered by Alpa". |
 | `showSocialProof` | boolean | Exibe depoimentos/prova social configurados. |
 | `showTermsFooter` | boolean | Exibe links de Termos e Privacidade. |
 
@@ -181,7 +181,7 @@ O campo `checkoutConfig` permite personalizar a aparência e o comportamento vis
 ### Link Simples com PIX e Cartão
 
 ```javascript
-const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payment-links', {
+const response = await fetch('https://alpa-sistema-api.onrender.com/api/v1/payment-links', {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${apiKey}`,
@@ -205,7 +205,7 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payme
 ### Link com Produtos e Estoque
 
 ```javascript
-const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payment-links', {
+const response = await fetch('https://alpa-sistema-api.onrender.com/api/v1/payment-links', {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${apiKey}`,
@@ -235,7 +235,7 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payme
 const expiresAt = new Date();
 expiresAt.setDate(expiresAt.getDate() + 30); // Expira em 30 dias
 
-const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payment-links', {
+const response = await fetch('https://alpa-sistema-api.onrender.com/api/v1/payment-links', {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${apiKey}`,
@@ -260,21 +260,21 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/payme
 ### Listar Todos os Links
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/v1/payment-links?page=1&limit=20" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/payment-links?page=1&limit=20" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
 ### Buscar Link Específico
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/v1/payment-links/{id}" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/payment-links/{id}" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
 ## Atualizando um link
 
 ```bash
-curl -X PATCH "https://upay-sistema-api.onrender.com/api/v1/payment-links/{id}" \
+curl -X PATCH "https://alpa-sistema-api.onrender.com/api/v1/payment-links/{id}" \
   -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -290,7 +290,7 @@ curl -X PATCH "https://upay-sistema-api.onrender.com/api/v1/payment-links/{id}" 
 ## 🗑️ Deletando um Link
 
 ```bash
-curl -X DELETE "https://upay-sistema-api.onrender.com/api/v1/payment-links/{id}" \
+curl -X DELETE "https://alpa-sistema-api.onrender.com/api/v1/payment-links/{id}" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
@@ -303,7 +303,7 @@ curl -X DELETE "https://upay-sistema-api.onrender.com/api/v1/payment-links/{id}"
 Após criar um link, você receberá uma URL no formato:
 
 ```
-https://checkout.upaybr.com/pay/{slug}
+https://checkout.alpabr.com/pay/{slug}
 ```
 
 Esta URL pode ser compartilhada diretamente com seus clientes.

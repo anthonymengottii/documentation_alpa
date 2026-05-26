@@ -6,12 +6,12 @@ icon: "money-bill"
 
 ## Visão geral
 
-As **Transações** representam todas as operações de pagamento realizadas através da Upay Gateway API. Cada transação contém informações completas sobre o pagamento, incluindo método utilizado, status, valores e dados do cliente.
+As **Transações** representam todas as operações de pagamento realizadas através da Alpa Gateway API. Cada transação contém informações completas sobre o pagamento, incluindo método utilizado, status, valores e dados do cliente.
 
 ## Pré-requisitos
 
 Antes de começar, você precisa:
-- Uma conta ativa na Upay
+- Uma conta ativa na Alpa
 - Sua API Key configurada (veja [Autenticação](/authentication))
 - Conhecimento básico de APIs REST
 
@@ -29,7 +29,7 @@ Antes de começar, você precisa:
 ### Requisição Básica - PIX
 
 ```bash
-curl -X POST "https://upay-sistema-api.onrender.com/api/v1/transactions" \
+curl -X POST "https://alpa-sistema-api.onrender.com/api/v1/transactions" \
   -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -103,7 +103,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/transactions" \
 ### Transação com Cartão de Crédito
 
 ```javascript
-const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/transactions', {
+const response = await fetch('https://alpa-sistema-api.onrender.com/api/v1/transactions', {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${apiKey}`,
@@ -125,7 +125,7 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/trans
 ### Transação com Boleto
 
 ```javascript
-const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/transactions', {
+const response = await fetch('https://alpa-sistema-api.onrender.com/api/v1/transactions', {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${apiKey}`,
@@ -146,7 +146,7 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/trans
 ### Transação com Metadata (integração de parceiros)
 
 ```javascript
-const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/transactions', {
+const response = await fetch('https://alpa-sistema-api.onrender.com/api/v1/transactions', {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${apiKey}`,
@@ -174,7 +174,7 @@ const response = await fetch('https://upay-sistema-api.onrender.com/api/v1/trans
 ### Listar Todas as Transações
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/v1/transactions?page=1&limit=20" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/transactions?page=1&limit=20" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
@@ -211,7 +211,7 @@ curl -X GET "https://upay-sistema-api.onrender.com/api/v1/transactions?page=1&li
 ### Buscar Transação Específica
 
 ```bash
-curl -X GET "https://upay-sistema-api.onrender.com/api/v1/transactions/{id}" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/transactions/{id}" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
@@ -219,19 +219,19 @@ curl -X GET "https://upay-sistema-api.onrender.com/api/v1/transactions/{id}" \
 
 ```bash
 # Filtrar por status
-curl -X GET "https://upay-sistema-api.onrender.com/api/v1/transactions?status=COMPLETED" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/transactions?status=COMPLETED" \
   -H "Authorization: Bearer SUA_API_KEY"
 
 # Filtrar por método de pagamento
-curl -X GET "https://upay-sistema-api.onrender.com/api/v1/transactions?paymentMethod=PIX" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/transactions?paymentMethod=PIX" \
   -H "Authorization: Bearer SUA_API_KEY"
 
 # Filtrar por período
-curl -X GET "https://upay-sistema-api.onrender.com/api/v1/transactions?startDate=2025-01-01&endDate=2025-12-31" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/transactions?startDate=2025-01-01&endDate=2025-12-31" \
   -H "Authorization: Bearer SUA_API_KEY"
 
 # Combinar filtros
-curl -X GET "https://upay-sistema-api.onrender.com/api/v1/transactions?status=COMPLETED&paymentMethod=PIX&page=1&limit=50" \
+curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/transactions?status=COMPLETED&paymentMethod=PIX&page=1&limit=50" \
   -H "Authorization: Bearer SUA_API_KEY"
 ```
 
@@ -286,7 +286,7 @@ curl -X GET "https://upay-sistema-api.onrender.com/api/v1/transactions?status=CO
 
 ```json
 {
-  "boletoUrl": "https://boleto.upaybr.com/...",
+  "boletoUrl": "https://boleto.alpabr.com/...",
   "boletoBarcode": "34191.79001 01043.510047 91020.150008 1 84350000002000",
   "boletoExpiresAt": "2025-01-02T23:59:59.000Z"
 }
@@ -322,7 +322,7 @@ Quando o status mudar para `COMPLETED` ou `FAILED`, a UPay enviará automaticame
 O cabeçalho `X-Webhook-Signature` é enviado com assinatura HMAC-SHA256 para validação de autenticidade (mesmo formato dos [webhooks](/pages/guides/features/webhooks#validando-a-assinatura)). Seu endpoint deve responder com status `2xx` para confirmar o recebimento.
 
 ```bash
-curl -X POST "https://upay-sistema-api.onrender.com/api/v1/transactions" \
+curl -X POST "https://alpa-sistema-api.onrender.com/api/v1/transactions" \
   -H "Authorization: Bearer SUA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -331,7 +331,7 @@ curl -X POST "https://upay-sistema-api.onrender.com/api/v1/transactions" \
     "clientName": "João Silva",
     "clientEmail": "joao@example.com",
     "clientDocument": "12345678900",
-    "postbackUrl": "https://meusite.com.br/postback/upay"
+    "postbackUrl": "https://meusite.com.br/postback/alpa"
   }'
 ```
 
@@ -384,7 +384,7 @@ function validateTransaction(data) {
 Use `metadata` para rastrear transações e evitar duplicatas:
 
 ```javascript
-const transaction = await upay.transactions.create({
+const transaction = await alpa.transactions.create({
   // ... outros campos
   metadata: {
     orderId: 'ORD-2025-001',

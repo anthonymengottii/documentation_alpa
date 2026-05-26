@@ -5,7 +5,7 @@ icon: 'rotate'
 ---
 
 <Info>
-  O sistema de assinaturas da Upay permite cobrar clientes de forma recorrente com retry automático, período de trial e métricas em tempo real — sem precisar gerenciar cobranças manualmente.
+  O sistema de assinaturas da Alpa permite cobrar clientes de forma recorrente com retry automático, período de trial e métricas em tempo real — sem precisar gerenciar cobranças manualmente.
 </Info>
 
 ## O que você pode fazer
@@ -32,13 +32,13 @@ icon: 'rotate'
     O cliente acessa a página pública do plano via `GET /api/subscriptions/public/:planId` ou uma landing page customizada.
   </Step>
   <Step title="Se inscreve">
-    O cliente preenche nome, email, CPF/CNPJ e dados de pagamento. A inscrição é feita via `POST /api/subscriptions/checkout` — sem necessidade de conta na Upay.
+    O cliente preenche nome, email, CPF/CNPJ e dados de pagamento. A inscrição é feita via `POST /api/subscriptions/checkout` — sem necessidade de conta na Alpa.
   </Step>
   <Step title="Trial (se configurado)">
     Se o plano tem `trialDays > 0`, o cliente fica em status `TRIAL` e a primeira cobrança só ocorre após o período de trial.
   </Step>
   <Step title="Cobranças automáticas">
-    A Upay processa a cobrança no intervalo do plano. Em caso de falha, o status muda para `PAST_DUE` e o retry é disparado automaticamente.
+    A Alpa processa a cobrança no intervalo do plano. Em caso de falha, o status muda para `PAST_DUE` e o retry é disparado automaticamente.
   </Step>
   <Step title="Gestão pelo assinante">
     O assinante pode pausar, retomar ou cancelar a assinatura, e atualizar o cartão de cobrança.
@@ -49,7 +49,7 @@ icon: 'rotate'
 
 ```bash
 curl --request POST \
-  --url https://upay-sistema-api.onrender.com/api/subscriptions/plans \
+  --url https://alpa-sistema-api.onrender.com/api/subscriptions/plans \
   --header 'Authorization: Bearer SUA_API_KEY' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -72,7 +72,7 @@ curl --request POST \
 ## Métricas em tempo real
 
 ```bash
-curl https://upay-sistema-api.onrender.com/api/subscriptions/metrics \
+curl https://alpa-sistema-api.onrender.com/api/subscriptions/metrics \
   -H 'Authorization: Bearer SUA_API_KEY'
 ```
 
