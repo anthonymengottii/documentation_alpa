@@ -1,13 +1,13 @@
 <div align="center">
-  <img src="logo/light.png" alt="UPay Gateway API" width="200" />
+  <img src="logo/light.png" alt="Alpa Gateway API" width="200" />
   
-  # UPay Gateway API - Documentação Pública
+  # Alpa Gateway API - Documentação Pública
   
   [![Documentation](https://img.shields.io/badge/Documentation-Live-brightgreen)](https://docs.alpa.com)
   [![API Version](https://img.shields.io/badge/API-v1.0-blue)](https://alpa-sistema-api.onrender.com)
   [![License](https://img.shields.io/badge/License-MIT-purple)](LICENSE)
   
-  **Documentação oficial e completa da API UPay Gateway**
+  **Documentação oficial e completa da API Alpa Gateway**
   
   Plataforma completa de pagamentos com PIX, cartão de crédito/débito, boleto bancário e muito mais.
 </div>
@@ -16,7 +16,7 @@
 
 ## 📋 Sobre
 
-A **UPay Gateway API** é uma solução completa de processamento de pagamentos desenvolvida para oferecer integração simples, segura e eficiente. Esta documentação fornece todas as informações necessárias para desenvolvedores integrarem pagamentos em suas aplicações.
+A **Alpa Gateway API** é uma solução completa de processamento de pagamentos desenvolvida para oferecer integração simples, segura e eficiente. Esta documentação fornece todas as informações necessárias para desenvolvedores integrarem pagamentos em suas aplicações.
 
 ### Características Principais
 
@@ -35,7 +35,7 @@ A **UPay Gateway API** é uma solução completa de processamento de pagamentos 
 ### Para Desenvolvedores
 
 1. **Obtenha suas credenciais de API**
-   - Acesse o [Dashboard UPay](https://app.usealpa.com)
+   - Acesse o [Dashboard Alpa](https://app.usealpa.com)
    - Complete o processo de verificação (KYC)
    - Gere sua API Key em **Configurações → Credenciais de API**
 
@@ -152,6 +152,6 @@ Este projeto está licenciado sob a [MIT License](LICENSE).
 
 <div align="center">
   <p>
-    <strong>UPay Gateway API</strong> - Simplificando pagamentos online
+    <strong>Alpa Gateway API</strong> - Simplificando pagamentos online
   </p>
 </div>

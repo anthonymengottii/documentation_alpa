@@ -296,7 +296,7 @@ curl -X GET "https://alpa-sistema-api.onrender.com/api/v1/transactions?status=CO
 
 Se você prefere receber notificações de status por transação sem precisar cadastrar uma assinatura de webhook global, use o campo `postbackUrl` na criação da transação.
 
-Quando o status mudar para `COMPLETED` ou `FAILED`, a UPay enviará automaticamente um `POST` para a URL informada com o seguinte payload:
+Quando o status mudar para `COMPLETED` ou `FAILED`, a Alpa enviará automaticamente um `POST` para a URL informada com o seguinte payload:
 
 ```json
 {
