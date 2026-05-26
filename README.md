@@ -1,11 +1,15 @@
 <div align="center">
-  <img src="logo/light.png" alt="Alpa Gateway API" width="200" />
+  <img src="logo/dark.png" alt="Alpa Gateway API" width="200" />
   
   # Alpa Gateway API - Documentação Pública
   
-  [![Documentation](https://img.shields.io/badge/Documentation-Live-brightgreen)](https://docs.alpa.com)
+  [![Documentation](https://img.shields.io/badge/Documentation-Live-brightgreen)](https://docs.usealpa.com)
   [![API Version](https://img.shields.io/badge/API-v1.0-blue)](https://alpa-sistema-api.onrender.com)
   [![License](https://img.shields.io/badge/License-MIT-purple)](LICENSE)
+  [![Node.js SDK](https://img.shields.io/badge/SDK-Node.js-339933?logo=node.js&logoColor=white)](pages/sdk-nodejs.mdx)
+  [![Python SDK](https://img.shields.io/badge/SDK-Python-3776AB?logo=python&logoColor=white)](pages/sdk-python.mdx)
+  [![PHP SDK](https://img.shields.io/badge/SDK-PHP-777BB4?logo=php&logoColor=white)](pages/sdk-php.mdx)
+  [![Java SDK](https://img.shields.io/badge/SDK-Java-ED8B00?logo=java&logoColor=white)](pages/sdk-java.mdx)
   
   **Documentação oficial e completa da API Alpa Gateway**
   
@@ -25,9 +29,14 @@ A **Alpa Gateway API** é uma solução completa de processamento de pagamentos 
 - ✅ **Links de pagamento personalizados** - Crie e compartilhe links únicos com configurações flexíveis
 - ✅ **Gestão completa de produtos** - Catálogo integrado com controle de estoque
 - ✅ **Sistema de cupons** - Descontos percentuais ou valores fixos com regras configuráveis
+- ✅ **Gestão de clientes** - Cadastro e consulta de clientes
+- ✅ **Saques e antecipações** - Solicite saques e antecipações de recebíveis
+- ✅ **Programa de afiliados** - Crie e gerencie programas de afiliados com comissões
+- ✅ **Assinaturas recorrentes** - Planos e cobranças automáticas por assinatura
 - ✅ **Advanced Sales Tracking (Utmify)** - Suporte completo para UTMs, fbclid, gclid e src
 - ✅ **Webhooks em tempo real** - Notificações instantâneas sobre eventos importantes
 - ✅ **Dashboard administrativo** - Interface completa para gerenciamento e relatórios
+- ✅ **SDKs oficiais** - Bibliotecas para Node.js, Python, PHP e Java
 - ✅ **Documentação interativa** - Exemplos práticos e referência completa da API
 
 ## 🚀 Início Rápido
@@ -47,33 +56,48 @@ A **Alpa Gateway API** é uma solução completa de processamento de pagamentos 
    ```
 
 3. **Explore a documentação**
-   - [Guia de Início Rápido](/pages/quickstart)
-   - [Referência Completa da API](/api-reference/openapi.json)
-   - [Exemplos de Código](/pages/introduction)
+   - [Guia de Início Rápido](pages/quickstart.mdx)
+   - [Autenticação](pages/authentication.mdx)
+   - [Referência Completa da API](api-reference/openapi.json)
+   - [SDKs disponíveis](pages/sdks.mdx)
 
 ## 📚 Estrutura do Projeto
 
 ```
-documentation/
-├── api-reference/          # Especificação OpenAPI e referência de endpoints
-│   └── openapi.json        # Especificação OpenAPI 3.0.3 completa
-├── pages/                  # Conteúdo principal da documentação
-│   ├── guides/             # Guias e tutoriais detalhados
-│   │   └── features/       # Guias específicos por funcionalidade
-│   ├── payment-links/      # Documentação de Links de Pagamento
-│   ├── products/           # Documentação de Produtos
-│   ├── coupon/             # Documentação de Cupons
-│   ├── transactions/       # Documentação de Transações
-│   ├── webhooks/           # Documentação de Webhooks
-│   └── balance/            # Documentação de Saldo
-├── images/                 # Imagens e assets visuais
-├── logo/                   # Logos para temas claro e escuro
-├── custom.css              # Estilos customizados (scrollbar, etc.)
-├── docs.json               # Configuração principal do Mintlify
-├── favicon.ico             # Ícone do site
-└── README.md               # Este arquivo
+documentação_alpa/
+├── api-reference/              # Especificação OpenAPI e referência de endpoints
+│   └── openapi.json            # Especificação OpenAPI 3.0.3 completa
+├── pages/                      # Conteúdo principal da documentação
+│   ├── guides/                 # Guias e tutoriais detalhados
+│   │   └── features/           # Guias específicos por funcionalidade
+│   ├── payment-links/          # Documentação de Links de Pagamento
+│   ├── products/               # Documentação de Produtos
+│   ├── customers/              # Documentação de Clientes
+│   ├── coupon/                 # Documentação de Cupons
+│   ├── transactions/           # Documentação de Transações
+│   ├── balance/                # Documentação de Saldo
+│   ├── withdrawals/            # Documentação de Saques
+│   ├── affiliates/             # Documentação de Afiliados
+│   ├── subscriptions/          # Documentação de Assinaturas
+│   ├── advances/               # Documentação de Antecipações
+│   ├── webhooks/               # Documentação de Webhooks
+│   ├── quickstart.mdx          # Guia de início rápido
+│   ├── authentication.mdx      # Autenticação e segurança
+│   ├── webhooks.mdx            # Visão geral de webhooks
+│   ├── glossary.mdx            # Glossário de termos
+│   ├── sdks.mdx                # Visão geral dos SDKs
+│   ├── sdk-nodejs.mdx          # SDK Node.js
+│   ├── sdk-python.mdx          # SDK Python
+│   ├── sdk-php.mdx             # SDK PHP
+│   ├── sdk-java.mdx            # SDK Java
+│   └── changelog.mdx           # Histórico de alterações
+├── images/                     # Imagens e assets visuais
+├── logo/                       # Logos para temas claro e escuro
+├── custom.css                  # Estilos customizados (scrollbar, etc.)
+├── docs.json                   # Configuração principal do Mintlify
+├── favicon.ico                 # Ícone do site
+└── README.md                   # Este arquivo
 ```
-
 
 ### Adicionando Novo Conteúdo
 
@@ -96,12 +120,17 @@ documentation/
 
 | Recurso | Descrição | Documentação |
 |---------|-----------|--------------|
-| **Links de Pagamento** | Crie e gerencie links personalizados | [Ver Documentação](/pages/payment-links/reference) |
-| **Produtos** | Gerencie seu catálogo de produtos | [Ver Documentação](/pages/products/reference) |
-| **Cupons** | Sistema completo de cupons de desconto | [Ver Documentação](/pages/coupon/reference) |
-| **Transações** | Consulte e gerencie transações | [Ver Documentação](/pages/transactions/reference) |
-| **Webhooks** | Configure notificações em tempo real | [Ver Documentação](/pages/webhooks/reference) |
-| **Saldo** | Consulte saldo e movimentações | [Ver Documentação](/pages/balance/reference) |
+| **Links de Pagamento** | Crie e gerencie links personalizados | [Ver Documentação](pages/payment-links/reference.mdx) |
+| **Produtos** | Gerencie seu catálogo de produtos | [Ver Documentação](pages/products/reference.mdx) |
+| **Clientes** | Cadastre e consulte clientes | [Ver Documentação](pages/customers/reference.mdx) |
+| **Cupons** | Sistema completo de cupons de desconto | [Ver Documentação](pages/coupon/reference.mdx) |
+| **Transações** | Consulte e gerencie transações | [Ver Documentação](pages/transactions/reference.mdx) |
+| **Saldo** | Consulte saldo e movimentações | [Ver Documentação](pages/balance/reference.mdx) |
+| **Saques** | Solicite e gerencie saques | [Ver Documentação](pages/withdrawals/reference.mdx) |
+| **Afiliados** | Programas de afiliados e comissões | [Ver Documentação](pages/affiliates/reference.mdx) |
+| **Assinaturas** | Planos recorrentes e cobranças automáticas | [Ver Documentação](pages/subscriptions/reference.mdx) |
+| **Antecipações** | Solicite antecipação de recebíveis | [Ver Documentação](pages/advances/reference.mdx) |
+| **Webhooks** | Configure notificações em tempo real | [Ver Documentação](pages/webhooks/reference.mdx) |
 
 ### Autenticação
 
@@ -111,7 +140,16 @@ A API utiliza autenticação via **API Key** (Bearer Token). Todas as requisiç�
 Authorization: Bearer SUA_API_KEY
 ```
 
-Para mais detalhes, consulte a [documentação de autenticação](/pages/authentication).
+Para mais detalhes, consulte a [documentação de autenticação](pages/authentication.mdx).
+
+## 🛠️ SDKs Oficiais
+
+| Linguagem | Instalação | Documentação |
+|-----------|-----------|--------------|
+| **Node.js** | `npm install alpa-sdk` | [Ver Documentação](pages/sdk-nodejs.mdx) |
+| **Python** | `pip install alpa-sdk` | [Ver Documentação](pages/sdk-python.mdx) |
+| **PHP** | `composer require alpa/sdk` | [Ver Documentação](pages/sdk-php.mdx) |
+| **Java** | Maven / Gradle | [Ver Documentação](pages/sdk-java.mdx) |
 
 ## 🔗 Links Importantes
 
@@ -120,24 +158,25 @@ Para mais detalhes, consulte a [documentação de autenticação](/pages/authent
 - **Documentação Online**: [https://docs.usealpa.com](https://docs.usealpa.com)
 - **API Base URL**: `https://alpa-sistema-api.onrender.com`
 - **Dashboard**: [https://app.usealpa.com](https://app.usealpa.com)
-- **Status da API**: [Verificar Status](https://status.usealpa.com)
+- **Status da API**: [https://status.usealpa.com](https://status.usealpa.com)
+- **Changelog**: [Ver histórico de alterações](pages/changelog.mdx)
 
 ### Repositórios
 
-- **Documentação**: [GitHub Repository](https://github.com/anthonymengottii/documentation)
+- **Documentação**: [GitHub Repository](https://github.com/anthonymengottii/documentation_alpa)
 - **Sistema Principal**: [GitHub Repository](https://github.com/anthonymengottii/alpa_sistema)
 
 ### Suporte
 
 - **Email**: [suporte@usealpa.com](mailto:suporte@usealpa.com)
-- **Issues**: [GitHub Issues](https://github.com/anthonymengottii/documentation/issues)
-- **Documentação de Suporte**: [Páginas de Ajuda](/pages/introduction)
+- **Issues**: [GitHub Issues](https://github.com/anthonymengottii/documentation_alpa/issues)
+- **Glossário**: [Ver Glossário](pages/glossary.mdx)
 
 ## 🤝 Contribuindo
 
 Contribuições são bem-vindas! Se você encontrar erros, tiver sugestões ou quiser adicionar conteúdo:
 
-1. Abra uma [Issue](https://github.com/anthonymengottii/documentation/issues) descrevendo sua proposta
+1. Abra uma [Issue](https://github.com/anthonymengottii/documentation_alpa/issues) descrevendo sua proposta
 2. Faça um Fork do repositório
 3. Crie uma branch para sua alteração (`git checkout -b feature/minha-contribuicao`)
 4. Faça commit das alterações (`git commit -m 'Adiciona nova funcionalidade'`)
