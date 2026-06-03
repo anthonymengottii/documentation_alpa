@@ -3388,6 +3388,90 @@
         }
       }
     },
+    "/api/subscriptions/customer/{id}/pause": {
+      "patch": {
+        "tags": ["Assinaturas"],
+        "summary": "Assinante pausa assinatura",
+        "description": "Endpoint público para o assinante pausar temporariamente a própria assinatura. Cobranças ficam suspensas até retomada.",
+        "security": [],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": { "email": { "type": "string", "format": "email" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Assinatura pausada" },
+          "403": { "description": "Email não corresponde ao assinante" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "description": "Operação inválida para o status atual" }
+        }
+      }
+    },
+    "/api/subscriptions/customer/{id}/resume": {
+      "patch": {
+        "tags": ["Assinaturas"],
+        "summary": "Assinante retoma assinatura",
+        "description": "Endpoint público para o assinante retomar uma assinatura pausada. Status volta para ACTIVE e cobranças são reiniciadas.",
+        "security": [],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": { "email": { "type": "string", "format": "email" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Assinatura retomada" },
+          "403": { "description": "Email não corresponde ao assinante" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "description": "Operação inválida para o status atual" }
+        }
+      }
+    },
+    "/api/subscriptions/customer/{id}/card": {
+      "patch": {
+        "tags": ["Assinaturas"],
+        "summary": "Assinante atualiza cartão",
+        "description": "Endpoint público para o assinante substituir o cartão de cobrança da assinatura.",
+        "security": [],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "cardToken"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "cardToken": { "type": "string", "description": "Novo token de cartão gerado pelo PSP" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Cartão atualizado" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "403": { "description": "Email não corresponde ao assinante" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
     "/api/advances": {
       "get": {
         "tags": ["Antecipações"],

@@ -146,8 +146,13 @@
               "pages/subscriptions/reference",
               "pages/subscriptions/create-plan",
               "pages/subscriptions/list-plans",
+              "pages/subscriptions/metrics",
               "pages/subscriptions/checkout",
-              "pages/subscriptions/customer"
+              "pages/subscriptions/customer",
+              "pages/subscriptions/customer-cancel",
+              "pages/subscriptions/customer-pause",
+              "pages/subscriptions/customer-resume",
+              "pages/subscriptions/customer-card"
             ]
           },
           {
@@ -155,7 +160,8 @@
             "pages": [
               "pages/advances/reference",
               "pages/advances/create",
-              "pages/advances/list"
+              "pages/advances/list",
+              "pages/advances/get"
             ]
           },
           {
