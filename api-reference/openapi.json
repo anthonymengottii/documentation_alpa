@@ -3267,30 +3267,6 @@
         }
       }
     },
-    "/api/withdraws/providers": {
-      "get": {
-        "tags": ["Saques"],
-        "summary": "Listar provedores de saque",
-        "description": "Lista os provedores de pagamento disponíveis para saque",
-        "security": [{ "bearerAuth": [] }],
-        "responses": {
-          "200": { "description": "Lista de provedores" },
-          "401": { "$ref": "#/components/responses/Unauthorized" }
-        }
-      }
-    },
-    "/api/withdraws/methods": {
-      "get": {
-        "tags": ["Saques"],
-        "summary": "Listar métodos de saque",
-        "description": "Lista os métodos de saque suportados (PIX, TED, etc)",
-        "security": [{ "bearerAuth": [] }],
-        "responses": {
-          "200": { "description": "Lista de métodos disponíveis" },
-          "401": { "$ref": "#/components/responses/Unauthorized" }
-        }
-      }
-    },
     "/api/withdraws/{id}/cancel": {
       "post": {
         "tags": ["Saques"],
