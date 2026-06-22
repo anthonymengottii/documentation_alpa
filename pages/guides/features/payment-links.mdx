@@ -54,12 +54,15 @@ curl -X POST "https://alpa-sistema-api.onrender.com/api/v1/payment-links" \
     "amount": 9900,
     "currency": "BRL",
     "status": "ACTIVE",
-    "url": "https://checkout.usealpa.com/pay/produto-premium-abc123",
     "createdAt": "2025-12-30T00:00:00.000Z",
     "updatedAt": "2025-12-30T00:00:00.000Z"
   }
 }
 ```
+
+<Note>
+  A URL pública do checkout é montada a partir do `slug`: `https://checkout.usealpa.com/pay/{slug}`.
+</Note>
 
 ## Campos disponíveis
 
