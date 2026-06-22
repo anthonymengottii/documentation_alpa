@@ -10,7 +10,8 @@ Notas importantes:
 - Valores monetários são sempre em **centavos** (ex.: `10000` = R$ 100,00).
 - Webhooks precisam de URL HTTPS pública e são configurados via assinaturas (`/api/v1/webhooks/subscriptions`).
 - Cupons podem ser validados publicamente (sem autenticação) via `POST /api/coupons/validate`.
-- Links de pagamento possuem endpoints públicos (checkout) e privados (gestão via API v1).
+- Links de pagamento possuem endpoints públicos (checkout) e privados (gestão via API v1). A resposta traz `slug`; a URL pública do checkout é `https://checkout.usealpa.com/pay/{slug}`.
+- Webhooks são assinados com **HMAC-SHA256 (hex)** no header `X-Webhook-Signature` (prefixo `sha256=`). O envelope entregue é `{ id, type, data, timestamp, subscription }` — o campo `type` identifica o evento.
 
 ## Links de Pagamento
 
@@ -35,7 +36,7 @@ Notas importantes:
 ## Produtos
 
 - [Referência de Produtos](https://docs.usealpa.com/pages/products/reference): Catálogo de produtos que podem ser associados a links de pagamento.
-- [POST /api/v1/products](https://docs.usealpa.com/pages/products/create): Criar um produto. Campos obrigatórios: `name`, `price` (centavos), `currency` ("BRL"). Opcional: `description`, `imageUrl`.
+- [POST /api/v1/products](https://docs.usealpa.com/pages/products/create): Criar um produto. Campos obrigatórios: `name`, `price` (centavos). Opcionais: `description`, `imageUrl`, `stockQuantity`, `stockEnabled`, `isDigital`, `status`.
 - [GET /api/v1/products](https://docs.usealpa.com/pages/products/list): Listar produtos.
 - [GET /api/v1/products/{id}](https://docs.usealpa.com/pages/products/get): Obter produto pelo ID.
 - [PATCH /api/v1/products/{id}](https://docs.usealpa.com/pages/products/update): Atualizar produto.
@@ -68,8 +69,6 @@ Notas importantes:
 
 - [Referência de Saques](https://docs.usealpa.com/pages/withdrawals/reference): Saques do saldo disponível para chave PIX ou conta bancária. Métodos suportados: PIX, TED.
 - [GET /api/withdraws/balance](https://docs.usealpa.com/pages/withdrawals/reference): Obter saldo disponível para saque.
-- [GET /api/withdraws/providers](https://docs.usealpa.com/pages/withdrawals/reference): Listar provedores de pagamento disponíveis.
-- [GET /api/withdraws/methods](https://docs.usealpa.com/pages/withdrawals/reference): Listar métodos de saque suportados.
 - [POST /api/withdraws](https://docs.usealpa.com/pages/withdrawals/create): Criar uma nova solicitação de saque.
 - [GET /api/withdraws](https://docs.usealpa.com/pages/withdrawals/list): Listar saques.
 - [GET /api/withdraws/{id}](https://docs.usealpa.com/pages/withdrawals/get): Obter detalhes de um saque.
