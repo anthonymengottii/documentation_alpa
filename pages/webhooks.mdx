@@ -10,40 +10,9 @@ Pense nos webhooks como **"mensagens enviadas pela Alpa para o seu sistema"**, s
 
 ## Por que usar webhooks?
 
-Sem webhooks, sua aplicação teria que **perguntar para a API a cada segundo**:
+Sem webhooks, sua aplicação teria que **perguntar para a API a cada segundo** se uma transação já foi confirmada. Isso é lento e ineficiente.
 
-> "Essa transação já foi confirmada?"
-
-Isso é lento e ineficiente.
-
-Com webhooks, a Alpa avisa você **imediatamente**:
-
-> "O pagamento foi confirmado. Aqui estão os dados."
-
-Assim você pode:
-
-- atualizar o status de um pedido
-- liberar acesso a um produto
-- enviar e-mails automáticos de confirmação
-- registrar movimentações financeiras
-
-Tudo isso de forma automática, sem fazer seu cliente esperar.
-
----
-
-## Como funciona na prática?
-
-1. **Você cria um endpoint no seu sistema**
-   Ex.: `https://meusite.com/webhooks/alpa`
-
-2. **Você cadastra esse endpoint criando uma assinatura de webhook via API**
-
-3. **Sempre que algo importante acontece**, como um pagamento aprovado:
-   - A Alpa envia um `POST` para a sua URL
-   - O body contém o evento (ex: `transaction.paid`, `withdrawal.completed`)
-   - Seu sistema processa esse evento
-
-É como receber uma notificação push — só que para servidores.
+Com webhooks, a Alpa avisa você **imediatamente** quando o pagamento é confirmado, entregando os dados do evento. Assim você pode atualizar o status de um pedido, liberar acesso a um produto, enviar e-mails de confirmação ou registrar movimentações financeiras — de forma automática.
 
 ---
 
@@ -52,87 +21,104 @@ Tudo isso de forma automática, sem fazer seu cliente esperar.
 <Card title="Ambientes da Alpa" horizontal>
   - Webhooks criados com chaves de **Desenvolvimento** recebem eventos simulados
   - Webhooks criados com chaves de **Produção** recebem eventos reais
-
-  Dessa forma, você pode testar tudo antes de ir para produção.
 </Card>
 
 ---
 
-## Segurança dos webhooks
+## Formato do payload
 
-Webhooks precisam ser seguros — afinal, qualquer pessoa poderia tentar enviar requisições falsas para sua aplicação.
+Todos os eventos compartilham o mesmo envelope:
 
-Por isso, recomendamos duas camadas de proteção:
-
----
-
-### 🔐 1. Secret na URL
-
-Cada assinatura de webhook tem um secret único, que pode ir na query string do seu endpoint.
-
-Ex.: `https://meusite.com/webhook/alpa?secret=SEU_SECRET`
-
-Seu backend confere:
-
-```js
-if (req.query.secret !== process.env.WEBHOOK_SECRET) {
-  return res.status(401).json({ error: "Unauthorized" });
+```json
+{
+  "id": "f7c1b2a0-...",
+  "type": "transaction.completed",
+  "data": { },
+  "timestamp": "2026-05-25T14:30:00.000Z",
+  "subscription": {
+    "id": "sub_abc123",
+    "url": "https://meusite.com/webhooks/alpa"
+  }
 }
 ```
 
-### 🛡️ 2. Assinatura HMAC (verificação do corpo)
+O campo **`type`** identifica o evento. O campo **`data`** carrega os dados do objeto afetado.
 
-Mesmo que alguém descubra sua URL, ainda não consegue falsificar o evento.
+### Exemplo: `transaction.completed`
 
-**Por quê?**
-Porque cada webhook enviado pela Alpa inclui uma assinatura no header `X-Webhook-Signature`.
+```json
+{
+  "id": "f7c1b2a0-...",
+  "type": "transaction.completed",
+  "timestamp": "2026-05-25T14:30:00.000Z",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "status": "PAID",
+    "amountCents": 9900,
+    "paymentMethod": "PIX",
+    "clientEmail": "joao@example.com",
+    "createdAt": "2026-05-25T14:29:00.000Z",
+    "paidAt": "2026-05-25T14:30:00.000Z"
+  }
+}
+```
 
-Essa assinatura é gerada usando **HMAC-SHA256** e garante que:
-
-- o corpo da requisição **não foi alterado**
-- o evento realmente foi enviado pela Alpa
-
-Seu backend deve recalcular a assinatura e comparar:
-
-- Se for igual → ✅ evento é legítimo
-- Se for diferente → ❌ evento rejeitado
-
-Esse é o mesmo método usado por **Stripe, PayPal, Shopify, GitHub**, etc.
+<Info>
+  **Dados sensíveis:** documentos (CPF/CNPJ) são mascarados nos payloads. Para cartão, apenas os últimos 4 dígitos e a bandeira são enviados.
+</Info>
 
 ---
 
-## 🔧 Exemplo de validação HMAC (Node.js)
+## Eventos suportados
 
-> Este exemplo mostra como validar a assinatura HMAC enviada no header `X-Webhook-Signature`.
+| Evento (`type`) | Quando é disparado |
+|--------|---------------------|
+| `transaction.created` | Nova transação criada (status `PENDING`) |
+| `transaction.updated` | Status da transação alterado |
+| `transaction.completed` | Pagamento confirmado e saldo creditado (`PAID`) |
+| `transaction.failed` | Pagamento falhou (`FAILED`) |
+| `transaction.refunded` | Reembolso concluído |
+| `payment_link.created` | Novo link de pagamento criado |
+| `payment_link.updated` | Link de pagamento atualizado |
+| `balance.updated` | Saldo da carteira atualizado |
+| `subscription.cancelled` | Assinatura cancelada |
+| `kyc.submitted` / `kyc.approved` / `kyc.rejected` | Mudanças no status de KYC |
+| `advance.created` / `advance.approved` / `advance.rejected` | Antecipações |
+| `withdrawal.requested` / `withdrawal.completed` / `withdrawal.failed` | Saques |
+
+---
+
+## Segurança: assinatura HMAC
+
+Cada webhook enviado pela Alpa inclui uma assinatura no header `X-Webhook-Signature`, gerada com **HMAC-SHA256** sobre o corpo bruto da requisição e codificada em **hexadecimal** (prefixada por `sha256=`).
+
+Seu backend deve recalcular a assinatura e comparar com a recebida usando comparação em tempo constante.
 
 ```typescript
 import crypto from "node:crypto";
 
-/**
- * Verifica se a assinatura do webhook é válida.
- * @param rawBody String com o body bruto da requisição.
- * @param signatureFromHeader Assinatura recebida no header X-Webhook-Signature.
- * @param secret Secret configurado na sua assinatura de webhook.
- * @returns true se a assinatura for válida, false caso contrário.
- */
 export function verifyAlpaSignature(
   rawBody: string,
-  signatureFromHeader: string,
+  signatureFromHeader: string, // valor do header X-Webhook-Signature
   secret: string
-) {
-  const bodyBuffer = Buffer.from(rawBody, "utf8");
-
-  const expectedSig = crypto
+): boolean {
+  const received = signatureFromHeader.replace(/^sha256=/, "");
+  const expected = crypto
     .createHmac("sha256", secret)
-    .update(bodyBuffer)
-    .digest("base64");
+    .update(rawBody, "utf8")
+    .digest("hex");
 
-  const A = Buffer.from(expectedSig);
-  const B = Buffer.from(signatureFromHeader);
-
-  return A.length === B.length && crypto.timingSafeEqual(A, B);
+  const a = Buffer.from(expected);
+  const b = Buffer.from(received);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 ```
+
+<Warning>
+  Use o **corpo bruto** (raw body) para validar — não o JSON re-serializado. Sempre valide a assinatura antes de processar o evento.
+</Warning>
+
+> Usando um dos SDKs oficiais? Eles já trazem `verifyWebhookSignature(payload, signature, secret)` pronto.
 
 ---
 
@@ -150,17 +136,17 @@ export function verifyAlpaSignature(
   </Step>
 
   <Step title="Crie a assinatura via API">
-    Envie uma requisição `POST /api/v1/webhooks/subscriptions`:
-
     ```bash
     curl -X POST "https://alpa-sistema-api.onrender.com/api/v1/webhooks/subscriptions" \
       -H "Authorization: Bearer SUA_API_KEY" \
       -H "Content-Type: application/json" \
       -d '{
         "url": "https://meusite.com/webhooks/alpa",
-        "events": ["transaction.paid", "withdrawal.completed"]
+        "events": ["transaction.completed", "withdrawal.completed"]
       }'
     ```
+
+    A resposta inclui o `secret` da assinatura **apenas na criação** — guarde-o com segurança.
   </Step>
 
   <Step title="Valide os eventos recebidos">
@@ -170,303 +156,14 @@ export function verifyAlpaSignature(
 
 ---
 
-## Eventos suportados
-
-| Evento | Quando é disparado |
-|--------|---------------------|
-| `transaction.paid` | Pagamento de uma transação foi confirmado |
-| `transaction.refunded` | Reembolso de uma transação foi concluído |
-| `transaction.cancelled` | Transação foi cancelada |
-| `transaction.expired` | Transação expirou sem pagamento |
-| `payment_link.paid` | Pagamento realizado via link de pagamento |
-| `payment_link.expired` | Link de pagamento expirou |
-| `withdrawal.completed` | Saque concluído com sucesso |
-| `withdrawal.failed` | Saque falhou |
-| `affiliate.commission_created` | Comissão de afiliado gerada |
-
-Todos os webhooks compartilham o mesmo formato de payload:
-
-```json
-{
-  "id": "evt_abc123xyz",
-  "event": "transaction.paid",
-  "devMode": false,
-  "data": { }
-}
-```
-
-<Info>
-  **Dados sensíveis:** O campo `taxId` (CPF/CNPJ) é mascarado nos payloads (ex: `123.***.***-**`). Para pagamentos com cartão, apenas os últimos 4 dígitos e a bandeira são enviados.
-</Info>
-
----
-
-## Eventos de Transação
-
-<Tabs>
-  <Tab title="transaction.paid">
-    Disparado quando o pagamento de uma transação é confirmado.
-
-    ```json
-    {
-      "id": "evt_abc123xyz",
-      "event": "transaction.paid",
-      "devMode": false,
-      "data": {
-        "transaction": {
-          "id": "txn_abc123xyz",
-          "externalId": "pedido-123",
-          "amount": 10000,
-          "paidAmount": 10000,
-          "status": "PAID",
-          "method": "PIX",
-          "currency": "BRL",
-          "receiptUrl": "https://app.usealpa.com/receipt/...",
-          "createdAt": "2026-01-15T10:30:00.000Z",
-          "updatedAt": "2026-01-15T10:30:05.000Z"
-        },
-        "customer": {
-          "id": "cust_abc123",
-          "name": "João Silva",
-          "email": "joao@exemplo.com",
-          "taxId": "123.***.***-**"
-        },
-        "paymentLink": {
-          "id": "pl_abc123",
-          "slug": "meu-produto"
-        }
-      }
-    }
-    ```
-  </Tab>
-
-  <Tab title="transaction.refunded">
-    Disparado quando uma transação é reembolsada.
-
-    ```json
-    {
-      "id": "evt_abc123xyz",
-      "event": "transaction.refunded",
-      "devMode": false,
-      "data": {
-        "transaction": {
-          "id": "txn_abc123xyz",
-          "externalId": "pedido-123",
-          "amount": 10000,
-          "paidAmount": 10000,
-          "status": "REFUNDED",
-          "method": "PIX",
-          "currency": "BRL",
-          "createdAt": "2026-01-15T10:30:00.000Z",
-          "updatedAt": "2026-01-15T11:00:00.000Z"
-        },
-        "customer": {
-          "id": "cust_abc123",
-          "name": "João Silva",
-          "email": "joao@exemplo.com",
-          "taxId": "123.***.***-**"
-        },
-        "reason": "requested_by_customer"
-      }
-    }
-    ```
-  </Tab>
-
-  <Tab title="transaction.cancelled">
-    Disparado quando uma transação é cancelada.
-
-    ```json
-    {
-      "id": "evt_abc123xyz",
-      "event": "transaction.cancelled",
-      "devMode": false,
-      "data": {
-        "transaction": {
-          "id": "txn_abc123xyz",
-          "externalId": "pedido-123",
-          "amount": 10000,
-          "paidAmount": 0,
-          "status": "CANCELLED",
-          "method": "PIX",
-          "currency": "BRL",
-          "createdAt": "2026-01-15T10:30:00.000Z",
-          "updatedAt": "2026-01-15T10:45:00.000Z"
-        },
-        "customer": {
-          "id": "cust_abc123",
-          "name": "João Silva",
-          "email": "joao@exemplo.com",
-          "taxId": "123.***.***-**"
-        }
-      }
-    }
-    ```
-  </Tab>
-
-  <Tab title="transaction.expired">
-    Disparado quando uma transação expira sem pagamento.
-
-    ```json
-    {
-      "id": "evt_abc123xyz",
-      "event": "transaction.expired",
-      "devMode": false,
-      "data": {
-        "transaction": {
-          "id": "txn_abc123xyz",
-          "externalId": "pedido-123",
-          "amount": 10000,
-          "paidAmount": 0,
-          "status": "EXPIRED",
-          "method": "PIX",
-          "currency": "BRL",
-          "createdAt": "2026-01-15T10:30:00.000Z",
-          "updatedAt": "2026-01-15T10:30:00.000Z"
-        },
-        "customer": {
-          "id": "cust_abc123",
-          "name": "João Silva",
-          "email": "joao@exemplo.com",
-          "taxId": "123.***.***-**"
-        }
-      }
-    }
-    ```
-  </Tab>
-</Tabs>
-
----
-
-## Eventos de Link de Pagamento
-
-<Tabs>
-  <Tab title="payment_link.paid">
-    Disparado quando um pagamento é realizado via link de pagamento.
-
-    ```json
-    {
-      "id": "evt_abc123xyz",
-      "event": "payment_link.paid",
-      "devMode": false,
-      "data": {
-        "paymentLink": {
-          "id": "pl_abc123",
-          "slug": "meu-produto",
-          "name": "Meu Produto",
-          "amount": 10000,
-          "currency": "BRL",
-          "status": "ACTIVE"
-        },
-        "transaction": {
-          "id": "txn_abc123xyz",
-          "amount": 10000,
-          "paidAmount": 10000,
-          "status": "PAID",
-          "method": "PIX",
-          "receiptUrl": "https://app.usealpa.com/receipt/...",
-          "createdAt": "2026-01-15T10:30:00.000Z",
-          "updatedAt": "2026-01-15T10:30:05.000Z"
-        },
-        "customer": {
-          "id": "cust_abc123",
-          "name": "João Silva",
-          "email": "joao@exemplo.com",
-          "taxId": "123.***.***-**"
-        }
-      }
-    }
-    ```
-  </Tab>
-
-  <Tab title="payment_link.expired">
-    Disparado quando um link de pagamento expira.
-
-    ```json
-    {
-      "id": "evt_abc123xyz",
-      "event": "payment_link.expired",
-      "devMode": false,
-      "data": {
-        "paymentLink": {
-          "id": "pl_abc123",
-          "slug": "meu-produto",
-          "name": "Meu Produto",
-          "amount": 10000,
-          "currency": "BRL",
-          "status": "EXPIRED",
-          "expiredAt": "2026-01-16T00:00:00.000Z"
-        }
-      }
-    }
-    ```
-  </Tab>
-</Tabs>
-
----
-
-## Eventos de Saque
-
-<Tabs>
-  <Tab title="withdrawal.completed">
-    Disparado quando um saque é concluído com sucesso.
-
-    ```json
-    {
-      "id": "evt_abc123xyz",
-      "event": "withdrawal.completed",
-      "devMode": false,
-      "data": {
-        "withdrawal": {
-          "id": "wth_abc123xyz",
-          "amount": 50000,
-          "status": "COMPLETED",
-          "method": "PIX",
-          "pixKey": "joao@exemplo.com",
-          "receiptUrl": "https://app.usealpa.com/receipt/...",
-          "createdAt": "2026-01-15T10:30:00.000Z",
-          "updatedAt": "2026-01-15T10:30:10.000Z"
-        }
-      }
-    }
-    ```
-  </Tab>
-
-  <Tab title="withdrawal.failed">
-    Disparado quando um saque falha.
-
-    ```json
-    {
-      "id": "evt_abc123xyz",
-      "event": "withdrawal.failed",
-      "devMode": false,
-      "data": {
-        "withdrawal": {
-          "id": "wth_abc123xyz",
-          "amount": 50000,
-          "status": "FAILED",
-          "method": "PIX",
-          "pixKey": "joao@exemplo.com",
-          "failureReason": "invalid_pix_key",
-          "createdAt": "2026-01-15T10:30:00.000Z",
-          "updatedAt": "2026-01-15T10:30:05.000Z"
-        }
-      }
-    }
-    ```
-  </Tab>
-</Tabs>
-
----
-
 ## Boas práticas
 
 <Card title="Recomendações importantes" horizontal>
   * Use **HTTPS** em todos os webhooks
   * Valide a **assinatura HMAC** em cada requisição recebida
-  * Registre cada evento recebido e processe cada um **uma única vez** (idempotência)
+  * Processe cada evento **uma única vez** (idempotência via campo `id`)
   * Responda **200 OK** somente após concluir o processamento
-  * Implemente **retentativas com idempotência** caso o processamento falhe
-  * **Não valide o payload inteiro** com schemas rígidos (como Zod) — novos campos podem ser adicionados sem aviso prévio
+  * **Não valide o payload inteiro** com schemas rígidos — novos campos podem ser adicionados sem aviso prévio
 </Card>
 
 ---

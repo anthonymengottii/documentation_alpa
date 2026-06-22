@@ -75,7 +75,7 @@ const link = await alpa.paymentLinks.create({
   title: 'Produto Premium',
   amountCents: 9900,
 });
-console.log('Checkout:', link.url);
+console.log('Checkout:', alpa.paymentLinks.getCheckoutUrl(link.slug));
 ```
 
 ```python Python
@@ -87,7 +87,7 @@ link = alpa.payment_links.create({
     'title': 'Produto Premium',
     'amountCents': 9900,
 })
-print('Checkout:', link['url'])
+print('Checkout:', alpa.payment_links.get_checkout_url(link['slug']))
 ```
 
 ```php PHP
@@ -99,7 +99,7 @@ $link = $alpa->paymentLinks->create([
     'title'       => 'Produto Premium',
     'amountCents' => 9900,
 ]);
-echo 'Checkout: ' . $link['url'];
+echo 'Checkout: ' . $alpa->paymentLinks->getCheckoutUrl($link['slug']);
 ```
 
 ```java Java
@@ -107,11 +107,8 @@ import com.alpa.AlpaClient;
 
 var alpa = new AlpaClient(System.getenv("ALPA_API_KEY"));
 
-var link = alpa.paymentLinks.create(Map.of(
-    "title",       "Produto Premium",
-    "amountCents", 9900
-));
-System.out.println("Checkout: " + link.path("url").asText());
+var link = alpa.paymentLinks.create("Produto Premium", 9900, java.util.Map.of());
+System.out.println("Checkout: https://checkout.usealpa.com/pay/" + link.path("slug").asText());
 ```
 </CodeGroup>
 

@@ -49,7 +49,7 @@ Após o `mvn install`, adicione ao seu `pom.xml`:
 <dependency>
     <groupId>com.alpa</groupId>
     <artifactId>alpa-java</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -87,7 +87,9 @@ JsonNode link = alpa.paymentLinks.create(Map.of(
     "description", "Acesso vitalício"
 ));
 
-System.out.println(link.path("url").asText()); // URL de checkout para o cliente
+// A resposta traz o slug; monte a URL do checkout a partir dele:
+String slug = link.path("slug").asText();
+System.out.println("https://checkout.usealpa.com/pay/" + slug);
 ```
 
 ## Resposta
@@ -97,9 +99,10 @@ System.out.println(link.path("url").asText()); // URL de checkout para o cliente
   "id": "lnk_abc123",
   "title": "Produto Premium",
   "description": "Acesso vitalício",
-  "amountCents": 9900,
+  "amount": 9900,
+  "currency": "BRL",
   "status": "ACTIVE",
-  "url": "https://pay.usealpa.com/l/abc123",
+  "slug": "abc123",
   "createdAt": "2026-04-08T00:00:00.000Z",
   "updatedAt": "2026-04-08T00:00:00.000Z"
 }

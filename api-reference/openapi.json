@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Alpa Gateway API",
-    "version": "2.23.0",
+    "version": "2.30.0",
     "description": "Documentação completa da API pública do Alpa Gateway (v2.23.0). Todas as rotas requerem autenticação via API Key, exceto validação de cupom, checkout público e checkout de assinaturas. Novidades em 2.23.0: sistema de assinaturas recorrentes com planos, retry automático e métricas MRR/churn; cart abandonment para recuperação de vendas.",
     "contact": {
       "email": "suporte@usealpa.com"

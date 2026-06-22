@@ -45,13 +45,15 @@ Configure seus webhooks para receber notificações dos eventos relevantes para 
 
 ## Formato do payload
 
-Todos os eventos seguem a mesma estrutura de envelope:
+Todos os eventos seguem a mesma estrutura de envelope. O campo **`type`** identifica o evento:
 
 ```json
 {
-  "event": "transaction.completed",
+  "id": "f7c1b2a0-...",
+  "type": "transaction.completed",
   "timestamp": "2026-05-25T14:30:00.000Z",
-  "data": { }
+  "data": { },
+  "subscription": { "id": "sub_abc123", "url": "https://meusite.com/webhooks/alpa" }
 }
 ```
 
@@ -59,7 +61,8 @@ Todos os eventos seguem a mesma estrutura de envelope:
 
 ```json
 {
-  "event": "transaction.completed",
+  "id": "f7c1b2a0-...",
+  "type": "transaction.completed",
   "timestamp": "2026-05-25T14:30:00.000Z",
   "data": {
     "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -77,7 +80,8 @@ Todos os eventos seguem a mesma estrutura de envelope:
 
 ```json
 {
-  "event": "subscription.charge_failed",
+  "id": "f7c1b2a0-...",
+  "type": "subscription.charge_failed",
   "timestamp": "2026-05-25T10:00:00.000Z",
   "data": {
     "subscriptionId": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
@@ -100,14 +104,14 @@ Todos os eventos incluem o header `X-Webhook-Signature` com um HMAC-SHA256 do pa
 const crypto = require('crypto');
 
 function verifyWebhook(payload, signature, secret) {
+  const received = signature.replace(/^sha256=/, '');
   const expected = crypto
     .createHmac('sha256', secret)
     .update(payload)
     .digest('hex');
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expected)
-  );
+  const a = Buffer.from(received);
+  const b = Buffer.from(expected);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 ```
 

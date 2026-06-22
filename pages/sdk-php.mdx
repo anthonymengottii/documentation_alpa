@@ -51,12 +51,20 @@ $link = $alpa->paymentLinks->create([
     'id'          => 'lnk_abc123',
     'title'       => 'Produto Premium',
     'description' => 'Acesso vitalício',
-    'amountCents' => 9900,
+    'amount'      => 9900,
+    'currency'    => 'BRL',
     'status'      => 'ACTIVE',
-    'url'         => 'https://pay.usealpa.com/l/abc123',
+    'slug'        => 'abc123',
     'createdAt'   => '2026-04-08T00:00:00.000Z',
     'updatedAt'   => '2026-04-08T00:00:00.000Z',
 ]
+```
+
+A URL do checkout é montada a partir do `slug`:
+
+```php
+$checkoutUrl = $alpa->paymentLinks->getCheckoutUrl($link['slug']);
+// https://checkout.usealpa.com/pay/abc123
 ```
 
 ## Criar Transação PIX
